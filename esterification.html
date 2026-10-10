@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TP : estérification et dosage</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#cbd7f7;--fg:#1d1d1b;--card:#fff;--bd:#d9d7cf;--ac:#2a6f97;--mut:#6b6a63}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1b1d;--fg:#ececec;--card:#25272a;--bd:#3a3d41;--ac:#6ab0d8;--mut:#9a9a9a}}
+:root[data-theme="dark"]{--bg:#1a1b1d;--fg:#ececec;--card:#25272a;--bd:#3a3d41;--ac:#6ab0d8;--mut:#9a9a9a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0 auto;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:16px;max-width:960px}
+h1{font-size:20px;margin:0 0 4px}h2{font-size:15px;margin:0 0 8px}p.s{color:var(--mut);margin:0 0 14px;font-size:13px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:12px}
+.fig{background:#fff;text-align:center}.fig img{max-width:100%;height:auto}
+.main{display:grid;grid-template-columns:1fr 280px;gap:12px;margin-bottom:12px}
+@media(max-width:700px){.main{grid-template-columns:1fr}}
+.main .card{margin:0}
+.ctrl{background:#f4f2ea;color:#1d1d1b;border:1px solid #d9d7cf;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.ctrl small{color:#6b6a63}.ctrl hr{border:0;border-top:1px solid #d9d7cf;width:100%;margin:2px 0}
+label{font-size:13px;display:flex;flex-direction:column;gap:2px}
+.r{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+button{background:var(--ac);color:#fff;border:0;border-radius:6px;padding:7px 12px;font-size:14px;cursor:pointer}
+.ctrl button.g,button.g{background:transparent;color:inherit;border:1px solid #b9b7ae}
+button.o{background:#c0562b}
+.big{font-size:20px;font-variant-numeric:tabular-nums}
+.sc{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--bd);padding:4px 8px;text-align:right}th:first-child,td:first-child{text-align:left}
+canvas{display:block}#cv{width:100%;height:auto}
+.tubes{display:flex;gap:8px;align-items:flex-end;min-height:62px;margin-bottom:6px}
+.tube{width:20px;height:50px;border:2px solid var(--fg);border-top:none;border-radius:0 0 10px 10px;position:relative;overflow:hidden;cursor:pointer}
+.tube i{position:absolute;bottom:0;left:0;right:0;height:75%;background:#8fd0f0;opacity:.75}
+.tube b{position:absolute;top:2px;width:100%;text-align:center;font-size:11px}
+.tube.sel{outline:2px solid var(--ac);outline-offset:2px}
+small{color:var(--mut)}
+.fg{display:grid;gap:8px}
+button:disabled{opacity:.45;cursor:not-allowed}
+#lcd{background:#10170f;color:#7cfc8a;font:700 24px "Courier New",monospace;padding:2px 12px;border-radius:6px;border:3px solid #555;letter-spacing:3px;text-shadow:0 0 6px rgba(124,252,138,.6);box-shadow:inset 0 0 8px #000}
+#tip{position:fixed;display:none;background:#1d1d1b;color:#fff;font-size:12px;padding:5px 9px;border-radius:6px;pointer-events:none;z-index:10;max-width:220px;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+#hp li.cur{background:rgba(42,111,151,.22);border-radius:4px;font-weight:600;list-style-position:inside}
+ .signature{
+text-align: center;
+font-family: "Arial";
+font-size: 12px;
+font-weight: bold;
+color: rgb(1, 46, 65);
+margin-top: 30px;
+}
+</style></head><body>
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><h1>TP : estérification de l'acide éthanoïque par l'éthanol</h1><button class="g" id="help" style="color:inherit;white-space:nowrap">❓ Aide</button></div>
+<p class="s">CH₃COOH + C₂H₅OH ⇌ CH₃COOC₂H₅ + H₂O — suivi cinétique par dosage de l'acide restant </p>
+
+<div class="card" id="hp" style="display:none"><h2>Étapes à suivre</h2>
+<ol style="margin:0;padding-left:22px;font-size:14px;line-height:1.9">
+<li data-i="1">Réglez si vous le souhaitez la température, le rapport éthanol/acide, le catalyseur et la vitesse (panneau de droite, avant de démarrer).</li>
+<li data-i="2">Cliquez sur <b>Démarrer</b> : les tubes sont plongés dans le bain à 80 °C et le chronomètre part de t = 0.</li>
+<li data-i="3">À l'instant de votre choix, cliquez sur <b>Prélever un tube</b> : le tube sort du bain et passe dans l'eau glacée.</li>
+<li data-i="4">Cliquez sur <b>Vider le tube</b> : son contenu est versé dans l'erlenmeyer (eau glacée + phénolphtaléine).</li>
+<li data-i="5">Dosez avec <b>+ 0,1 mL</b>, <b>+ 1 mL</b> ou <b>Écoulement</b> jusqu'à la première teinte rose persistante : V<sub>B</sub> est enregistré dans le tableau.</li>
+<li data-i="6">Répétez les étapes 3 à 5 pour d'autres tubes, à des instants différents (8 tubes au maximum). Le tube choisi pour le dosage est entouré dans la rangée au-dessus de la burette ; pour changer de tube, cliquez sur un autre tube de cette rangée ou dans le cristallisoir d'eau glacée.</li>
+<li data-i="7">Exploitez : lisez le tableau (n acide, n ester, taux), affichez la courbe, puis la tangente pour obtenir la vitesse de réaction.</li></ol>
+<small>L'étape en cours est surlignée. « Reset » remet tout à zéro.</small></div>
+<div class="card"><div class="fg"><div><h2>Mode opératoire</h2><ol style="margin:0;padding-left:20px;font-size:13px">
+<li>Préparer le mélange : 16 mL d'acide éthanoïque + 16,3 mL d'éthanol + quelques gouttes d'acide sulfurique.</li>
+<li>Répartir 2 mL du mélange dans 8 tubes à essais munis d'un tube effilé (condenseur à air), les placer dans un support, puis les plonger dans le bain thermostaté à 80 °C en déclenchant le chronomètre (t = 0).</li>
+<li>À des instants variés, sortir un tube, le plonger dans l'eau glacée (la réaction est bloquée), le vider dans un erlenmeyer avec de l'eau distillée glacée et de la phénolphtaléine, puis rincer le tube.</li>
+<li>Doser l'acide restant par NaOH 1 mol/L jusqu'au rose persistant et noter V<sub>B</sub>.</li>
+<li>Calculer n(ester) = n₀ − C<sub>B</sub>·V<sub>B</sub> et tracer n(ester) = f(t).</li></ol></div><svg id="bath" viewBox="0 -150 690 406" style="width:100%;color:var(--fg)"></svg><div class="r" style="justify-content:center;gap:8px"><b>t (min:s)</b><div id="lcd" title="Chronomètre"><span id="tt">00:00</span></div><button id="go">▶ Démarrer</button><button class="g" id="rs">↺ Reset</button><button class="o" id="samp">🧪 Prélever un tube</button><button class="o" id="vid">⤵ Vider le tube</button></div></div></div>
+
+<div class="main">
+<div class="card">
+<div class="tubes" id="tubes"><small id="tl">Les tubes prélevés apparaîtront ici (cliquez sur un tube pour le doser).</small></div>
+<canvas id="lab" width="600" height="280" style="width:100%;max-width:600px;height:auto"></canvas>
+<div class="r" style="margin:6px 0"><b>Ajout de NaOH :</b><button id="b1">+ 0,1 mL</button><button id="b2">+ 1 mL</button><button class="g" id="b3">Écoulement</button></div>
+<small>Arrêtez-vous à la première goutte qui colore en rose : le volume est alors enregistré.</small><br>
+<small>Mélange initial : 16 mL d'acide + 16,3 mL d'éthanol → 0,28 mol de chaque. Tube de 2 mL ≈ 17,3 mmol d'acide.</small>
+</div>
+
+<div class="ctrl">
+<h2>Réaction (bain-marie)</h2>
+<label>Température : <b id="Tv">80</b> °C<input type="range" id="T" min="20" max="100" value="80"></label>
+<label>n(éthanol) / n(acide) : <b id="Rv">1.00</b><input type="range" id="R" min="0.5" max="3" step="0.05" value="1"></label>
+<label style="flex-direction:row;gap:6px"><input type="checkbox" id="cat" checked> Catalyseur H₂SO₄</label>
+<label>Vitesse : ×<b id="Sv">10</b><input type="range" id="S" min="10" max="300" step="10" value="10"></label>
+<hr>
+<h2>Dosage (NaOH 1 mol/L)</h2>
+<div>V<sub>B</sub> = <span class="big" id="vb">—</span> mL</div>
+<small id="vbn">Prélevez un tube pour commencer.</small><b id="st"></b>
+</div>
+</div>
+
+<div class="card sc"><table><thead><tr><th>Tube</th><th>t (min)</th><th>V<sub>B</sub> (mL)</th><th>n acide (mmol)</th><th>n ester (mmol)</th><th>Taux ξ</th></tr></thead><tbody id="tb"></tbody></table></div>
+
+<div class="card"><button class="g" id="showc" style="color:inherit">📈 Afficher la courbe</button>
+<div id="cw" style="display:none;margin-top:8px"><canvas id="cv" width="800" height="260"></canvas>
+<div style="margin:8px 0"><button class="g" id="showtg" style="color:inherit">📐 Afficher la tangente</button></div>
+<div id="tgp" style="display:none;margin-bottom:8px"><div class="r" style="gap:18px">
+<label style="min-width:220px"><span>Tangente construite à partir</span><select id="tgs"><option value="mod">du modèle (pointillés)</option><option value="mes">des points mesurés</option></select></label>
+<label style="min-width:220px"><span>Instant t : <b id="t0v">30</b> min</span><input type="range" id="t0" min="0" max="120" step="1" value="30"></label>
+<label style="min-width:220px"><span>Intervalle Δt : <b id="dtv">20</b> min</span><input type="range" id="dtt" min="5" max="60" step="1" value="20"></label></div>
+<div id="tgr" style="font-size:14px;margin-top:6px"></div></div>
+<small>n(ester) dans un tube (mmol) en fonction de t. Pointillés : modèle ; points : vos mesures ; ligne horizontale : équilibre.</small></div></div>
+
+<div class="card"><button class="g" id="showt" style="color:inherit">📖 Afficher l'aperçu théorique</button>
+<div id="tw" style="display:none;margin-top:10px;font-size:14px">
+<h2>Aperçu théorique</h2>
+<p><b>Réaction.</b> CH₃COOH + C₂H₅OH ⇌ CH₃COOC₂H₅ + H₂O. Elle est lente, limitée (la réaction inverse est l'hydrolyse de l'ester) et pratiquement athermique.</p>
+<p><b>Constante d'équilibre.</b> K = [ester]·[eau] / ([acide]·[alcool]). Pour un alcool primaire, K ≈ 4. Pour un mélange équimolaire, K = τ² / (1 − τ)², donc τ<sub>éq</sub> = √K / (1 + √K) = 2/3 ≈ 67 %.</p>
+<div class="sc"><table><caption style="text-align:left;font-weight:600;padding:4px 0">Tableau d'avancement (un tube, quantités en mmol)</caption><thead><tr><th>État</th><th>x</th><th>CH₃COOH</th><th>C₂H₅OH</th><th>CH₃COOC₂H₅</th><th>H₂O</th></tr></thead><tbody>
+<tr><td>Initial</td><td>0</td><td>n₀ = 17,3</td><td>17,3</td><td>0</td><td>0</td></tr>
+<tr><td>En cours</td><td>x</td><td>17,3 − x</td><td>17,3 − x</td><td>x</td><td>x</td></tr>
+<tr><td>Équilibre</td><td>x<sub>éq</sub> ≈ 11,5</td><td>≈ 5,8</td><td>≈ 5,8</td><td>≈ 11,5</td><td>≈ 11,5</td></tr></tbody></table></div>
+<p style="margin-top:6px">Mélange équimolaire (n(éthanol) = n(acide) = n₀). À l'équilibre, K = x<sub>éq</sub>² / (n₀ − x<sub>éq</sub>)² = 4, donc x<sub>éq</sub> = 2n₀/3. Le dosage donne n(acide) = C<sub>B</sub>·V<sub>B</sub> = n₀ − x, donc x = n(ester) = n₀ − C<sub>B</sub>·V<sub>B</sub>.</p>
+<p><b>Suivi par dosage.</b> La trempe (eau glacée et dilution) bloque la réaction. Le dosage ne mesure alors que l'acide restant : n(acide) = C<sub>B</sub>·V<sub>B</sub>, puis n(ester) = n₀ − C<sub>B</sub>·V<sub>B</sub> et τ = n(ester) / n<sub>max</sub>. Ici n₀ ≈ 17,3 mmol par tube (l'acide sulfurique, aussi dosé, est négligé).</p>
+<p><b>Cinétique.</b> La vitesse volumique de formation de l'ester est v = (1/V)·dx/dt, c'est la pente de la tangente à la courbe n(ester) = f(t). Elle diminue au cours du temps car les réactifs se consomment. Le temps de demi-réaction t<sub>1/2</sub> est la date où x = x<sub>éq</sub>/2.</p>
+<p><b>Facteurs cinétiques.</b> Une température plus élevée et la présence de H₂SO₄ accélèrent la réaction. Ils font atteindre l'équilibre plus vite mais ne changent pas K ni le rendement final.</p>
+<p><b>Déplacer l'équilibre.</b> Un excès de l'un des réactifs ou l'élimination de l'eau ou de l'ester augmente le rendement. Par exemple, avec n(éthanol)/n(acide) = 3, on obtient τ ≈ 90 % au lieu de 67 %.</p>
+</div>
+</div>
+<div class="signature"> TP Simulation de la réaction d"estérification - chrif.md@gmail.com - Octobre 2026 </div>
+<div id="tip"></div>
+<script>
+const $=id=>document.getElementById(id),K=4,NA=17.3,cs=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let started=false,t=0,x=0,run=false,last=0,pts=[],p,cur,rows=[],tit=null,flow=false,drops=[],ang=0;
+function params(){const T=+$('T').value+273.15,r=+$('R').value,cat=$('cat').checked;
+ return{k:0.03/NA*Math.exp(-6000*(1/T-1/353.15))*(cat?1:0.02),na:NA,nb:NA*r}}
+function dx(x,p){return p.k*((p.na-x)*(p.nb-x)-x*x/K)}
+function step(x,p,dt){const n=Math.ceil(dt/0.05),h=dt/n;for(let i=0;i<n;i++){const a=dx(x,p);x+=h*dx(x+h*a/2,p)}return x}
+function xeq(p){const a=1-1/K,b=-(p.na+p.nb),c=p.na*p.nb;return(-b-Math.sqrt(b*b-4*a*c))/(2*a)}
+function curve(){const c=[];let y=0;for(let m=0;m<=120;m++){c.push([m,y]);y=step(y,p,1)}return c}
+function dish(k,xl,xr,ty,by,wy,w1){const C='currentColor',L=xl+4,R=xr-4;
+ const wall=`M${L} ${ty+6}L${xl+8} ${by-10}Q${xl+8} ${by} ${xl+19} ${by}H${xr-19}Q${xr-8} ${by} ${xr-8} ${by-10}L${R} ${ty+6}`;
+ let wave=`M${xl+6} ${wy}q10 -3 20 0`;for(let i=0;i<(xr-xl-12)/20-1;i++)wave+='t20 0';
+ const back=`<clipPath id="cp${k}"><path d="${wall}Z"/></clipPath><rect x="${xl}" y="${wy}" width="${xr-xl}" height="${by-wy+2}" fill="${w1}" clip-path="url(#cp${k})"/><path d="${wave}" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2" clip-path="url(#cp${k})"/>`;
+ const front=`<rect x="${xl}" y="${wy}" width="${xr-xl}" height="${by-wy+2}" fill="${w1}" opacity=".3" clip-path="url(#cp${k})"/><path d="${wall}" fill="none" stroke="${C}" stroke-width="3" stroke-linejoin="round"/><path d="${wall}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.5" transform="translate(4,-2)" clip-path="url(#cp${k})"/><rect x="${xl}" y="${ty}" width="${xr-xl}" height="7" rx="3.5" fill="rgba(255,255,255,.25)" stroke="${C}" stroke-width="2"/><path d="M${xl+14} ${wy+10}V${by-14}" stroke="#fff" stroke-opacity=".45" stroke-width="4" stroke-linecap="round"/>`;
+ return[back,front]}
+function buildBath(){const C='currentColor';
+ const d1=dish(1,15,475,98,214,122,'rgba(70,150,215,.5)'),d2=dish(2,490,680,128,214,150,'rgba(150,215,245,.5)');
+ let h=d1[0]+d2[0];
+ [[515,158,12],[548,166,-8],[585,156,20],[620,164,-14],[652,158,6],[530,190,-10],[600,192,14],[640,188,-6]].forEach(c=>h+=`<rect x="-9" y="-9" width="18" height="18" rx="4" fill="rgba(255,255,255,.55)" stroke="rgba(190,230,250,.95)" stroke-width="1.5" transform="translate(${c[0]},${c[1]}) rotate(${c[2]})"/>`);
+ h+=`<rect x="451" y="62" width="8" height="128" rx="4" fill="rgba(255,255,255,.35)" stroke="${C}" stroke-width="1.5"/><rect x="454" y="92" width="2" height="98" fill="#d93025"/><circle cx="455" cy="194" r="6" fill="#d93025" stroke="${C}"/><text x="455" y="54" text-anchor="middle" font-size="11" fill="${C}">80 °C</text>`;
+ const W='#b98a52';h+=`<g class="rack"><rect x="135" y="-25" width="6" height="77" fill="${W}"/><rect x="549" y="-25" width="6" height="77" fill="${W}"/><rect x="133" y="43" width="424" height="9" rx="2" fill="${W}" stroke="${C}" stroke-width="1.5"/><text x="565" y="20" font-size="11" fill="${C}">Support à tubes</text></g>`;
+ for(let i=0;i<8;i++)h+=`<g id="tg${i+1}" style="transform:translate(${163+i*53}px,-150px);transition:transform .7s"><rect x="-14" y="14" width="28" height="182" fill="transparent"/><path d="M-13 59V180a13 13 0 0 0 26 0V59Z" fill="rgba(255,255,255,.12)" stroke="${C}" stroke-width="2"/><path class="liq" d="M-11 118V180a11 11 0 0 0 22 0V118Z" fill="#e8c547" opacity=".75"/><path d="M-11 53H11L8.5 67H-8.5Z" fill="#8b5a2b" stroke="#5a3a1a" stroke-width="1"/><path d="M-3.5 78L-1.2 18H1.2L3.5 78Z" fill="rgba(255,255,255,.55)" stroke="${C}" stroke-width="1.2"/><text y="12" text-anchor="middle" font-size="12" fill="${C}">${i+1}</text></g>`;
+ h+=`<g class="rack"><rect x="133" y="-25" width="424" height="9" rx="2" fill="${W}" stroke="${C}" stroke-width="1.5"/></g>`+'<g pointer-events="none">'+d1[1]+d2[1]+'</g>'+`<rect x="30" y="218" width="430" height="14" rx="3" fill="#666"/><circle cx="48" cy="225" r="3.5" fill="#e04b3a"/><rect x="400" y="221" width="46" height="8" rx="2" fill="#222"/><text x="423" y="228" text-anchor="middle" font-size="7" fill="#7f7">80.0</text><text x="245" y="250" text-anchor="middle" font-size="12" fill="${C}">Bain thermostaté (cristallisoir, 80 °C)</text><text x="585" y="250" text-anchor="middle" font-size="12" fill="${C}">Cristallisoir d'eau glacée</text>`;
+ $('bath').innerHTML=h}
+function fmt(m){const a=Math.floor(m),b=Math.floor((m-a)*60);return String(a).padStart(2,'0')+':'+String(b).padStart(2,'0')}
+let lastS=0;
+function hl(){if($('hp').style.display==='none')return;const n=!started?2:!tit?3:!tit.emptied?4:tit.vb==null?5:pts.length>=2?7:6;
+ if(n!==lastS){lastS=n;document.querySelectorAll('#hp li').forEach(l=>l.classList.toggle('cur',+l.dataset.i===n))}}
+function plunge(){for(let i=1;i<=8;i++){const g=$('tg'+i);g.style.transitionDelay=((i-1)*0.1)+'s';g.style.transform=`translate(${50+(i-1)*53}px,0px)`}document.querySelectorAll('#bath .rack').forEach(e=>{e.style.transition='opacity .6s 1.1s';e.style.opacity='0'})}
+function outTube(n){const g=$('tg'+n);g.style.cursor='pointer';g.onclick=()=>{if(rows[n-1])load(rows[n-1])};g.style.transitionDelay='0s';g.style.transform=`translate(${510+(n-1)*20}px,66px) scale(.75)`;g.querySelector('.liq').setAttribute('fill','#8fd0f0')}
+function reset(){buildBath();started=false;$('samp').disabled=true;run=flow=false;t=x=0;pts=[];rows=[];tit=null;drops=[];p=params();cur=curve();
+ $('tb').innerHTML='';$('tubes').innerHTML='<small>Les tubes prélevés apparaîtront ici (cliquez sur un tube pour le doser).</small>';
+ $('go').textContent='▶ Démarrer';['T','R','cat'].forEach(i=>$(i).disabled=false);$('tt').textContent='00:00';draw()}
+let tg=false;
+function xAt(tm){const i=Math.min(119,Math.floor(tm)),a=cur[i][1],b=cur[i+1][1];return a+(b-a)*(tm-i)}
+function fit(){if(pts.length<2)return null;let best=null;
+ for(let tau=1;tau<=400;tau+=.5){let sf=0,sff=0;pts.forEach(q=>{const f=1-Math.exp(-q[0]/tau);sf+=q[1]*f;sff+=f*f});if(!sff)continue;const a=sf/sff;let e=0;pts.forEach(q=>{const r=q[1]-a*(1-Math.exp(-q[0]/tau));e+=r*r});if(!best||e<best.e)best={a,tau,e}}return best}
+function tangent(g,X,Y,m,W,H){const t0=+$('t0').value,D=+$('dtt').value,mes=$('tgs').value==='mes';let x0,sl,f=null;
+ $('t0v').textContent=t0;$('dtv').textContent=D;
+ if(mes){f=fit();if(!f){$('tgr').textContent='Il faut au moins 2 points mesurés : prélevez, videz et dosez au moins 2 tubes.';return}
+  x0=f.a*(1-Math.exp(-t0/f.tau));sl=f.a/f.tau*Math.exp(-t0/f.tau)}else{x0=xAt(t0);sl=dx(x0,p)}
+ const col='#2e9d5b';g.save();g.beginPath();g.rect(m,5,W-m-5,H-30);g.clip();
+ if(f){g.strokeStyle='#c0562b';g.lineWidth=1.5;g.beginPath();for(let k=0;k<=120;k+=2){const y=f.a*(1-Math.exp(-k/f.tau));k?g.lineTo(X(k),Y(y)):g.moveTo(X(k),Y(y))}g.stroke()}
+ g.strokeStyle=g.fillStyle=col;g.lineWidth=2;
+ g.beginPath();g.moveTo(X(t0-D),Y(x0-sl*D));g.lineTo(X(t0+D),Y(x0+sl*D));g.stroke();
+ g.setLineDash([3,3]);g.lineWidth=1.5;g.beginPath();g.moveTo(X(t0),Y(x0));g.lineTo(X(t0+D),Y(x0));g.lineTo(X(t0+D),Y(x0+sl*D));g.stroke();g.setLineDash([]);
+ g.beginPath();g.arc(X(t0),Y(x0),5,0,7);g.fill();g.restore();
+ g.font='12px sans-serif';g.fillText('Δt',X(t0+D/2)-6,Y(x0)+14);g.fillText('Δn',X(t0+D)+5,Math.max(20,Y(x0+sl*D/2)));
+ $('tgr').innerHTML=(mes?'<small>Tangente à la courbe lissée (orange) tracée au plus près des points mesurés.</small><br>':'')+`t = ${t0} min ; n(ester) = ${x0.toFixed(2)} mmol<br>Pente de la tangente = Δn/Δt = ${(sl*D).toFixed(2)} mmol / ${D} min = <b>${sl.toFixed(3)} mmol/min</b><br>Vitesse volumique v = (1/V)·dx/dt = ${sl.toFixed(3)} mmol/min ÷ 2 mL = <b>${(sl/2).toFixed(3)} mol·L⁻¹·min⁻¹</b>`}
+function draw(){const c=$('cv'),g=c.getContext('2d'),W=c.width,H=c.height,fg=cs('--fg'),ac=cs('--ac');
+ g.clearRect(0,0,W,H);const m=40,ym=Math.min(p.na,p.nb)*1.05,X=v=>m+v/120*(W-m-10),Y=v=>H-25-v/ym*(H-40);
+ g.strokeStyle=g.fillStyle=fg;g.globalAlpha=.5;g.font='12px sans-serif';g.beginPath();g.moveTo(m,10);g.lineTo(m,H-25);g.lineTo(W-10,H-25);g.stroke();
+ for(let v=0;v<=120;v+=20)g.fillText(v,X(v)-6,H-8);for(let i=0;i<=4;i++){const v=ym*i/4;g.fillText(v.toFixed(0),4,Y(v)+4)}
+ g.globalAlpha=1;g.setLineDash([4,4]);g.strokeStyle=ac;g.beginPath();cur.forEach((q,i)=>i?g.lineTo(X(q[0]),Y(q[1])):g.moveTo(X(q[0]),Y(q[1])));g.stroke();
+ g.globalAlpha=.4;g.beginPath();g.moveTo(m,Y(xeq(p)));g.lineTo(W-10,Y(xeq(p)));g.stroke();g.setLineDash([]);g.globalAlpha=1;
+ g.fillStyle='#c0562b';pts.forEach(q=>{g.beginPath();g.arc(X(q[0]),Y(q[1]),5,0,7);g.fill()});if(tg)tangent(g,X,Y,m,W,H)}
+function load(r){tit=r;rows.forEach(q=>{const g=$('tg'+q.n);if(g)g.style.filter=q===r?'drop-shadow(0 0 4px #2a6f97)':''});[...$('tubes').children].forEach(e=>e.classList&&e.classList.toggle('sel',e===r.el))}
+function add(a,sp=true){if(!tit||!tit.emptied||tit.vb!=null)return;tit.cur=Math.min(25,tit.cur+a);if(sp)drops.push(0);
+ if(tit.cur>=tit.veq){tit.vb=tit.cur;flow=false;tit.xe=Math.max(0,p.na-tit.vb);const c=tit.tr.children;
+ c[2].textContent=tit.vb.toFixed(1);c[3].textContent=(p.na-tit.xe).toFixed(1);c[4].textContent=tit.xe.toFixed(1);c[5].textContent=(tit.xe/Math.min(p.na,p.nb)).toFixed(2);pts.push([tit.t,tit.xe]);draw()}}
+$('samp').onclick=()=>{if(rows.length>=8)return;const n=rows.length+1;if(n==1)$('tubes').innerHTML='';outTube(n);
+ const r={n,t,veq:Math.max(.5,p.na-x+(Math.random()-.5)*.2),cur:0,vb:null,xe:null,emptied:false};rows.push(r);
+ const tr=document.createElement('tr');tr.innerHTML=`<td>${n}</td><td>${t.toFixed(1)}</td><td>à doser</td><td>—</td><td>—</td><td>—</td>`;r.tr=tr;$('tb').appendChild(tr);
+ const tu=document.createElement('div');tu.className='tube';tu.innerHTML='<i></i><b>'+n+'</b>';tu.onclick=()=>load(r);r.el=tu;$('tubes').appendChild(tu);load(r)};
+$('vid').onclick=()=>{if(!tit||tit.emptied)return;tit.emptied=true;const g=$('tg'+tit.n);g.style.transition='transform .7s,opacity .6s';g.style.opacity=0;tit.el.querySelector('i').style.display='none'};
+$('b1').onclick=()=>add(.1);$('b2').onclick=()=>add(1);$('b3').onclick=()=>{flow=!flow};
+$('go').onclick=()=>{run=!run;if(run&&!started){started=true;plunge();$('samp').disabled=false}if(run)['T','R','cat'].forEach(i=>$(i).disabled=true);$('go').textContent=run?'⏸ Pause':'▶ Reprendre'};
+$('rs').onclick=reset;
+$('help').onclick=()=>{const h=$('hp'),o=h.style.display==='none';h.style.display=o?'block':'none';$('help').textContent=o?'✖ Fermer l\'aide':'❓ Aide';lastS=0};
+{const tip=$('tip'),bt=$('bath');
+ ['mousemove','pointermove','pointerdown','click'].forEach(ev=>bt.addEventListener(ev,e=>{const g=e.target.closest('g[id^="tg"]');
+  if(g&&!started){tip.textContent='Tube '+g.id.slice(2)+' : prélèvement de 2 mL du mélange initial';tip.style.left=Math.min(e.clientX+14,innerWidth-230)+'px';tip.style.top=(e.clientY+14)+'px';tip.style.display='block'}else tip.style.display='none'}));
+ ['mouseleave','pointerleave'].forEach(ev=>bt.addEventListener(ev,()=>tip.style.display='none'))}
+$('showt').onclick=()=>{const w=$('tw'),o=w.style.display==='none';w.style.display=o?'block':'none';$('showt').textContent=o?"📖 Masquer l'aperçu théorique":"📖 Afficher l'aperçu théorique"};
+$('showtg').onclick=()=>{tg=!tg;$('tgp').style.display=tg?'block':'none';$('showtg').textContent=tg?'📐 Masquer la tangente':'📐 Afficher la tangente';draw()};
+['t0','dtt'].forEach(i=>$(i).oninput=draw);
+$('tgs').onchange=draw;
+$('showc').onclick=()=>{const w=$('cw'),s=w.style.display==='none';w.style.display=s?'block':'none';$('showc').textContent=s?'📈 Masquer la courbe':'📈 Afficher la courbe';draw()};
+['T','R','S'].forEach(i=>$(i).oninput=()=>{$('Tv').textContent=$('T').value;$('Rv').textContent=(+$('R').value).toFixed(2);$('Sv').textContent=$('S').value;if(!run&&t===0){p=params();cur=curve();draw()}});
+$('cat').onchange=()=>{p=params();cur=curve();draw()};
+const g2=$('lab').getContext('2d');
+function rend(){const fg=cs('--fg'),bd=cs('--bd'),c=g2,cx=200,v=tit?tit.cur:0;c.clearRect(0,0,600,280);c.lineWidth=2;c.strokeStyle=fg;c.font='12px sans-serif';
+ const ly=15+130*v/25;c.fillStyle='rgba(120,190,240,.6)';c.fillRect(cx-8,ly,16,145-ly);c.strokeRect(cx-9,15,18,130);
+ c.fillStyle=fg;c.fillRect(cx-14,143,28,5);c.beginPath();c.moveTo(cx-6,148);c.lineTo(cx-1,172);c.lineTo(cx+1,172);c.lineTo(cx+6,148);c.stroke();c.fillText('NaOH 1 mol/L',cx+20,30);
+ let col=(tit&&tit.emptied)?'rgba(200,225,255,.25)':'rgba(0,0,0,0)';if(tit&&tit.emptied){const q=v/tit.veq;if(tit.vb!=null)col='rgba(236,72,153,.65)';else if(q>.85)col='rgba(244,114,182,'+Math.min(.4,(q-.85)*2.5)+')'}
+ c.fillStyle=col;c.beginPath();c.moveTo(cx-29.5,238);c.lineTo(cx+29.5,238);c.lineTo(cx+60,262);c.lineTo(cx-60,262);c.fill();
+ c.beginPath();c.moveTo(cx-13,200);c.lineTo(cx-13,225);c.lineTo(cx-60,262);c.lineTo(cx+60,262);c.lineTo(cx+13,225);c.lineTo(cx+13,200);c.stroke();
+ c.fillStyle=bd;c.fillRect(cx-75,264,150,12);c.fillStyle='#fff';c.save();c.translate(cx,258);c.rotate(ang);c.fillRect(-9,-2,18,4);c.restore();
+ c.fillStyle='rgba(56,189,248,.9)';drops.forEach(y=>{c.beginPath();c.arc(cx,174+y,3,0,7);c.fill()});
+ c.fillStyle=fg;c.fillText(tit&&tit.emptied?'Tube '+tit.n+' + eau glacée + PhPh':'Erlenmeyer (eau glacée + PhPh)',cx+75,235);
+ if(tit&&tit.emptied){c.fillStyle='rgba(255,255,255,.12)';c.beginPath();c.moveTo(80,170);c.lineTo(80,250);c.arc(91,250,11,Math.PI,0,true);c.lineTo(102,170);c.fill();c.stroke();c.beginPath();c.moveTo(77,170);c.lineTo(105,170);c.stroke();c.fillStyle=fg;c.fillText('Tube '+tit.n+' vidé',58,278)}
+ $('vb').textContent=tit?v.toFixed(1):'—';if(tit){$('vbn').textContent='tube '+tit.n+' · prélevé à t = '+tit.t.toFixed(1)+' min';$('st').textContent=!tit.emptied?" Videz d'abord le tube dans l'erlenmeyer":tit.vb!=null?' Rose persistant : fin du dosage':(v/tit.veq>.9?' Virage imminent, goutte à goutte !':' Incolore')}else{$('vbn').textContent='Prélevez un tube pour commencer.';$('st').textContent=''}}
+function loop(ts){const dt=Math.min((ts-last)/1000,.1);last=ts;
+ if(run){const d=dt*$('S').value/60;t+=d;x=step(x,p,d);$('tt').textContent=fmt(t);if(t>=120){run=false;$('go').textContent='▶ Démarrer'}}
+ if(flow&&tit&&tit.emptied&&tit.vb==null){add(3*dt,false);if(Math.random()<.5)drops.push(0)}
+ drops=drops.map(y=>y+220*dt).filter(y=>y<64);ang+=dt*10;rend();hl();requestAnimationFrame(loop)}
+reset();requestAnimationFrame(loop);
+</script></body></html>
