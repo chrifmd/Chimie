@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>TP : estérification et dosage</title>
 <style>
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#cbd7f7;--fg:#1d1d1b;--card:#fff;--bd:#d9d7cf;--ac:#2a6f97;--mut:#6b6a63}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#fafaf7;--fg:#1d1d1b;--card:#fff;--bd:#d9d7cf;--ac:#2a6f97;--mut:#6b6a63}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1b1d;--fg:#ececec;--card:#25272a;--bd:#3a3d41;--ac:#6ab0d8;--mut:#9a9a9a}}
 :root[data-theme="dark"]{--bg:#1a1b1d;--fg:#ececec;--card:#25272a;--bd:#3a3d41;--ac:#6ab0d8;--mut:#9a9a9a}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -36,21 +36,13 @@ button:disabled{opacity:.45;cursor:not-allowed}
 #lcd{background:#10170f;color:#7cfc8a;font:700 24px "Courier New",monospace;padding:2px 12px;border-radius:6px;border:3px solid #555;letter-spacing:3px;text-shadow:0 0 6px rgba(124,252,138,.6);box-shadow:inset 0 0 8px #000}
 #tip{position:fixed;display:none;background:#1d1d1b;color:#fff;font-size:12px;padding:5px 9px;border-radius:6px;pointer-events:none;z-index:10;max-width:220px;box-shadow:0 2px 6px rgba(0,0,0,.3)}
 #hp li.cur{background:rgba(42,111,151,.22);border-radius:4px;font-weight:600;list-style-position:inside}
- .signature{
-text-align: center;
-font-family: "Arial";
-font-size: 12px;
-font-weight: bold;
-color: rgb(1, 46, 65);
-margin-top: 30px;
-}
 </style></head><body>
 <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><h1>TP : estérification de l'acide éthanoïque par l'éthanol</h1><button class="g" id="help" style="color:inherit;white-space:nowrap">❓ Aide</button></div>
-<p class="s">CH₃COOH + C₂H₅OH ⇌ CH₃COOC₂H₅ + H₂O — suivi cinétique par dosage de l'acide restant </p>
+<p class="s">CH₃COOH + C₂H₅OH ⇌ CH₃COOC₂H₅ + H₂O — suivi cinétique par dosage de l'acide restant (K = 4)</p>
 
 <div class="card" id="hp" style="display:none"><h2>Étapes à suivre</h2>
 <ol style="margin:0;padding-left:22px;font-size:14px;line-height:1.9">
-<li data-i="1">Réglez si vous le souhaitez la température, le rapport éthanol/acide, le catalyseur et la vitesse (panneau de droite, avant de démarrer).</li>
+<li data-i="1">Réglez si vous le souhaitez la température, le rapport éthanol/acide, le catalyseur et la vitesse (panneau de droite, avant de démarrer). Option : cliquez sur le tube 1 dans le support pour le garder hors du bain : ce sera le <b>tube témoin</b> (mélange initial, t = 0), à doser en dernier en cliquant dessus ou avec « Prélever un tube ».</li>
 <li data-i="2">Cliquez sur <b>Démarrer</b> : les tubes sont plongés dans le bain à 80 °C et le chronomètre part de t = 0.</li>
 <li data-i="3">À l'instant de votre choix, cliquez sur <b>Prélever un tube</b> : le tube sort du bain et passe dans l'eau glacée.</li>
 <li data-i="4">Cliquez sur <b>Vider le tube</b> : son contenu est versé dans l'erlenmeyer (eau glacée + phénolphtaléine).</li>
@@ -113,13 +105,11 @@ margin-top: 30px;
 <p><b>Cinétique.</b> La vitesse volumique de formation de l'ester est v = (1/V)·dx/dt, c'est la pente de la tangente à la courbe n(ester) = f(t). Elle diminue au cours du temps car les réactifs se consomment. Le temps de demi-réaction t<sub>1/2</sub> est la date où x = x<sub>éq</sub>/2.</p>
 <p><b>Facteurs cinétiques.</b> Une température plus élevée et la présence de H₂SO₄ accélèrent la réaction. Ils font atteindre l'équilibre plus vite mais ne changent pas K ni le rendement final.</p>
 <p><b>Déplacer l'équilibre.</b> Un excès de l'un des réactifs ou l'élimination de l'eau ou de l'ester augmente le rendement. Par exemple, avec n(éthanol)/n(acide) = 3, on obtient τ ≈ 90 % au lieu de 67 %.</p>
-</div>
-</div>
-<div class="signature"> TP Simulation de la réaction d"estérification - chrif.md@gmail.com - Octobre 2026 </div>
+</div></div>
 <div id="tip"></div>
 <script>
 const $=id=>document.getElementById(id),K=4,NA=17.3,cs=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-let started=false,t=0,x=0,run=false,last=0,pts=[],p,cur,rows=[],tit=null,flow=false,drops=[],ang=0;
+let tem=false,started=false,t=0,x=0,run=false,last=0,pts=[],p,cur,rows=[],tit=null,flow=false,drops=[],ang=0;
 function params(){const T=+$('T').value+273.15,r=+$('R').value,cat=$('cat').checked;
  return{k:0.03/NA*Math.exp(-6000*(1/T-1/353.15))*(cat?1:0.02),na:NA,nb:NA*r}}
 function dx(x,p){return p.k*((p.na-x)*(p.nb-x)-x*x/K)}
@@ -138,16 +128,17 @@ function buildBath(){const C='currentColor';
  [[515,158,12],[548,166,-8],[585,156,20],[620,164,-14],[652,158,6],[530,190,-10],[600,192,14],[640,188,-6]].forEach(c=>h+=`<rect x="-9" y="-9" width="18" height="18" rx="4" fill="rgba(255,255,255,.55)" stroke="rgba(190,230,250,.95)" stroke-width="1.5" transform="translate(${c[0]},${c[1]}) rotate(${c[2]})"/>`);
  h+=`<rect x="451" y="62" width="8" height="128" rx="4" fill="rgba(255,255,255,.35)" stroke="${C}" stroke-width="1.5"/><rect x="454" y="92" width="2" height="98" fill="#d93025"/><circle cx="455" cy="194" r="6" fill="#d93025" stroke="${C}"/><text x="455" y="54" text-anchor="middle" font-size="11" fill="${C}">80 °C</text>`;
  const W='#b98a52';h+=`<g class="rack"><rect x="135" y="-25" width="6" height="77" fill="${W}"/><rect x="549" y="-25" width="6" height="77" fill="${W}"/><rect x="133" y="43" width="424" height="9" rx="2" fill="${W}" stroke="${C}" stroke-width="1.5"/><text x="565" y="20" font-size="11" fill="${C}">Support à tubes</text></g>`;
- for(let i=0;i<8;i++)h+=`<g id="tg${i+1}" style="transform:translate(${163+i*53}px,-150px);transition:transform .7s"><rect x="-14" y="14" width="28" height="182" fill="transparent"/><path d="M-13 59V180a13 13 0 0 0 26 0V59Z" fill="rgba(255,255,255,.12)" stroke="${C}" stroke-width="2"/><path class="liq" d="M-11 118V180a11 11 0 0 0 22 0V118Z" fill="#e8c547" opacity=".75"/><path d="M-11 53H11L8.5 67H-8.5Z" fill="#8b5a2b" stroke="#5a3a1a" stroke-width="1"/><path d="M-3.5 78L-1.2 18H1.2L3.5 78Z" fill="rgba(255,255,255,.55)" stroke="${C}" stroke-width="1.2"/><text y="12" text-anchor="middle" font-size="12" fill="${C}">${i+1}</text></g>`;
+ h+=`<rect id="stand" x="622" y="98" width="36" height="8" rx="2" fill="#b98a52" stroke="${C}" stroke-width="1.5" style="opacity:0;transition:opacity .5s"/>`;
+ for(let i=0;i<8;i++)h+=`<g id="tg${i+1}" style="transform:translate(${163+i*53}px,-150px);transition:transform .7s"><rect x="-14" y="14" width="28" height="182" fill="transparent"/><path d="M-13 59V180a13 13 0 0 0 26 0V59Z" fill="rgba(255,255,255,.12)" stroke="${C}" stroke-width="2"/><path class="liq" d="M-11 118V180a11 11 0 0 0 22 0V118Z" fill="#e8c547" opacity=".75"/><path d="M-11 53H11L8.5 67H-8.5Z" fill="#8b5a2b" stroke="#5a3a1a" stroke-width="1"/><path d="M-3.5 78L-1.2 18H1.2L3.5 78Z" fill="rgba(255,255,255,.55)" stroke="${C}" stroke-width="1.2"/><text y="12" text-anchor="middle" font-size="12" fill="${C}">${i+1}</text><text class="tem" y="1" text-anchor="middle" font-size="10" fill="#c0562b" style="display:none">témoin</text></g>`;
  h+=`<g class="rack"><rect x="133" y="-25" width="424" height="9" rx="2" fill="${W}" stroke="${C}" stroke-width="1.5"/></g>`+'<g pointer-events="none">'+d1[1]+d2[1]+'</g>'+`<rect x="30" y="218" width="430" height="14" rx="3" fill="#666"/><circle cx="48" cy="225" r="3.5" fill="#e04b3a"/><rect x="400" y="221" width="46" height="8" rx="2" fill="#222"/><text x="423" y="228" text-anchor="middle" font-size="7" fill="#7f7">80.0</text><text x="245" y="250" text-anchor="middle" font-size="12" fill="${C}">Bain thermostaté (cristallisoir, 80 °C)</text><text x="585" y="250" text-anchor="middle" font-size="12" fill="${C}">Cristallisoir d'eau glacée</text>`;
  $('bath').innerHTML=h}
 function fmt(m){const a=Math.floor(m),b=Math.floor((m-a)*60);return String(a).padStart(2,'0')+':'+String(b).padStart(2,'0')}
 let lastS=0;
 function hl(){if($('hp').style.display==='none')return;const n=!started?2:!tit?3:!tit.emptied?4:tit.vb==null?5:pts.length>=2?7:6;
  if(n!==lastS){lastS=n;document.querySelectorAll('#hp li').forEach(l=>l.classList.toggle('cur',+l.dataset.i===n))}}
-function plunge(){for(let i=1;i<=8;i++){const g=$('tg'+i);g.style.transitionDelay=((i-1)*0.1)+'s';g.style.transform=`translate(${50+(i-1)*53}px,0px)`}document.querySelectorAll('#bath .rack').forEach(e=>{e.style.transition='opacity .6s 1.1s';e.style.opacity='0'})}
-function outTube(n){const g=$('tg'+n);g.style.cursor='pointer';g.onclick=()=>{if(rows[n-1])load(rows[n-1])};g.style.transitionDelay='0s';g.style.transform=`translate(${510+(n-1)*20}px,66px) scale(.75)`;g.querySelector('.liq').setAttribute('fill','#8fd0f0')}
-function reset(){buildBath();started=false;$('samp').disabled=true;run=flow=false;t=x=0;pts=[];rows=[];tit=null;drops=[];p=params();cur=curve();
+function plunge(){for(let i=1;i<=8;i++){const g=$('tg'+i);g.style.transitionDelay=((i-1)*0.1)+'s';g.style.transform=(i===1&&tem)?'translate(640px,-95px)':`translate(${50+(i-1)*53}px,0px)`}if(tem)$('stand').style.opacity=1;document.querySelectorAll('#bath .rack').forEach(e=>{e.style.transition='opacity .6s 1.1s';e.style.opacity='0'})}
+function outTube(n){const g=$('tg'+n);g.style.cursor='pointer';g.onclick=()=>{const r=rows.find(q=>q.n===n);if(r)load(r)};g.style.transitionDelay='0s';g.style.transform=`translate(${510+(n-1)*20}px,66px) scale(.75)`;g.querySelector('.liq').setAttribute('fill','#8fd0f0')}
+function reset(){tem=false;buildBath();started=false;$('samp').disabled=true;run=flow=false;t=x=0;pts=[];rows=[];tit=null;drops=[];p=params();cur=curve();
  $('tb').innerHTML='';$('tubes').innerHTML='<small>Les tubes prélevés apparaîtront ici (cliquez sur un tube pour le doser).</small>';
  $('go').textContent='▶ Démarrer';['T','R','cat'].forEach(i=>$(i).disabled=false);$('tt').textContent='00:00';draw()}
 let tg=false;
@@ -177,18 +168,23 @@ function load(r){tit=r;rows.forEach(q=>{const g=$('tg'+q.n);if(g)g.style.filter=
 function add(a,sp=true){if(!tit||!tit.emptied||tit.vb!=null)return;tit.cur=Math.min(25,tit.cur+a);if(sp)drops.push(0);
  if(tit.cur>=tit.veq){tit.vb=tit.cur;flow=false;tit.xe=Math.max(0,p.na-tit.vb);const c=tit.tr.children;
  c[2].textContent=tit.vb.toFixed(1);c[3].textContent=(p.na-tit.xe).toFixed(1);c[4].textContent=tit.xe.toFixed(1);c[5].textContent=(tit.xe/Math.min(p.na,p.nb)).toFixed(2);pts.push([tit.t,tit.xe]);draw()}}
-$('samp').onclick=()=>{if(rows.length>=8)return;const n=rows.length+1;if(n==1)$('tubes').innerHTML='';outTube(n);
- const r={n,t,veq:Math.max(.5,p.na-x+(Math.random()-.5)*.2),cur:0,vb:null,xe:null,emptied:false};rows.push(r);
- const tr=document.createElement('tr');tr.innerHTML=`<td>${n}</td><td>${t.toFixed(1)}</td><td>à doser</td><td>—</td><td>—</td><td>—</td>`;r.tr=tr;$('tb').appendChild(tr);
- const tu=document.createElement('div');tu.className='tube';tu.innerHTML='<i></i><b>'+n+'</b>';tu.onclick=()=>load(r);r.el=tu;$('tubes').appendChild(tu);load(r)};
+function sample(force){const ids=tem?[2,3,4,5,6,7,8,1]:[1,2,3,4,5,6,7,8],n=force||ids.find(i=>!rows.some(r=>r.n===i));if(!n||rows.some(r=>r.n===n))return;
+ const te=tem&&n===1,t1=te?0:t,x1=te?0:x;if(rows.length===0)$('tubes').innerHTML='';outTube(n);
+ const r={n,t:t1,veq:Math.max(.5,p.na-x1+(Math.random()-.5)*.2),cur:0,vb:null,xe:null,emptied:false};rows.push(r);
+ const tr=document.createElement('tr');tr.innerHTML=`<td>${n}${te?' (témoin)':''}</td><td>${t1.toFixed(1)}</td><td>à doser</td><td>—</td><td>—</td><td>—</td>`;r.tr=tr;$('tb').appendChild(tr);
+ const tu=document.createElement('div');tu.className='tube';tu.innerHTML='<i></i><b>'+n+'</b>';tu.onclick=()=>load(r);r.el=tu;$('tubes').appendChild(tu);load(r)}
+$('samp').onclick=()=>sample();
 $('vid').onclick=()=>{if(!tit||tit.emptied)return;tit.emptied=true;const g=$('tg'+tit.n);g.style.transition='transform .7s,opacity .6s';g.style.opacity=0;tit.el.querySelector('i').style.display='none'};
 $('b1').onclick=()=>add(.1);$('b2').onclick=()=>add(1);$('b3').onclick=()=>{flow=!flow};
 $('go').onclick=()=>{run=!run;if(run&&!started){started=true;plunge();$('samp').disabled=false}if(run)['T','R','cat'].forEach(i=>$(i).disabled=true);$('go').textContent=run?'⏸ Pause':'▶ Reprendre'};
 $('rs').onclick=reset;
+function paintTem(){const g=$('tg1');g.style.filter=tem?'drop-shadow(0 0 4px #c0562b)':'';g.querySelector('.tem').style.display=tem?'block':'none'}
+$('bath').addEventListener('click',e=>{const g=e.target.closest('g[id^="tg"]');if(!g||g.id!=='tg1')return;
+ if(!started){tem=!tem;paintTem()}else if(tem&&!rows.some(r=>r.n===1))sample(1)});
 $('help').onclick=()=>{const h=$('hp'),o=h.style.display==='none';h.style.display=o?'block':'none';$('help').textContent=o?'✖ Fermer l\'aide':'❓ Aide';lastS=0};
 {const tip=$('tip'),bt=$('bath');
  ['mousemove','pointermove','pointerdown','click'].forEach(ev=>bt.addEventListener(ev,e=>{const g=e.target.closest('g[id^="tg"]');
-  if(g&&!started){tip.textContent='Tube '+g.id.slice(2)+' : prélèvement de 2 mL du mélange initial';tip.style.left=Math.min(e.clientX+14,innerWidth-230)+'px';tip.style.top=(e.clientY+14)+'px';tip.style.display='block'}else tip.style.display='none'}));
+  if(g&&!started){{const id=g.id.slice(2);tip.textContent=id==='1'?(tem?'Tube 1 : tube témoin, il reste hors du bain. Cliquez pour annuler.':'Tube 1 : prélèvement de 2 mL du mélange initial. Cliquez pour le garder hors du bain (tube témoin).'):'Tube '+id+' : prélèvement de 2 mL du mélange initial'}tip.style.left=Math.min(e.clientX+14,innerWidth-230)+'px';tip.style.top=(e.clientY+14)+'px';tip.style.display='block'}else tip.style.display='none'}));
  ['mouseleave','pointerleave'].forEach(ev=>bt.addEventListener(ev,()=>tip.style.display='none'))}
 $('showt').onclick=()=>{const w=$('tw'),o=w.style.display==='none';w.style.display=o?'block':'none';$('showt').textContent=o?"📖 Masquer l'aperçu théorique":"📖 Afficher l'aperçu théorique"};
 $('showtg').onclick=()=>{tg=!tg;$('tgp').style.display=tg?'block':'none';$('showtg').textContent=tg?'📐 Masquer la tangente':'📐 Afficher la tangente';draw()};
