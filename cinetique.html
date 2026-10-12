@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TP : cinétique I⁻ + S₂O₈²⁻ et dosage</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#fafaf7;--fg:#1d1d1b;--card:#fff;--bd:#d9d7cf;--ac:#2a6f97;--mut:#6b6a63}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1b1d;--fg:#ececec;--card:#25272a;--bd:#3a3d41;--ac:#6ab0d8;--mut:#9a9a9a}}
+:root[data-theme="dark"]{--bg:#1a1b1d;--fg:#ececec;--card:#25272a;--bd:#3a3d41;--ac:#6ab0d8;--mut:#9a9a9a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0 auto;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:16px;max-width:960px}
+h1{font-size:20px;margin:0 0 4px}h2{font-size:15px;margin:0 0 8px}p.s{color:var(--mut);margin:0 0 14px;font-size:13px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:12px}
+.fig{background:#fff;text-align:center}.fig img{max-width:100%;height:auto}
+.main{display:grid;grid-template-columns:1fr 280px;gap:12px;margin-bottom:12px}
+@media(max-width:700px){.main{grid-template-columns:1fr}}
+.main .card{margin:0}
+.ctrl{background:#f4f2ea;color:#1d1d1b;border:1px solid #d9d7cf;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.ctrl small{color:#6b6a63}.ctrl hr{border:0;border-top:1px solid #d9d7cf;width:100%;margin:2px 0}
+label{font-size:13px;display:flex;flex-direction:column;gap:2px}
+.r{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+button{background:var(--ac);color:#fff;border:0;border-radius:6px;padding:7px 12px;font-size:14px;cursor:pointer}
+.ctrl button.g,button.g{background:transparent;color:inherit;border:1px solid #b9b7ae}
+button.o{background:#c0562b}
+.big{font-size:20px;font-variant-numeric:tabular-nums}
+.sc{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--bd);padding:4px 8px;text-align:right}th:first-child,td:first-child{text-align:left}
+canvas{display:block}#cv{width:100%;height:auto}
+.tubes{display:flex;gap:8px;align-items:flex-end;min-height:62px;margin-bottom:6px}
+.tube{width:20px;height:50px;border:2px solid var(--fg);border-top:none;border-radius:0 0 10px 10px;position:relative;overflow:hidden;cursor:pointer}
+.tube i{position:absolute;bottom:0;left:0;right:0;height:75%;background:#8fd0f0;opacity:.75}
+.tube b{position:absolute;top:2px;width:100%;text-align:center;font-size:11px}
+.tube.sel{outline:2px solid var(--ac);outline-offset:2px}
+small{color:var(--mut)}
+.fg{display:grid;gap:8px}
+button:disabled{opacity:.45;cursor:not-allowed}
+#lcd{background:#10170f;color:#7cfc8a;font:700 24px "Courier New",monospace;padding:2px 12px;border-radius:6px;border:3px solid #555;letter-spacing:3px;text-shadow:0 0 6px rgba(124,252,138,.6);box-shadow:inset 0 0 8px #000}
+#tip{position:fixed;display:none;background:#fafabf;color:#222222;font-size:12px;padding:5px 9px;border-radius:6px;pointer-events:none;z-index:10;max-width:220px;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+#hp li.cur{background:rgba(42,111,151,.22);border-radius:4px;font-weight:600;list-style-position:inside}
+ .signature {
+    text-align: center; font-family: "Arial"; font-size: 12px; font-weight: bold;
+    color: rgb(1, 48, 66); margin-top: 30px;
+  }
+</style></head><body>
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><h1>TP : cinétique de l'oxydation des ions iodure par les ions peroxodisulfate</h1><button class="g" id="help" style="color:inherit;white-space:nowrap">❓ Aide</button></div>
+<p class="s">2 I⁻ + S₂O₈²⁻ → I₂ + 2 SO₄²⁻ — suivi cinétique par dosage du diiode formé : I₂ + 2 S₂O₃²⁻ → 2 I⁻ + S₄O₆²⁻</p>
+
+<div class="card" id="hp" style="display:none"><h2>Étapes à suivre</h2>
+<ol style="margin:0;padding-left:22px;font-size:14px;line-height:1.9">
+<li data-i="1">Réglez si vous le souhaitez la température, les concentrations C₁ et C₂, le catalyseur et la vitesse (panneau de droite, avant de démarrer).</li>
+<li data-i="2">Cliquez sur <b>Démarrer</b> : l'éprouvette (S₂) se vide dans le bécher (t = 0), puis le mélange est réparti : les erlenmeyers (5 mL chacun) apparaissent l'un après l'autre. La réaction continue dans le bécher et dans les erlenmeyers.</li>
+<li data-i="3">À l'instant de votre choix, cliquez sur <b>Bloquer un erlenmeyer</b> (un erlenmeyer rempli est nécessaire) : il passe dans l'eau glacée, la réaction est bloquée.</li>
+<li data-i="4">Cliquez sur <b>Ajouter l'eau glacée et doser</b> : l'erlenmeyer (≈ 40 mL d'eau glacée ajoutés, empois d'amidon présent) est placé sous la burette.</li>
+<li data-i="5">Dosez avec <b>+ 0,1 mL</b>, <b>+ 1 mL</b> ou <b>Écoulement</b> jusqu'à la décoloration (bleu → incolore) : V₃ est enregistré dans le tableau.</li>
+<li data-i="6">Répétez les étapes 3 à 5 avec d'autres erlenmeyers à des instants différents (10 au maximum). Pour changer d'erlenmeyer à doser, cliquez sur un autre dans l'eau glacée.</li>
+<li data-i="7">Exploitez : lisez le tableau (n(I₂), x, avancement relatif), affichez la courbe x = f(t) (survolez-la : t et x s'affichent ; déplacez les curseurs A et B), puis la tangente pour obtenir la vitesse de réaction. Cliquez sur « Enregistrer la courbe », réinitialisez, refaites l'expérience avec ou sans catalyseur (Fe³⁺) : les deux courbes s'affichent ensemble pour comparer.</li></ol>
+<small>L'étape en cours est surlignée. « Reset » remet tout à zéro.</small></div>
+<div class="card"><div class="fg"><div><h2>Mode opératoire</h2><ol style="margin:0;padding-left:20px;font-size:13px">
+<li>Dans un bécher de 250 mL : 40 mL de S₁ (KI, C₁ = 0,50 mol/L) + 10 mL d'empois d'amidon ; homogénéiser. Mesurer 10,0 mL de S₂ (K₂S₂O₈, C₂ = 5,0·10⁻² mol/L) dans une éprouvette.</li>
+<li>À t = 0, verser S₂ dans le bécher (V total = 60 mL), puis répartir aussitôt le mélange dans 10 erlenmeyers contenant chacun 5 mL. La réaction se poursuit à température ambiante.</li>
+<li>À des instants variés, plonger un erlenmeyer dans l'eau glacée (la réaction est bloquée), puis ajouter environ 40 mL d'eau glacée.</li>
+<li>Doser le diiode par Na₂S₂O₃ (C₃ = 1,0·10⁻² mol/L) jusqu'à décoloration de l'empois et noter V₃.</li>
+<li>Calculer x = 12 × C₃V₃ / 2 = 6·C₃·V₃ (quantité de I₂ formé dans les 60 mL) et tracer x = f(t).</li></ol></div><svg id="bath" viewBox="0 10 690 250" style="width:100%;color:var(--fg)"></svg><div class="r" style="justify-content:center;gap:8px"><b>t (min:s)</b><div id="lcd" title="Chronomètre"><span id="tt">00:00</span></div><button id="go">▶ Démarrer</button><button class="g" id="rs">↺ Reset</button><button class="o" id="samp">🧊 Bloquer un erlenmeyer</button><button class="o" id="vid">⤵ Ajouter l'eau glacée et doser</button></div></div></div>
+
+<div class="main">
+<div class="card">
+<canvas id="lab" width="600" height="280" style="width:100%;max-width:600px;height:auto"></canvas>
+<div class="r" style="margin:6px 0"><b>Ajout de Na₂S₂O₃ :</b><button id="b1">+ 0,1 mL</button><button id="b2">+ 1 mL</button><button class="g" id="b3">Écoulement</button></div>
+<small>Arrêtez-vous à la décoloration de l'empois (bleu → incolore) : le volume V₃ est alors enregistré.</small><br>
+<small>Mélange de 60 mL : n(I⁻) = 20 mmol (excès), n(S₂O₈²⁻) = 0,50 mmol. Chaque erlenmeyer (5 mL) en contient 1/12.</small>
+</div>
+
+<div class="ctrl">
+<h2>Conditions</h2>
+<label>Température ambiante : <b id="Tv">25</b> °C<input type="range" id="T" min="10" max="50" value="25"></label>
+<label>C₁ (KI) : <b id="Rv">0.50</b> mol/L<input type="range" id="R" min="0.1" max="1" step="0.05" value="0.5"></label>
+<label>C₂ (K₂S₂O₈) : <b id="Qv">0.050</b> mol/L<input type="range" id="Q" min="0.02" max="0.1" step="0.005" value="0.05"></label>
+<label style="flex-direction:row;gap:6px"><input type="checkbox" id="cat"> Catalyseur Fe³⁺ (×5)</label>
+<label>Vitesse : ×<b id="Sv">5</b><input type="range" id="S" min="1" max="100" step="1" value="5"></label>
+<hr>
+<h2>Dosage (Na₂S₂O₃ 1,0·10⁻² mol/L)</h2>
+<div>V<sub>3</sub> = <span class="big" id="vb">—</span> mL</div>
+<small id="vbn">Bloquez un erlenmeyer pour commencer.</small><b id="st"></b>
+</div>
+</div>
+
+<div class="card sc"><table><thead><tr><th>Erlen.</th><th>t (min)</th><th>V<sub>3</sub> (mL)</th><th>n(I₂) dosé (mmol)</th><th>x (mmol)</th><th>x / x<sub>max</sub></th></tr></thead><tbody id="tb"></tbody></table></div>
+
+<div class="card"><button class="g" id="showc" style="color:inherit">📈 Afficher la courbe</button> <button class="g" id="savec" style="color:inherit">💾 Enregistrer la courbe</button><span id="svm" style="font-size:13px;margin-left:8px"></span>
+<div id="cw" style="display:none;margin-top:8px"><canvas id="cv" width="800" height="260"></canvas><div id="leg" style="font-size:13px;margin:6px 0"></div>
+<div style="border-top:1px solid var(--bd);padding-top:8px;margin-top:6px"><div style="font-size:13px;color:var(--mut);margin-bottom:4px">Survolez la courbe : une infobulle affiche t et x.</div>
+<label style="font-size:14px;cursor:pointer"><input type="checkbox" id="curon"> <b>🎯 Afficher deux points A et B </b></label>
+<div id="curbox" style="display:none">
+<div style="font-size:13px;color:var(--mut);margin:4px 0">Survolez la courbe : une infobulle affiche t et x. Cliquez ou faites glisser pour déplacer le curseur le plus proche : <span style="color:#7c3aed">A (violet)</span> ou <span style="color:#0d9488">B (vert)</span>.</div>
+<div style="margin:6px 0"><button class="g" id="csh" style="color:inherit">½ Placer A en t = 0 et B sur x<sub>max</sub>/2 (temps de demi-réaction)</button></div>
+<div id="cread" style="font-size:14px"></div></div></div>
+<div style="margin:8px 0"><button class="g" id="showtg" style="color:inherit">📐 Afficher la tangente</button></div>
+<div id="tgp" style="display:none;margin-bottom:8px"><div class="r" style="gap:18px">
+<label style="min-width:220px"><span>Tangente construite à partir</span><select id="tgs"><option value="mod">du modèle (pointillés)</option><option value="mes">des points mesurés</option></select></label>
+<label style="min-width:220px"><span>Instant t : <b id="t0v">6</b> min</span><input type="range" id="t0" min="0" max="30" step="0.5" value="6"></label>
+<label style="min-width:220px"><span>Intervalle Δt : <b id="dtv">4</b> min</span><input type="range" id="dtt" min="1" max="10" step="0.5" value="4"></label></div>
+<div id="tgr" style="font-size:14px;margin-top:6px"></div></div>
+<small>x (mmol de I₂ formé dans les 60 mL) en fonction de t. Pointillés : modèle ; points : vos mesures ; ligne horizontale : x<sub>max</sub> = n(S₂O₈²⁻) initial.</small></div></div>
+
+<div class="card"><button class="g" id="showt" style="color:inherit">📖 Afficher l'aperçu théorique</button>
+<div id="tw" style="display:none;margin-top:10px;font-size:14px">
+<h2>Aperçu théorique</h2>
+<p><b>Réaction.</b> 2 I⁻ + S₂O₈²⁻ → I₂ + 2 SO₄²⁻ : lente et totale. Les ions I⁻ sont en excès (20 mmol pour 0,50 mmol de S₂O₈²⁻), donc S₂O₈²⁻ est le réactif limitant et x<sub>max</sub> = 0,50 mmol.</p>
+<div class="sc"><table><caption style="text-align:left;font-weight:600;padding:4px 0">Tableau d'avancement (mélange de 60 mL, quantités en mmol)</caption><thead><tr><th>État</th><th>x</th><th>I⁻</th><th>S₂O₈²⁻</th><th>I₂</th><th>SO₄²⁻</th></tr></thead><tbody>
+<tr><td>Initial</td><td>0</td><td>20</td><td>0,50</td><td>0</td><td>0</td></tr>
+<tr><td>En cours</td><td>x</td><td>20 − 2x</td><td>0,50 − x</td><td>x</td><td>2x</td></tr>
+<tr><td>Final</td><td>0,50</td><td>19</td><td>0</td><td>0,50</td><td>1,0</td></tr></tbody></table></div>
+<p style="margin-top:6px"><b>Dosage.</b> L'erlenmeyer de 5 mL contient x/12 mol de I₂. Réaction de dosage : I₂ + 2 S₂O₃²⁻ → 2 I⁻ + S₄O₆²⁻. À l'équivalence (disparition de la couleur bleue de l'empois) : n(I₂) = C₃V₃ / 2, donc x = 12 · C₃V₃ / 2 = 6·C₃·V₃. Pour x<sub>max</sub> : V₃ ≈ 8,3 mL.</p>
+<p><b>Blocage de la réaction.</b> L'ajout d'eau glacée dilue les réactifs et abaisse la température : la réaction devient négligeable pendant le dosage (trempe).</p>
+<p><b>Cinétique.</b> La vitesse volumique est v = (1/V)·dx/dt (pente de la tangente à x = f(t) divisée par V = 60 mL). Elle diminue car les réactifs sont consommés. Le temps de demi-réaction t<sub>1/2</sub> est la date où x = x<sub>max</sub>/2.</p>
+<p><b>Facteurs cinétiques.</b> Une température plus élevée, des concentrations plus grandes ou un catalyseur (Fe³⁺) augmentent la vitesse. Ils ne changent pas x<sub>max</sub>, fixé par le réactif limitant.</p>
+<p><small>Modèle : v = k[I⁻][S₂O₈²⁻], k ≈ 1,1·10⁻² L·mol⁻¹·s⁻¹ à 25 °C (ordre de grandeur), loi d'Arrhenius. t est mesuré depuis l'ajout de S₂ ; la réaction se poursuit pendant la répartition.</small></p>
+</div>
+<div class="signature">TP Suivi de l'évolution temporelle de la réaction d'oxydation des ions iodure par les ions perexodisulfate    - chrif.md@gmail.com -  Octobre 2026</div>
+</div>
+<div id="tip"></div>
+<script>
+const $=id=>document.getElementById(id),cs=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const FL='M-5 55V95L-22 178Q-23 186 -14 186H14Q23 186 22 178L5 95V55Z',LQ='M-12 130L-22 178Q-23 186 -14 186H14Q23 186 22 178L12 130Z';
+let nSave=0,saved=[],starting=false,tmr=[],shown=0,pourDone=false,nextT=0,tem=false,started=false,t=0,x=0,run=false,last=0,pts=[],p,cur,rows=[],tit=null,flow=false,drops=[],ang=0;
+function params(){const T=+$('T').value+273.15,cat=$('cat').checked;return{k:0.011*Math.exp(-6250*(1/T-1/298.15))*(cat?5:1),na:+$('Q').value*10,nb:+$('R').value*40}}
+function dx(x,p){return p.k*(p.na-x)*(p.nb-2*x)}
+function xan(tm,p){const a=p.na,c=p.nb/2,e=Math.exp(-2*p.k*(c-a)*tm);return a*c*(1-e)/(c-a*e)}
+function updT(){const v=$('T').value;['thl'].forEach(i=>$(i)&&($(i).textContent=v+' °C'));$('thd')&&($('thd').textContent=v+'.0')}
+function step(x,p,dt){const n=Math.ceil(dt/0.05),h=dt/n;for(let i=0;i<n;i++){const a=dx(x,p);x+=h*dx(x+h*a/2,p)}return x}
+function xeq(p){return Math.min(p.na,p.nb/2)}
+function curve(){const c=[];for(let m=0;m<=120;m++)c.push([m/4,xan(m/4,p)]);return c}
+function dish(k,xl,xr,ty,by,wy,w1){const C='currentColor',L=xl+4,R=xr-4;
+ const wall=`M${L} ${ty+6}L${xl+8} ${by-10}Q${xl+8} ${by} ${xl+19} ${by}H${xr-19}Q${xr-8} ${by} ${xr-8} ${by-10}L${R} ${ty+6}`;
+ let wave=`M${xl+6} ${wy}q10 -3 20 0`;for(let i=0;i<(xr-xl-12)/20-1;i++)wave+='t20 0';
+ const back=`<clipPath id="cp${k}"><path d="${wall}Z"/></clipPath><rect x="${xl}" y="${wy}" width="${xr-xl}" height="${by-wy+2}" fill="${w1}" clip-path="url(#cp${k})"/><path d="${wave}" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2" clip-path="url(#cp${k})"/>`;
+ const front=`<rect x="${xl}" y="${wy}" width="${xr-xl}" height="${by-wy+2}" fill="${w1}" opacity=".3" clip-path="url(#cp${k})"/><path d="${wall}" fill="none" stroke="${C}" stroke-width="3" stroke-linejoin="round"/><path d="${wall}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.5" transform="translate(4,-2)" clip-path="url(#cp${k})"/><rect x="${xl}" y="${ty}" width="${xr-xl}" height="7" rx="3.5" fill="rgba(255,255,255,.25)" stroke="${C}" stroke-width="2"/><path d="M${xl+14} ${wy+10}V${by-14}" stroke="#fff" stroke-opacity=".45" stroke-width="4" stroke-linecap="round"/>`;
+ return[back,front]}
+function buildBath(){const C='currentColor',d2=dish(2,460,688,128,214,150,'rgba(150,215,245,.5)');let h=d2[0];
+ [[490,158,12],[525,166,-8],[565,156,20],[605,164,-14],[645,158,6],[505,192,-10],[585,194,14],[660,190,-6]].forEach(c=>h+=`<rect x="-9" y="-9" width="18" height="18" rx="4" fill="rgba(255,255,255,.55)" stroke="rgba(190,230,250,.95)" stroke-width="1.5" transform="translate(${c[0]},${c[1]}) rotate(${c[2]})"/>`);
+ h+=`<rect x="10" y="214" width="470" height="8" rx="2" fill="#8884"/>`;
+ h+=`<rect id="bliq" x="38" y="167" width="104" height="45" rx="4" fill="${colX(0)}" style="y:167px;height:45px;transition:y 1.5s,height 1.5s,fill .5s"/><path d="M30 60L36 205Q37 214 47 214H133Q143 214 144 205L150 60" fill="none" stroke="${C}" stroke-width="2.5" stroke-linejoin="round"/><path d="M26 60H154" stroke="${C}" stroke-width="2.5" stroke-linecap="round"/><text x="90" y="110" text-anchor="middle" font-size="10" fill="${C}" opacity=".6">250 mL</text><rect id="hbk" x="26" y="60" width="128" height="154" fill="transparent"/>`;
+ h+=`<rect id="stream" x="138" y="54" width="4" height="108" fill="rgba(180,200,225,.9)" opacity="0" style="transition:opacity .3s"/>`;
+ h+=`<g id="cyl" style="transform-origin:183px 84px;transition:transform .9s"><rect x="166" y="84" width="34" height="130" fill="transparent"/><path id="cliq" d="M172 100V210H194V100Z" fill="rgba(200,220,240,.8)" style="transition:opacity 1.5s"/><path d="M170 84V212H196V84" fill="none" stroke="${C}" stroke-width="2"/><path d="M166 84H200M166 212H200" stroke="${C}" stroke-width="2.5" stroke-linecap="round"/><path d="M170 120h6M170 150h6M170 180h6" stroke="${C}" stroke-width="1.2"/></g>`;
+ for(let i=0;i<10;i++)h+=`<g id="tg${i+1}" style="transform:translate(${236+i*22}px,79px) scale(.5);opacity:0;pointer-events:none;transition:transform .6s,opacity .6s"><rect x="-24" y="50" width="48" height="140" fill="transparent"/><path d="${FL}" fill="rgba(255,255,255,.12)" stroke="${C}" stroke-width="3"/><path class="liq" d="${LQ}" fill="${colX(0)}"/><text y="176" text-anchor="middle" font-size="20" fill="${C}">${i+1}</text></g>`;
+ h+='<g pointer-events="none">'+d2[1]+'</g>'+`<text x="90" y="238" text-anchor="middle" font-size="11" fill="${C}">Bécher 250 mL : S₁ (40 mL) + empois</text><text x="183" y="252" text-anchor="middle" font-size="11" fill="${C}">S₂ (10 mL)</text><text x="335" y="252" text-anchor="middle" font-size="11" fill="${C}">Erlenmeyers (5 mL de mélange chacun)</text><text x="574" y="250" text-anchor="middle" font-size="12" fill="${C}">Cristallisoir d'eau glacée</text>`;
+ $('bath').innerHTML=h}
+function colX(v){return `rgba(60,80,170,${(.12+.8*Math.min(1,v/Math.max(p?p.na:.5,1e-9))).toFixed(2)})`}
+function avail(){for(let i=1;i<=shown;i++)if(!rows.some(r=>r.n===i))return i}
+function setLevel(v){const e=$('bliq'),h=.9*v;e.style.y=(212-h)+'px';e.style.height=h+'px';e.setAttribute('y',212-h);e.setAttribute('height',h)}
+function showFlask(n){const g=$('tg'+n);g.style.transform=`translate(${236+(n-1)*22}px,119px) scale(.5)`;g.style.opacity=1;g.style.pointerEvents='auto';setLevel(60-5*n)}
+function colAll(){if(!started)return;const c=colX(x);$('bliq').setAttribute('fill',c);for(let i=1;i<=shown;i++){const g=$('tg'+i);if(!g.dataset.fz)g.querySelector('.liq').setAttribute('fill',c)}}
+function pour(){const c=$('cyl'),T=(f,d)=>tmr.push(setTimeout(f,d));c.style.transform='translate(-43px,-34px) rotate(-100deg)';
+ T(()=>{$('stream').style.opacity=1;$('cliq').style.opacity=0;setLevel(60)},700);T(()=>{$('stream').style.opacity=0},1700);T(()=>{c.style.transform='none'},1900);T(()=>{starting=false;run=true;pourDone=true;nextT=t+.1;$('go').textContent='⏸ Pause'},2300)}
+function fmt(m){const a=Math.floor(m),b=Math.floor((m-a)*60);return String(a).padStart(2,'0')+':'+String(b).padStart(2,'0')}
+let lastS=0;
+function hl(){if($('hp').style.display==='none')return;const n=!started?2:!tit?3:!tit.emptied?4:tit.vb==null?5:pts.length>=2?7:6;
+ if(n!==lastS){lastS=n;document.querySelectorAll('#hp li').forEach(l=>l.classList.toggle('cur',+l.dataset.i===n))}}
+function outTube(n){const g=$('tg'+n);g.style.cursor='pointer';g.style.pointerEvents='auto';g.onclick=()=>{const r=rows.find(q=>q.n===n);if(r)load(r)};g.style.transitionDelay='0s';g.style.transform=`translate(${480+(n-1)*21}px,106px) scale(.55)`;g.dataset.fz=1;g.querySelector('.liq').setAttribute('fill',colX(xan(t,p)))}
+function reset(){tmr.forEach(clearTimeout);tmr=[];starting=false;shown=0;pourDone=false;nextT=0;buildBath();updT();started=false;$('samp').disabled=true;run=flow=false;t=x=0;pts=[];rows=[];tit=null;drops=[];p=params();cur=curve();
+ $('tb').innerHTML='';
+ $('go').textContent='▶ Démarrer';['T','R','Q','cat'].forEach(i=>$(i).disabled=false);$('tt').textContent='00:00';draw()}
+let tg=false;
+function xAt(tm){return xan(tm,p)}
+function fit(){if(pts.length<2)return null;let best=null;
+ for(let tau=.2;tau<=100;tau+=.1){let sf=0,sff=0;pts.forEach(q=>{const f=1-Math.exp(-q[0]/tau);sf+=q[1]*f;sff+=f*f});if(!sff)continue;const a=sf/sff;let e=0;pts.forEach(q=>{const r=q[1]-a*(1-Math.exp(-q[0]/tau));e+=r*r});if(!best||e<best.e)best={a,tau,e}}return best}
+function tangent(g,X,Y,m,W,H){const t0=+$('t0').value,D=+$('dtt').value,mes=$('tgs').value==='mes';let x0,sl,f=null;
+ $('t0v').textContent=t0;$('dtv').textContent=D;
+ if(mes){f=fit();if(!f){$('tgr').textContent='Il faut au moins 2 points mesurés : bloquez et dosez au moins 2 erlenmeyers.';return}
+  x0=f.a*(1-Math.exp(-t0/f.tau));sl=f.a/f.tau*Math.exp(-t0/f.tau)}else{x0=xAt(t0);sl=dx(x0,p)}
+ const col='#2e9d5b';g.save();g.beginPath();g.rect(m,5,W-m-5,H-30);g.clip();
+ if(f){g.strokeStyle='#c0562b';g.lineWidth=1.5;g.beginPath();for(let k=0;k<=30;k+=.5){const y=f.a*(1-Math.exp(-k/f.tau));k?g.lineTo(X(k),Y(y)):g.moveTo(X(k),Y(y))}g.stroke()}
+ g.strokeStyle=g.fillStyle=col;g.lineWidth=2;
+ g.beginPath();g.moveTo(X(t0-D),Y(x0-sl*D));g.lineTo(X(t0+D),Y(x0+sl*D));g.stroke();
+ g.setLineDash([3,3]);g.lineWidth=1.5;g.beginPath();g.moveTo(X(t0),Y(x0));g.lineTo(X(t0+D),Y(x0));g.lineTo(X(t0+D),Y(x0+sl*D));g.stroke();g.setLineDash([]);
+ g.beginPath();g.arc(X(t0),Y(x0),5,0,7);g.fill();g.restore();
+ g.font='12px sans-serif';g.fillText('Δt',X(t0+D/2)-6,Y(x0)+14);g.fillText('Δn',X(t0+D)+5,Math.max(20,Y(x0+sl*D/2)));
+ $('tgr').innerHTML=(mes?'<small>Tangente à la courbe lissée (orange) tracée au plus près des points mesurés.</small><br>':'')+`t = ${t0} min ; x = ${x0.toFixed(3)} mmol<br>Pente de la tangente = Δn/Δt = ${(sl*D).toFixed(3)} mmol / ${D} min = <b>${sl.toFixed(3)} mmol/min</b><br>Vitesse volumique v = (1/V)·dx/dt = ${sl.toFixed(3)} mmol/min ÷ 60 mL = <b>${(sl/60).toFixed(4)} mol·L⁻¹·min⁻¹</b>`}
+function draw(){const c=$('cv'),g=c.getContext('2d'),W=c.width,H=c.height,fg=cs('--fg'),ac=cs('--ac');
+ g.clearRect(0,0,W,H);const m=40,ym=Math.max(xeq(p),...saved.filter(s=>s.on).map(s=>s.xm))*1.1,X=v=>m+v/30*(W-m-10),Y=v=>H-25-v/ym*(H-40);
+ g.strokeStyle=g.fillStyle=fg;g.globalAlpha=.5;g.font='12px sans-serif';g.beginPath();g.moveTo(m,10);g.lineTo(m,H-25);g.lineTo(W-10,H-25);g.stroke();
+ for(let v=0;v<=30;v+=5)g.fillText(v,X(v)-6,H-8);for(let i=0;i<=4;i++){const v=ym*i/4;g.fillText(v.toFixed(2),2,Y(v)+4)}
+ g.globalAlpha=1;g.setLineDash([4,4]);g.strokeStyle=ac;g.beginPath();cur.forEach((q,i)=>i?g.lineTo(X(q[0]),Y(q[1])):g.moveTo(X(q[0]),Y(q[1])));g.stroke();
+ g.globalAlpha=.4;g.beginPath();g.moveTo(m,Y(xeq(p)));g.lineTo(W-10,Y(xeq(p)));g.stroke();g.setLineDash([]);g.globalAlpha=1;
+ saved.forEach(s=>{if(!s.on)return;const a=[[0,0],...s.pts.slice().sort((u,v)=>u[0]-v[0])];g.strokeStyle=g.fillStyle=s.col;g.lineWidth=2;g.beginPath();a.forEach((q,i)=>i?g.lineTo(X(q[0]),Y(q[1])):g.moveTo(X(q[0]),Y(q[1])));g.stroke();s.pts.forEach(q=>g.fillRect(X(q[0])-4,Y(q[1])-4,8,8))});g.lineWidth=1;
+ g.fillStyle='#c0562b';pts.forEach(q=>{g.beginPath();g.arc(X(q[0]),Y(q[1]),5,0,7);g.fill()});cursors(g,X,Y,m,W,H);if(tg)tangent(g,X,Y,m,W,H)}
+let lastXm=-1;
+function srcArr(){return pts.length>=2?[[0,0],...pts.slice().sort((a,b)=>a[0]-b[0])]:cur}
+function xOfT(a,tm){if(tm<=0)return 0;for(let i=1;i<a.length;i++)if(tm<=a[i][0]){const u=a[i-1],v=a[i];return u[1]+(v[1]-u[1])*(tm-u[0])/((v[0]-u[0])||1)}return null}
+function tOfX(a,xv){for(let i=1;i<a.length;i++){const u=a[i-1],v=a[i];if((u[1]-xv)*(v[1]-xv)<=0&&v[1]!==u[1])return u[0]+(v[0]-u[0])*(xv-u[1])/(v[1]-u[1])}return null}
+let curOn=false,cA=6,cB=15,hov=null,drag=null;
+function lerpSaved(q,tm){return xOfT([[0,0],...q.pts.slice().sort((u,v)=>u[0]-v[0])],tm)}
+function cursors(g,X,Y,m,W,H){const xm=xeq(p),a=srcArr(),meas=pts.length>=2,bg=cs('--card');
+ g.save();g.font='bold 12px sans-serif';
+ if(hov!==null){const hx=xOfT(a,hov);g.strokeStyle='rgba(128,128,128,.7)';g.setLineDash([2,3]);g.lineWidth=1;g.beginPath();g.moveTo(X(hov),10);g.lineTo(X(hov),H-25);g.stroke();g.setLineDash([]);if(hx!==null){g.fillStyle='rgba(128,128,128,.95)';g.beginPath();g.arc(X(hov),Y(hx),4,0,7);g.fill()}}
+ if(!curOn){g.restore();return}
+ [[cA,'A','#7c3aed'],[cB,'B','#0d9488']].forEach(([tt,nm,col],k)=>{const xv=xOfT(a,tt);g.setLineDash([6,3]);g.lineWidth=1.8;g.strokeStyle=g.fillStyle=col;g.beginPath();g.moveTo(X(tt),H-25);g.lineTo(X(tt),16);g.stroke();g.setLineDash([]);
+  g.fillRect(X(tt)-8,2,16,15);g.fillStyle='#fff';g.fillText(nm,X(tt)-4,14);
+  if(xv!==null){g.fillStyle=col;g.beginPath();g.arc(X(tt),Y(xv),5.5,0,7);g.fill();
+   const lab=nm+' : t = '+tt.toFixed(1)+' min ; x = '+xv.toFixed(3),w=g.measureText(lab).width+10,lx=X(tt)+10+w>W?X(tt)-10-w:X(tt)+10,ly=Math.min(Math.max(Y(xv)-10,34),H-50)+k*22;
+   g.fillStyle=bg;g.globalAlpha=.92;g.fillRect(lx,ly-13,w,19);g.globalAlpha=1;g.strokeStyle=col;g.lineWidth=1;g.strokeRect(lx,ly-13,w,19);g.fillStyle=col;g.fillText(lab,lx+5,ly)}});
+ g.restore();
+ const xa=xOfT(a,cA),xb=xOfT(a,cB),L=(nm,col,tt,xv)=>`<b style="color:${col}">${nm}</b> : t = ${tt.toFixed(1)} min, x = `+(xv!==null?`<b>${xv.toFixed(3)} mmol</b> (x/x<sub>max</sub> = ${(xv/xm).toFixed(2)})`:'hors des mesures');
+ let h=L('A','#7c3aed',cA,xa)+'<br>'+L('B','#0d9488',cB,xb);
+ if(xa!==null&&xb!==null){const dt=cB-cA,dx=xb-xa;h+=`<br>Δt = B − A = <b>${dt.toFixed(1)} min</b> ; Δx = <b>${dx.toFixed(3)} mmol</b>`+(Math.abs(dt)>.05?` ; vitesse volumique moyenne = Δx / (V·Δt) = <b>${(dx/60/dt).toExponential(2)} mol·L⁻¹·min⁻¹</b>`:'')}
+ if(xb!==null&&Math.abs(xb-xm/2)<=.02*xm){const tm=tOfX(cur,xm/2);h+=`<br>➜ B est sur x = x<sub>max</sub>/2 : <b>temps de demi-réaction t<sub>1/2</sub> ≈ ${cB.toFixed(1)} min</b>`+(meas&&tm!==null?` (modèle : ${tm.toFixed(1)} min)`:'')}
+ h+=`<br><small style="color:var(--mut)">Lecture sur ${meas?'vos mesures (segments entre les points, origine ajoutée)':'la courbe modèle : dosez au moins 2 erlenmeyers pour lire vos propres mesures'}.</small>`;
+ $('cread').innerHTML=h}
+function load(r){tit=r;rows.forEach(q=>{const g=$('tg'+q.n);if(g)g.style.filter=q===r?'drop-shadow(0 0 4px #2a6f97)':''})}
+function add(a,sp=true){if(!tit||!tit.emptied||tit.vb!=null)return;tit.cur=Math.min(25,tit.cur+a);if(sp)drops.push(0);
+ if(tit.cur>=tit.veq){tit.vb=tit.cur;flow=false;tit.xe=0.06*tit.vb;const c=tit.tr.children;
+ c[2].textContent=tit.vb.toFixed(2);c[3].textContent=(0.005*tit.vb).toFixed(4);c[4].textContent=tit.xe.toFixed(3);c[5].textContent=(tit.xe/p.na).toFixed(2);pts.push([tit.t,tit.xe]);draw()}}
+function sample(force){const n=force||avail();if(!n||n>shown||rows.some(r=>r.n===n))return;
+ const t1=t,x1=xan(t,p);outTube(n);
+ const r={n,t:t1,veq:Math.max(.1,200/12*x1+(Math.random()-.5)*.1),cur:0,vb:null,xe:null,emptied:false};rows.push(r);
+ const tr=document.createElement('tr');tr.innerHTML=`<td>${n}</td><td>${t1.toFixed(1)}</td><td>à doser</td><td>—</td><td>—</td><td>—</td>`;r.tr=tr;$('tb').appendChild(tr);
+ load(r)}
+$('samp').onclick=()=>sample();
+$('vid').onclick=()=>{if(!tit||tit.emptied)return;tit.emptied=true;const g=$('tg'+tit.n);g.style.transition='transform .7s,opacity .6s';g.style.opacity=0;g.style.pointerEvents='none'};
+$('b1').onclick=()=>add(.1);$('b2').onclick=()=>add(1);$('b3').onclick=()=>{flow=!flow};
+$('go').onclick=()=>{if(starting)return;if(!started){started=true;starting=true;['T','R','Q','cat'].forEach(i=>$(i).disabled=true);$('go').textContent='⏳ Versement de S₂…';pour();return}run=!run;$('go').textContent=run?'⏸ Pause':'▶ Reprendre'};
+$('rs').onclick=reset;
+$('bath').addEventListener('click',e=>{const g=e.target.closest('g[id^="tg"]');if(g&&started)sample(+g.id.slice(2))});
+$('help').onclick=()=>{const h=$('hp'),o=h.style.display==='none';h.style.display=o?'block':'none';$('help').textContent=o?'✖ Fermer l\'aide':'❓ Aide';lastS=0};
+{const tip=$('tip'),bt=$('bath');
+ const txt=el=>{const C1=+$('R').value,C2=+$('Q').value;
+  const fl=el.closest('g[id^="tg"]');if(fl){const id=+fl.id.slice(2),r=rows.find(q=>q.n===id);return r?'Erlenmeyer '+id+' : 5 mL de mélange, réaction bloquée dans l\'eau glacée à t = '+r.t.toFixed(1)+' min':'Erlenmeyer '+id+' : 5 mL de mélange réactionnel (la réaction se poursuit)'}
+  if(el.closest('#cyl'))return started?'Éprouvette vide : les 10 mL de S₂ ont été versés dans le bécher':'Éprouvette : 10 mL de S₂ = solution de peroxodisulfate de potassium K₂S₂O₈ (C₂ = '+C2.toFixed(3)+' mol/L)';
+  if(el.closest('#hbk')||el.closest('#bliq'))return started?'Bécher 250 mL : mélange réactionnel (60 mL au départ, '+(60-5*shown)+' mL restants). Au départ : [I⁻] = '+(C1*40/60).toFixed(3)+' mol/L, [S₂O₈²⁻] = '+(C2*10/60).toFixed(4)+' mol/L, empois d\'amidon':'Bécher 250 mL : 40 mL de S₁ (iodure de potassium KI, C₁ = '+C1.toFixed(2)+' mol/L) + 10 mL d\'empois d\'amidon';
+  return ''};
+ ['mousemove','pointermove','pointerdown','click'].forEach(ev=>bt.addEventListener(ev,e=>{const m=txt(e.target);
+  if(m){tip.textContent=m;tip.style.left=Math.min(e.clientX+14,innerWidth-230)+'px';tip.style.top=(e.clientY+14)+'px';tip.style.display='block'}else tip.style.display='none'}));
+ ['mouseleave','pointerleave'].forEach(ev=>bt.addEventListener(ev,()=>tip.style.display='none'))}
+$('showt').onclick=()=>{const w=$('tw'),o=w.style.display==='none';w.style.display=o?'block':'none';$('showt').textContent=o?"📖 Masquer l'aperçu théorique":"📖 Afficher l'aperçu théorique"};
+$('showtg').onclick=()=>{tg=!tg;$('tgp').style.display=tg?'block':'none';$('showtg').textContent=tg?'📐 Masquer la tangente':'📐 Afficher la tangente';draw()};
+['t0','dtt'].forEach(i=>$(i).oninput=draw);
+$('curon').onchange=e=>{curOn=e.target.checked;$('curbox').style.display=curOn?'block':'none';drag=null;draw()};
+$('csh').onclick=()=>{const tt=tOfX(srcArr(),xeq(p)/2);cA=0;if(tt!==null)cB=tt;draw()};
+{const cv=$('cv');cv.style.cursor='crosshair';cv.style.touchAction='none';
+ const tOf=e=>{const r=cv.getBoundingClientRect(),m=40;return Math.max(0,Math.min(30,((e.clientX-r.left)*cv.width/(r.width||1)-m)/(cv.width-m-10)*30))};
+ const tipOn=e=>{const tt=tOf(e),xv=xOfT(srcArr(),tt),tip=$('tip');let h='t = '+tt.toFixed(1)+' min<br>x = '+(xv!==null?xv.toFixed(3)+' mmol':'—');saved.filter(q=>q.on).forEach(q=>{const v=lerpSaved(q,tt);h+='<br><span style="color:'+q.col+'">■</span> '+(v!==null?v.toFixed(3):'—')+' mmol'});tip.innerHTML=h;tip.style.left=Math.min(e.clientX+14,innerWidth-200)+'px';tip.style.top=(e.clientY+14)+'px';tip.style.display='block'};
+ cv.addEventListener('pointerdown',e=>{if(!curOn)return;const tt=tOf(e);drag=Math.abs(tt-cA)<=Math.abs(tt-cB)?'A':'B';if(drag==='A')cA=tt;else cB=tt;try{cv.setPointerCapture(e.pointerId)}catch(_){}hov=tt;draw();tipOn(e)});
+ cv.addEventListener('pointermove',e=>{const tt=tOf(e);hov=tt;if(drag==='A')cA=tt;else if(drag==='B')cB=tt;draw();tipOn(e)});
+ ['pointerup','pointercancel'].forEach(ev=>cv.addEventListener(ev,()=>{drag=null}));
+ cv.addEventListener('pointerleave',()=>{if(!drag){hov=null;$('tip').style.display='none';draw()}})}
+$('tgs').onchange=draw;
+$('showc').onclick=()=>{const w=$('cw'),s=w.style.display==='none';w.style.display=s?'block':'none';$('showc').textContent=s?'📈 Masquer la courbe':'📈 Afficher la courbe';draw()};
+['T','R','Q','S'].forEach(i=>$(i).oninput=()=>{$('Tv').textContent=$('T').value;$('Rv').textContent=(+$('R').value).toFixed(2);$('Sv').textContent=$('S').value;$('Qv').textContent=(+$('Q').value).toFixed(3);updT();if(!run&&t===0){p=params();cur=curve();draw()}});
+$('cat').onchange=()=>{p=params();cur=curve();draw()};
+const g2=$('lab').getContext('2d');
+function rend(){const fg=cs('--fg'),bd=cs('--bd'),c=g2,cx=200,v=tit?tit.cur:0;c.clearRect(0,0,600,280);c.lineWidth=2;c.strokeStyle=fg;c.font='12px sans-serif';
+ const ly=15+130*v/25;c.fillStyle='rgba(120,190,240,.6)';c.fillRect(cx-8,ly,16,145-ly);c.strokeRect(cx-9,15,18,130);
+ c.fillStyle=fg;c.fillRect(cx-14,143,28,5);c.beginPath();c.moveTo(cx-6,148);c.lineTo(cx-1,172);c.lineTo(cx+1,172);c.lineTo(cx+6,148);c.stroke();c.fillText('Na₂S₂O₃ 1,0·10⁻² mol/L',cx+20,30);
+ let col=(tit&&tit.emptied)?'rgba(200,225,255,.25)':'rgba(0,0,0,0)';if(tit&&tit.emptied){const q=v/tit.veq;if(tit.vb!=null)col='rgba(200,225,255,.25)';else col='rgba(25,35,130,'+(.85*(1-q)*Math.min(1,tit.veq/3)).toFixed(2)+')'}
+ if(tit&&tit.emptied){const s=.62;c.save();c.translate(cx,262-186*s);c.scale(s,s);c.fillStyle=col;c.fill(new Path2D(LQ));c.lineWidth=3/s;c.strokeStyle=fg;c.stroke(new Path2D(FL));c.fillStyle=fg;c.font='bold 18px sans-serif';c.textAlign='center';c.fillText(tit.n,0,172);c.restore();c.textAlign='left';c.font='12px sans-serif'}
+ c.fillStyle=bd;c.fillRect(cx-50,264,100,12);if(tit&&tit.emptied){c.fillStyle='#fff';c.save();c.translate(cx,256);c.rotate(ang);c.fillRect(-12,-2,24,4);c.restore()}
+ c.fillStyle='rgba(56,189,248,.9)';drops.forEach(y=>{c.beginPath();c.arc(cx,174+y,3,0,7);c.fill()});
+ c.fillStyle=fg;c.fillText(tit&&tit.emptied?'Erlenmeyer '+tit.n+' + eau glacée + empois':'Agitateur magnétique',cx+40,235);
+ 
+ $('vb').textContent=tit?v.toFixed(1):'—';if(tit){$('vbn').textContent='erlenmeyer '+tit.n+' · bloqué à t = '+tit.t.toFixed(1)+' min';$('st').textContent=!tit.emptied?" Ajoutez d'abord l'eau glacée (bouton orange)":tit.vb!=null?' Décoloration : équivalence atteinte':(v/tit.veq>.9?' Décoloration imminente, goutte à goutte !':' Bleu (I₂ + empois)')}else{$('vbn').textContent='Bloquez un erlenmeyer pour commencer.';$('st').textContent=''}}
+function loop(ts){const dt=Math.min((ts-last)/1000,.1);last=ts;
+ if(run){const d=dt*$('S').value/60;t+=d;x=xan(t,p);$('tt').textContent=fmt(t);if(pourDone&&shown<10&&t>=nextT){shown++;showFlask(shown);nextT+=.2}if(t>=30){run=false;$('go').textContent='▶ Démarrer'}}
+ colAll();$('samp').disabled=!(started&&avail());
+ if(flow&&tit&&tit.emptied&&tit.vb==null){add(3*dt,false);if(Math.random()<.5)drops.push(0)}
+ drops=drops.map(y=>y+220*dt).filter(y=>y<52);ang+=dt*10;rend();hl();requestAnimationFrame(loop)}
+const PAL=['#2a6f97','#2f9e44','#8e44ad','#d97706'];
+function renderLeg(){$('leg').innerHTML='<div><span style="color:#c0562b">●</span> Mesures en cours <span style="color:var(--ac)">(- - - modèle)</span></div>'+saved.map((q,i)=>`<label style="display:flex;gap:6px;align-items:center;margin:2px 0"><input type="checkbox" data-i="${i}" ${q.on?'checked':''}><span style="width:12px;height:12px;background:${q.col};display:inline-block"></span><span>${q.label}</span><button class="g" data-d="${i}" style="color:inherit;padding:0 6px" title="Supprimer">✖</button></label>`).join('')}
+$('leg').onchange=e=>{const i=e.target.dataset.i;if(i!=null){saved[+i].on=e.target.checked;draw()}};
+$('leg').onclick=e=>{const d=e.target.dataset.d;if(d!=null){saved.splice(+d,1);renderLeg();draw()}};
+$('savec').onclick=()=>{const m=$('svm');if(pts.length<2){m.textContent='Dosez au moins 2 erlenmeyers avant d\'enregistrer.';return}
+ const used=saved.map(q=>q.col),col=PAL.find(c=>!used.includes(c))||PAL[0];if(saved.length>=4)saved.shift();
+ saved.push({pts:pts.map(q=>q.slice()),xm:xeq(p),col,on:true,label:'Courbe '+(++nSave)+' : '+$('T').value+' °C, C₁ = '+(+$('R').value).toFixed(2)+', C₂ = '+(+$('Q').value).toFixed(3)+' mol/L, '+($('cat').checked?'avec catalyseur Fe³⁺':'sans catalyseur')+' ('+pts.length+' points)'});
+ renderLeg();m.textContent='Courbe enregistrée ✓ Elle reste affichée après « Réinitialiser » pour comparer.';if($('cw').style.display==='none')$('showc').click();else draw()};
+reset();renderLeg();requestAnimationFrame(loop);
+</script></body></html>
