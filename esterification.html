@@ -51,6 +51,14 @@ button:disabled{opacity:.45;cursor:not-allowed}
             margin-bottom: 1.25rem;
             transition: border-color 0.2s, color 0.2s;
         }
+           .signature{
+text-align: center;
+font-family: "Arial";
+font-size: 12px;
+font-weight: bold;
+color: rgb(16, 150, 207);
+margin-top: 30px;
+}
 </style></head><body>
     <a class="btn-home" href="https://simphysique.blogspot.com/">← Retour au site SimPhysique</a>
 <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><h1>TP : estérification de l'acide éthanoïque par l'éthanol</h1><button class="g" id="help" style="color:inherit;white-space:nowrap">❓ Aide</button></div>
@@ -58,20 +66,25 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 <div class="card" id="hp" style="display:none"><h2>Étapes à suivre</h2>
 <ol style="margin:0;padding-left:22px;font-size:14px;line-height:1.9">
-<li data-i="1">Réglez si vous le souhaitez la température, le rapport éthanol/acide, le catalyseur et la vitesse (panneau de droite, avant de démarrer). Option : cliquez sur le tube 1 dans le support pour le garder hors du bain : ce sera le <b>tube témoin</b> (mélange initial, t = 0), à doser en dernier en cliquant dessus ou avec « Prélever un tube ».</li>
-<li data-i="2">Cliquez sur <b>Démarrer</b> : les tubes sont plongés dans le bain à 80 °C et le chronomètre part de t = 0.</li>
+<li data-i="0">Préparez le mélange avec le bouton de la zone « Préparation du mélange » : verser l'acide et l'éthanol dans le bécher, ajouter H₂SO₄ (le chronomètre se déclenche : t = 0), homogénéiser, puis répartir 2 mL dans chaque tube.</li>
+<li data-i="1">Réglez si vous le souhaitez la température, le rapport éthanol/acide, le catalyseur et la vitesse (panneau de droite, avant de démarrer). Le tube 0, posé à part sur son petit support à droite, est le <b>tube témoin</b> (mélange initial, non chauffé, t = 0) : il se dose en dernier.</li>
+<li data-i="2">Cliquez sur <b>Plonger les tubes dans le bain</b> : les tubes 1 à 8 passent dans le bain à 80 °C (le chronomètre tourne depuis l'ajout de H₂SO₄, t = 0).</li>
 <li data-i="3">À l'instant de votre choix, cliquez sur <b>Prélever un tube</b> : le tube sort du bain et passe dans l'eau glacée.</li>
 <li data-i="4">Cliquez sur <b>Vider le tube</b> : son contenu est versé dans l'erlenmeyer (eau glacée + phénolphtaléine).</li>
 <li data-i="5">Dosez avec <b>+ 0,1 mL</b>, <b>+ 1 mL</b> ou <b>Écoulement</b> jusqu'à la première teinte rose persistante : V<sub>B</sub> est enregistré dans le tableau.</li>
-<li data-i="6">Répétez les étapes 3 à 5 pour d'autres tubes, à des instants différents (8 tubes au maximum). Le tube choisi pour le dosage est entouré dans la rangée au-dessus de la burette ; pour changer de tube, cliquez sur un autre tube de cette rangée ou dans le cristallisoir d'eau glacée.</li>
+<li data-i="6">Répétez les étapes 4 à 6 pour d'autres tubes, à des instants différents (tubes 1 à 8). Une fois les tubes 1 à 8 prélevés (ou quand vous le décidez), prélevez le tube témoin 0 : cliquez dessus ou sur « Prélever un tube ». Le tube choisi pour le dosage est entouré dans la rangée au-dessus de la burette ; pour changer de tube, cliquez sur un autre tube de cette rangée ou dans le cristallisoir d'eau glacée.</li>
 <li data-i="7">Exploitez : lisez le tableau (n acide, n ester, taux), affichez la courbe, puis la tangente pour obtenir la vitesse de réaction.</li></ol>
 <small>L'étape en cours est surlignée. « Reset » remet tout à zéro.</small></div>
 <div class="card"><div class="fg"><div><h2>Mode opératoire</h2><ol style="margin:0;padding-left:20px;font-size:13px">
-<li>Préparer le mélange : 16 mL d'acide éthanoïque + 16,3 mL d'éthanol + quelques gouttes d'acide sulfurique.</li>
-<li>Répartir 2 mL du mélange dans 8 tubes à essais munis d'un tube effilé (condenseur à air), les placer dans un support, puis les plonger dans le bain thermostaté à 80 °C en déclenchant le chronomètre (t = 0).</li>
+<li>Mesurer, dans deux éprouvettes graduées, 16 mL d'acide éthanoïque et 16,3 mL d'éthanol (mélange équimolaire : 0,28 mol de chaque).</li>
+<li>Verser les deux liquides dans un bécher, ajouter quelques gouttes d'acide sulfurique concentré (catalyseur) et déclencher aussitôt le chronomètre (t = 0), puis homogénéiser.</li>
+<li>Répartir le mélange par 2 mL dans 9 tubes à essais numérotés de 0 à 8, munis d'un tube effilé (condenseur à air). Le tube 0 reste à part : c'est le tube témoin, dosé en dernier.</li>
+<li>Placer les tubes 1 à 8 dans un support, puis les plonger dans le bain thermostaté à 80 °C.</li>
 <li>À des instants variés, sortir un tube, le plonger dans l'eau glacée (la réaction est bloquée), le vider dans un erlenmeyer avec de l'eau distillée glacée et de la phénolphtaléine, puis rincer le tube.</li>
 <li>Doser l'acide restant par NaOH 1 mol/L jusqu'au rose persistant et noter V<sub>B</sub>.</li>
-<li>Calculer n(ester) = n₀ − C<sub>B</sub>·V<sub>B</sub> et tracer n(ester) = f(t).</li></ol></div><svg id="bath" viewBox="0 -150 690 406" style="width:100%;color:var(--fg)"></svg><div class="r" style="justify-content:center;gap:8px"><b>t (min:s)</b><div id="lcd" title="Chronomètre"><span id="tt">00:00</span></div><button id="go">▶ Démarrer</button><button class="g" id="rs">↺ Reset</button><button class="o" id="samp">🧪 Prélever un tube</button><button class="o" id="vid">⤵ Vider le tube</button></div></div></div>
+<li>Calculer n(ester) = n₀ − C<sub>B</sub>·V<sub>B</sub> et tracer n(ester) = f(t).</li></ol></div><div id="prep"><h2>Préparation du mélange</h2>
+<svg id="pv" viewBox="0 0 690 195" style="width:100%;max-width:690px;color:var(--fg)"></svg>
+<div class="r" style="justify-content:center;gap:10px"><button class="o" id="pb"></button><small id="pst"></small></div></div><svg id="bath" viewBox="0 -150 690 406" style="width:100%;color:var(--fg)"></svg><div class="r" style="justify-content:center;gap:8px"><b>t (min:s)</b><div id="lcd" title="Chronomètre"><span id="tt">00:00</span></div><button id="go">▶ Démarrer</button><button class="g" id="rs">↺ Reset</button><button class="o" id="samp">🧪 Prélever un tube</button><button class="o" id="vid">⤵ Vider le tube</button></div></div></div>
 
 <div class="main">
 <div class="card">
@@ -122,11 +135,14 @@ button:disabled{opacity:.45;cursor:not-allowed}
 <p><b>Facteurs cinétiques.</b> Une température plus élevée et la présence de H₂SO₄ accélèrent la réaction. Ils font atteindre l'équilibre plus vite mais ne changent pas K ni le rendement final.</p>
 <p><b>Déplacer l'équilibre.</b> Un excès de l'un des réactifs ou l'élimination de l'eau ou de l'ester augmente le rendement. Par exemple, avec n(éthanol)/n(acide) = 3, on obtient τ ≈ 90 % au lieu de 67 %.</p>
 </div></div>
-<div id="tip"></div>
+<div id="tip">
+    
+</div>
+<div class="signature"> Simulation du TP estérification de l'acide éthanoïque par l'éthanol - chrif.md@gmail.com - Octobre 2026 </div>
 <script>
 const $=id=>document.getElementById(id),K=4,NA=17.3,cs=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-let tem=false,started=false,t=0,x=0,run=false,last=0,pts=[],p,cur,rows=[],tit=null,flow=false,drops=[],ang=0;
-function params(){const T=+$('T').value+273.15,r=+$('R').value,cat=$('cat').checked;
+let started=false,t=0,x=0,run=false,last=0,pts=[],p,cur,rows=[],tit=null,flow=false,drops=[],ang=0;
+function params(Tc){const T=(Tc===undefined?+$('T').value:Tc)+273.15,r=+$('R').value,cat=$('cat').checked;
  return{k:0.03/NA*Math.exp(-6000*(1/T-1/353.15))*(cat?1:0.02),na:NA,nb:NA*r}}
 function dx(x,p){return p.k*((p.na-x)*(p.nb-x)-x*x/K)}
 function step(x,p,dt){const n=Math.ceil(dt/0.05),h=dt/n;for(let i=0;i<n;i++){const a=dx(x,p);x+=h*dx(x+h*a/2,p)}return x}
@@ -142,21 +158,47 @@ function buildBath(){const C='currentColor';
  const d1=dish(1,15,475,98,214,122,'rgba(70,150,215,.5)'),d2=dish(2,490,680,128,214,150,'rgba(150,215,245,.5)');
  let h=d1[0]+d2[0];
  [[515,158,12],[548,166,-8],[585,156,20],[620,164,-14],[652,158,6],[530,190,-10],[600,192,14],[640,188,-6]].forEach(c=>h+=`<rect x="-9" y="-9" width="18" height="18" rx="4" fill="rgba(255,255,255,.55)" stroke="rgba(190,230,250,.95)" stroke-width="1.5" transform="translate(${c[0]},${c[1]}) rotate(${c[2]})"/>`);
- h+=`<rect x="451" y="62" width="8" height="128" rx="4" fill="rgba(255,255,255,.35)" stroke="${C}" stroke-width="1.5"/><rect x="454" y="92" width="2" height="98" fill="#d93025"/><circle cx="455" cy="194" r="6" fill="#d93025" stroke="${C}"/><text x="455" y="54" text-anchor="middle" font-size="11" fill="${C}">80 °C</text>`;
- const W='#b98a52';h+=`<g class="rack"><rect x="135" y="-25" width="6" height="77" fill="${W}"/><rect x="549" y="-25" width="6" height="77" fill="${W}"/><rect x="133" y="43" width="424" height="9" rx="2" fill="${W}" stroke="${C}" stroke-width="1.5"/><text x="565" y="20" font-size="11" fill="${C}">Support à tubes</text></g>`;
- h+=`<rect id="stand" x="622" y="98" width="36" height="8" rx="2" fill="#b98a52" stroke="${C}" stroke-width="1.5" style="opacity:0;transition:opacity .5s"/>`;
- for(let i=0;i<8;i++)h+=`<g id="tg${i+1}" style="transform:translate(${163+i*53}px,-150px);transition:transform .7s"><rect x="-14" y="14" width="28" height="182" fill="transparent"/><path d="M-13 59V180a13 13 0 0 0 26 0V59Z" fill="rgba(255,255,255,.12)" stroke="${C}" stroke-width="2"/><path class="liq" d="M-11 118V180a11 11 0 0 0 22 0V118Z" fill="#e8c547" opacity=".75"/><path d="M-11 53H11L8.5 67H-8.5Z" fill="#8b5a2b" stroke="#5a3a1a" stroke-width="1"/><path d="M-3.5 78L-1.2 18H1.2L3.5 78Z" fill="rgba(255,255,255,.55)" stroke="${C}" stroke-width="1.2"/><text y="12" text-anchor="middle" font-size="12" fill="${C}">${i+1}</text><text class="tem" y="1" text-anchor="middle" font-size="10" fill="#c0562b" style="display:none">témoin</text></g>`;
+ h+=`<rect x="451" y="82" width="8" height="108" rx="4" fill="rgba(255,255,255,.35)" stroke="${C}" stroke-width="1.5"/><rect x="454" y="92" width="2" height="98" fill="#d93025"/><circle cx="455" cy="194" r="6" fill="#d93025" stroke="${C}"/><text x="455" y="74" text-anchor="middle" font-size="11" fill="${C}">80 °C</text>`;
+ const W='#b98a52';h+=`<g class="rack"><rect x="135" y="-25" width="6" height="77" fill="${W}"/><rect x="549" y="-25" width="6" height="77" fill="${W}"/><rect x="133" y="43" width="424" height="9" rx="2" fill="${W}" stroke="${C}" stroke-width="1.5"/><text x="125" y="20" text-anchor="end" font-size="11" fill="${C}">Support à tubes</text></g>`;
+ h+=`<rect x="620" y="53" width="40" height="8" rx="2" fill="#b98a52" stroke="${C}" stroke-width="1.5"/><text x="640" y="76" text-anchor="middle" font-size="11" fill="${C}">Tube témoin</text>`;
+ for(let i=-1;i<8;i++)h+=`<g id="tg${i+1}" style="transform:translate(${i<0?640:163+i*53}px,${i<0?-140:-150}px);transition:transform .7s${i<0?';cursor:pointer':''}"><rect x="-14" y="14" width="28" height="182" fill="transparent"/><path d="M-13 59V180a13 13 0 0 0 26 0V59Z" fill="rgba(255,255,255,.12)" stroke="${C}" stroke-width="2"/><path class="liq" d="M-11 118V180a11 11 0 0 0 22 0V118Z" fill="#e8c547" opacity=".75" style="transform-box:fill-box;transform-origin:center bottom;transform:scaleY(0);transition:transform .45s"/><path d="M-11 53H11L8.5 67H-8.5Z" fill="#8b5a2b" stroke="#5a3a1a" stroke-width="1"/><path d="M-3.5 78L-1.2 18H1.2L3.5 78Z" fill="rgba(255,255,255,.55)" stroke="${C}" stroke-width="1.2"/><text y="12" text-anchor="middle" font-size="12" fill="${C}">${i+1}</text><text class="tem" y="1" text-anchor="middle" font-size="10" fill="#c0562b" style="display:none">témoin</text></g>`;
  h+=`<g class="rack"><rect x="133" y="-25" width="424" height="9" rx="2" fill="${W}" stroke="${C}" stroke-width="1.5"/></g>`+'<g pointer-events="none">'+d1[1]+d2[1]+'</g>'+`<rect x="30" y="218" width="430" height="14" rx="3" fill="#666"/><circle cx="48" cy="225" r="3.5" fill="#e04b3a"/><rect x="400" y="221" width="46" height="8" rx="2" fill="#222"/><text x="423" y="228" text-anchor="middle" font-size="7" fill="#7f7">80.0</text><text x="245" y="250" text-anchor="middle" font-size="12" fill="${C}">Bain thermostaté (cristallisoir, 80 °C)</text><text x="585" y="250" text-anchor="middle" font-size="12" fill="${C}">Cristallisoir d'eau glacée</text>`;
  $('bath').innerHTML=h}
 function fmt(m){const a=Math.floor(m),b=Math.floor((m-a)*60);return String(a).padStart(2,'0')+':'+String(b).padStart(2,'0')}
 let lastS=0;
-function hl(){if($('hp').style.display==='none')return;const n=!started?2:!tit?3:!tit.emptied?4:tit.vb==null?5:pts.length>=2?7:6;
+function hl(){if($('hp').style.display==='none')return;const n=!started?(prep<5?0:2):!tit?3:!tit.emptied?4:tit.vb==null?5:pts.length>=2?7:6;
  if(n!==lastS){lastS=n;document.querySelectorAll('#hp li').forEach(l=>l.classList.toggle('cur',+l.dataset.i===n))}}
-function plunge(){for(let i=1;i<=8;i++){const g=$('tg'+i);g.style.transitionDelay=((i-1)*0.1)+'s';g.style.transform=(i===1&&tem)?'translate(640px,-95px)':`translate(${50+(i-1)*53}px,0px)`}if(tem)$('stand').style.opacity=1;document.querySelectorAll('#bath .rack').forEach(e=>{e.style.transition='opacity .6s 1.1s';e.style.opacity='0'})}
-function outTube(n){const g=$('tg'+n);g.style.cursor='pointer';g.onclick=()=>{const r=rows.find(q=>q.n===n);if(r)load(r)};g.style.transitionDelay='0s';g.style.transform=`translate(${510+(n-1)*20}px,66px) scale(.75)`;g.querySelector('.liq').setAttribute('fill','#8fd0f0')}
-function reset(){tem=false;buildBath();started=false;$('samp').disabled=true;run=flow=false;t=x=0;pts=[];rows=[];tit=null;drops=[];p=params();cur=curve();
+let prep=0,vA=16,vE=16.3,bAc=0,bEt=0,bm=0,mixed=false,busy=false,sE=5,sK=2,capE=25;
+const PC={ac:'#d6ecb0',et:'#b8dcf5',mx:'#ecd37a'},PB=['① Verser l\'acide éthanoïque','② Verser l\'éthanol','③ Ajouter quelques gouttes de H₂SO₄','④ Homogénéiser','⑤ Répartir 2 mL dans chaque tube'];
+function buildPrep(){const C='currentColor';let h='';
+ const cyl=(x,id,lab,sc,cap)=>{let t='';const st=cap/5;for(let m=st;m<=cap;m+=st)t+=`<line x1="${x}" x2="${x+9}" y1="${160-sc*m}" y2="${160-sc*m}" stroke="${C}"/><text x="${x-3}" y="${163-sc*m}" text-anchor="end" font-size="9" fill="${C}">${m}</text>`;
+  return `<rect id="l${id}" x="${x+1}" y="160" width="34" height="0" fill="${id==='a'?PC.ac:PC.et}"/><rect x="${x}" y="30" width="36" height="130" fill="rgba(255,255,255,.08)" stroke="${C}" stroke-width="2"/>${t}<rect x="${x-10}" y="160" width="56" height="6" rx="3" fill="${C}" opacity=".7"/><text x="${x+18}" y="182" text-anchor="middle" font-size="11" fill="${C}">${lab}</text><text id="t${id}" x="${x+18}" y="20" text-anchor="middle" font-size="12" font-weight="600" fill="${C}"></text>`};
+ h+=cyl(70,'a','Acide éthanoïque',5,25)+cyl(190,'e','Éthanol',sE,capE);
+ h+=`<rect id="b1" x="301" y="160" width="98" height="0" fill="${PC.ac}"/><rect id="b2" x="301" y="160" width="98" height="0" fill="${PC.et}"/><path d="M300 52V152Q300 162 310 162H390Q400 162 400 152V52" fill="rgba(255,255,255,.06)" stroke="${C}" stroke-width="2.5"/><text id="tb" x="350" y="182" text-anchor="middle" font-size="11" fill="${C}"></text>`;
+ h+=`<path id="sa" d="M106 28C150 -10 280 0 322 90" fill="none" stroke="${PC.ac}" stroke-width="4" style="opacity:0"/><path id="se" d="M226 28C260 -5 300 5 330 90" fill="none" stroke="${PC.et}" stroke-width="4" style="opacity:0"/>`;
+ h+=`<line id="rod" x1="372" y1="38" x2="372" y2="152" stroke="${C}" stroke-width="4" stroke-linecap="round" style="opacity:0"/><path d="M340 2h20v26q0 4-4 4h-12q-4 0-4-4z" fill="#8b5a2b"/><path d="M347 32h6l-1.5 22h-3z" fill="rgba(255,255,255,.55)" stroke="${C}"/><circle id="dp" cx="350" cy="58" r="3" fill="#7fb6d9" style="opacity:0"/><text x="368" y="20" font-size="11" fill="${C}">H₂SO₄ concentré</text>`;
+ $('pv').innerHTML=h}
+function updPrep(){const S=(id,y,hh)=>{const e=$(id);e.setAttribute('y',y);e.setAttribute('height',Math.max(0,hh))};
+ S('la',160-5*vA,5*vA);S('le',160-sE*vE,sE*vE);
+ if(mixed){S('b1',160-sK*bm,sK*bm);$('b1').setAttribute('fill',PC.mx);S('b2',160,0)}else{S('b1',160-sK*bAc,sK*bAc);$('b1').setAttribute('fill',PC.ac);S('b2',160-sK*(bAc+bEt),sK*bEt)}
+ $('ta').textContent=vA.toFixed(1)+' mL';$('te').textContent=vE.toFixed(1)+' mL';$('tb').textContent='Bécher : '+(mixed?bm:bAc+bEt).toFixed(1)+' mL'}
+function tween(ms,fn,done){const s0=performance.now();(function f(n){const k=Math.min(1,(n-s0)/ms);fn(k);if(k<1)requestAnimationFrame(f);else if(done)done()})(s0)}
+function prepReset(){const E=16.3*(+$('R').value);capE=E>25?50:25;sE=125/capE;sK=Math.min(2,95/(16+E));
+ prep=0;vA=16;vE=E;bAc=bEt=bm=0;mixed=busy=false;buildPrep();updPrep();$('pb').disabled=false;$('pb').textContent=PB[0];
+ $('pst').textContent='Suivez les 5 étapes pour préparer le mélange.';$('go').disabled=true}
+$('R').addEventListener('input',()=>{if(prep===0&&!busy)prepReset()});
+$('pb').onclick=()=>{if(busy||prep>=5)return;busy=true;['T','R','cat'].forEach(i=>$(i).disabled=true);const E0=16.3*(+$('R').value);
+ const fin=()=>{prep++;busy=false;if(prep===3){run=true;$('pst').textContent='⏱ Mélange réalisé : le chronomètre est déclenché (t = 0).'}if(prep<5)$('pb').textContent=PB[prep];else{$('pb').disabled=true;$('pb').textContent='✔ Mélange réparti dans les 9 tubes';$('pst').textContent='Le chronomètre court : plongez maintenant les tubes dans le bain.';$('go').disabled=false}};
+ if(prep===0){$('pst').textContent='Versement de 16 mL d\'acide éthanoïque…';$('sa').style.opacity=1;tween(1500,k=>{vA=16*(1-k);bAc=16*k;updPrep()},()=>{$('sa').style.opacity=0;fin()})}
+ else if(prep===1){$('pst').textContent='Versement de l\'éthanol…';$('se').style.opacity=1;tween(1500,k=>{vE=E0*(1-k);bEt=E0*k;updPrep()},()=>{$('se').style.opacity=0;fin()})}
+ else if(prep===2){let n=0;const nd=()=>{if(n>=5){fin();return}n++;$('dp').style.opacity=1;const y1=160-sK*(bAc+bEt);tween(350,k=>$('dp').setAttribute('cy',58+(y1-58)*k*k),()=>{$('dp').style.opacity=0;$('pst').textContent='H₂SO₄ : '+n+' goutte'+(n>1?'s':'');setTimeout(nd,150)})};nd()}
+ else if(prep===3){$('pst').textContent='Agitation à la baguette de verre…';$('rod').style.opacity=.85;tween(2400,k=>{$('rod').style.transform='translate('+(Math.sin(k*40)*-16)+'px,0)';if(k>.6&&!mixed){mixed=true;bm=bAc+bEt;updPrep()}},()=>{$('rod').style.opacity=0;$('pst').textContent='Mélange homogène.';fin()})}
+ else{const order=[1,2,3,4,5,6,7,8,0];let i=0;const nx=()=>{if(i>=order.length){fin();return}const n=order[i++];$('pst').textContent='Tube '+n+' : 2 mL';$('tg'+n).querySelector('.liq').style.transform='scaleY(1)';const b0=bm;tween(350,k=>{bm=b0-2*k;updPrep()},nx)};nx()}};
+function plunge(){for(let i=1;i<=8;i++){const g=$('tg'+i);g.style.transitionDelay=((i-1)*0.1)+'s';g.style.transform=`translate(${50+(i-1)*53}px,0px)`}document.querySelectorAll('#bath .rack').forEach(e=>{e.style.transition='opacity .6s 1.1s';e.style.opacity='0'})}
+function outTube(n){const g=$('tg'+n);g.style.cursor='pointer';g.onclick=()=>{const r=rows.find(q=>q.n===n);if(r)load(r)};if(n===0)return;g.style.transitionDelay='0s';g.style.transform=`translate(${508+(n-1)*19}px,66px) scale(.75)`;g.querySelector('.liq').setAttribute('fill','#8fd0f0')}
+function reset(){buildBath();prepReset();started=false;$('samp').disabled=true;run=flow=false;t=x=0;pts=[];rows=[];tit=null;drops=[];p=params();cur=curve();
  $('tb').innerHTML='';$('tubes').innerHTML='<small>Les tubes prélevés apparaîtront ici (cliquez sur un tube pour le doser).</small>';
- $('go').textContent='▶ Démarrer';['T','R','cat'].forEach(i=>$(i).disabled=false);$('tt').textContent='00:00';draw()}
+ $('go').textContent='🛁 Plonger les tubes dans le bain';['T','R','cat'].forEach(i=>$(i).disabled=false);$('tt').textContent='00:00';draw()}
 let tg=false;
 function xAt(tm){const i=Math.min(119,Math.floor(tm)),a=cur[i][1],b=cur[i+1][1];return a+(b-a)*(tm-i)}
 function fit(){if(pts.length<2)return null;let best=null;
@@ -184,23 +226,21 @@ function load(r){tit=r;rows.forEach(q=>{const g=$('tg'+q.n);if(g)g.style.filter=
 function add(a,sp=true){if(!tit||!tit.emptied||tit.vb!=null)return;tit.cur=Math.min(25,tit.cur+a);if(sp)drops.push(0);
  if(tit.cur>=tit.veq){tit.vb=tit.cur;flow=false;tit.xe=Math.max(0,p.na-tit.vb);const c=tit.tr.children;
  c[2].textContent=tit.vb.toFixed(1);c[3].textContent=(p.na-tit.xe).toFixed(1);c[4].textContent=tit.xe.toFixed(1);c[5].textContent=(tit.xe/Math.min(p.na,p.nb)).toFixed(2);pts.push([tit.t,tit.xe]);draw()}}
-function sample(force){const ids=tem?[2,3,4,5,6,7,8,1]:[1,2,3,4,5,6,7,8],n=force||ids.find(i=>!rows.some(r=>r.n===i));if(!n||rows.some(r=>r.n===n))return;
- const te=tem&&n===1,t1=te?0:t,x1=te?0:x;if(rows.length===0)$('tubes').innerHTML='';outTube(n);
+function sample(force){const ids=[1,2,3,4,5,6,7,8,0],n=force!==undefined?force:ids.find(i=>!rows.some(r=>r.n===i));if(n===undefined||rows.some(r=>r.n===n))return;
+ const te=n===0,t1=te?0:t,x1=te?0:x;if(rows.length===0)$('tubes').innerHTML='';outTube(n);
  const r={n,t:t1,veq:Math.max(.5,p.na-x1+(Math.random()-.5)*.2),cur:0,vb:null,xe:null,emptied:false};rows.push(r);
  const tr=document.createElement('tr');tr.innerHTML=`<td>${n}${te?' (témoin)':''}</td><td>${t1.toFixed(1)}</td><td>à doser</td><td>—</td><td>—</td><td>—</td>`;r.tr=tr;$('tb').appendChild(tr);
  const tu=document.createElement('div');tu.className='tube';tu.innerHTML='<i></i><b>'+n+'</b>';tu.onclick=()=>load(r);r.el=tu;$('tubes').appendChild(tu);load(r)}
 $('samp').onclick=()=>sample();
 $('vid').onclick=()=>{if(!tit||tit.emptied)return;tit.emptied=true;const g=$('tg'+tit.n);g.style.transition='transform .7s,opacity .6s';g.style.opacity=0;tit.el.querySelector('i').style.display='none'};
 $('b1').onclick=()=>add(.1);$('b2').onclick=()=>add(1);$('b3').onclick=()=>{flow=!flow};
-$('go').onclick=()=>{run=!run;if(run&&!started){started=true;plunge();$('samp').disabled=false}if(run)['T','R','cat'].forEach(i=>$(i).disabled=true);$('go').textContent=run?'⏸ Pause':'▶ Reprendre'};
+$('go').onclick=()=>{if(!started){started=true;plunge();$('samp').disabled=false;$('go').textContent=run?'⏸ Pause':'▶ Reprendre';return}run=!run;$('go').textContent=run?'⏸ Pause':'▶ Reprendre'};
 $('rs').onclick=reset;
-function paintTem(){const g=$('tg1');g.style.filter=tem?'drop-shadow(0 0 4px #c0562b)':'';g.querySelector('.tem').style.display=tem?'block':'none'}
-$('bath').addEventListener('click',e=>{const g=e.target.closest('g[id^="tg"]');if(!g||g.id!=='tg1')return;
- if(!started){tem=!tem;paintTem()}else if(tem&&!rows.some(r=>r.n===1))sample(1)});
+$('bath').addEventListener('click',e=>{const g=e.target.closest('g[id^="tg"]');if(g&&g.id==='tg0'&&started&&!rows.some(r=>r.n===0))sample(0)});
 $('help').onclick=()=>{const h=$('hp'),o=h.style.display==='none';h.style.display=o?'block':'none';$('help').textContent=o?'✖ Fermer l\'aide':'❓ Aide';lastS=0};
 {const tip=$('tip'),bt=$('bath');
  ['mousemove','pointermove','pointerdown','click'].forEach(ev=>bt.addEventListener(ev,e=>{const g=e.target.closest('g[id^="tg"]');
-  if(g&&!started){{const id=g.id.slice(2);tip.textContent=id==='1'?(tem?'Tube 1 : tube témoin, il reste hors du bain. Cliquez pour annuler.':'Tube 1 : prélèvement de 2 mL du mélange initial. Cliquez pour le garder hors du bain (tube témoin).'):'Tube '+id+' : prélèvement de 2 mL du mélange initial'}tip.style.left=Math.min(e.clientX+14,innerWidth-230)+'px';tip.style.top=(e.clientY+14)+'px';tip.style.display='block'}else tip.style.display='none'}));
+  if(g&&(!started||(g.id==='tg0'&&!rows.some(r=>r.n===0)))){{const id=g.id.slice(2);tip.textContent=id==='0'?'Tube 0 : tube témoin (mélange initial non chauffé), à doser en dernier. Après le démarrage, cliquez dessus pour le prélever.':'Tube '+id+' : prélèvement de 2 mL du mélange initial'}tip.style.left=Math.min(e.clientX+14,innerWidth-230)+'px';tip.style.top=(e.clientY+14)+'px';tip.style.display='block'}else tip.style.display='none'}));
  ['mouseleave','pointerleave'].forEach(ev=>bt.addEventListener(ev,()=>tip.style.display='none'))}
 $('showt').onclick=()=>{const w=$('tw'),o=w.style.display==='none';w.style.display=o?'block':'none';$('showt').textContent=o?"📖 Masquer l'aperçu théorique":"📖 Afficher l'aperçu théorique"};
 $('showtg').onclick=()=>{tg=!tg;$('tgp').style.display=tg?'block':'none';$('showtg').textContent=tg?'📐 Masquer la tangente':'📐 Afficher la tangente';draw()};
@@ -222,7 +262,7 @@ function rend(){const fg=cs('--fg'),bd=cs('--bd'),c=g2,cx=200,v=tit?tit.cur:0;c.
  if(tit&&tit.emptied){c.fillStyle='rgba(255,255,255,.12)';c.beginPath();c.moveTo(80,170);c.lineTo(80,250);c.arc(91,250,11,Math.PI,0,true);c.lineTo(102,170);c.fill();c.stroke();c.beginPath();c.moveTo(77,170);c.lineTo(105,170);c.stroke();c.fillStyle=fg;c.fillText('Tube '+tit.n+' vidé',58,278)}
  $('vb').textContent=tit?v.toFixed(1):'—';if(tit){$('vbn').textContent='tube '+tit.n+' · prélevé à t = '+tit.t.toFixed(1)+' min';$('st').textContent=!tit.emptied?" Videz d'abord le tube dans l'erlenmeyer":tit.vb!=null?' Rose persistant : fin du dosage':(v/tit.veq>.9?' Virage imminent, goutte à goutte !':' Incolore')}else{$('vbn').textContent='Prélevez un tube pour commencer.';$('st').textContent=''}}
 function loop(ts){const dt=Math.min((ts-last)/1000,.1);last=ts;
- if(run){const d=dt*$('S').value/60;t+=d;x=step(x,p,d);$('tt').textContent=fmt(t);if(t>=120){run=false;$('go').textContent='▶ Démarrer'}}
+ if(run){const d=dt*$('S').value/60;t+=d;x=step(x,started?p:params(20),d);$('tt').textContent=fmt(t);if(t>=120){run=false;$('go').textContent='■ Fin du suivi (120 min)'}}
  if(flow&&tit&&tit.emptied&&tit.vb==null){add(3*dt,false);if(Math.random()<.5)drops.push(0)}
  drops=drops.map(y=>y+220*dt).filter(y=>y<64);ang+=dt*10;rend();hl();requestAnimationFrame(loop)}
 reset();requestAnimationFrame(loop);
