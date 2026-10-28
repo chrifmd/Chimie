@@ -59,6 +59,45 @@ font-weight: bold;
 color: rgb(16, 150, 207);
 margin-top: 30px;
 }
+
+/* ===== Optimisation mobile ===== */
+.sxhint,.step-btn{display:none}
+.slider-line{display:block}
+@media (max-width:700px){
+ body{padding:10px max(10px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
+ h1{font-size:17px;line-height:1.3}
+ .btn-home{padding:.6rem .9rem;margin-bottom:.8rem}
+ .card{padding:10px}
+ button{min-height:44px;padding:8px 14px}
+ .r{gap:8px}
+ .tp-top{padding:10px 12px}
+ select{font-size:16px;min-height:42px}
+ .fg>*{min-width:0}
+ .sx{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:6px}
+ .sx>svg{min-width:560px}
+ .sxhint{display:block;margin:0 0 4px}
+ #lcd{font-size:22px}
+ .tubes{flex-wrap:wrap;gap:10px}
+ .tube{width:34px;height:60px}.tube b{font-size:12px}
+ .ctrl{padding:14px;gap:14px}
+ label{font-size:14px}
+ input[type=checkbox]{width:22px;height:22px}
+ .sc>table{min-width:480px}
+ th,td{padding:4px 6px}
+ #tgp label{min-width:0!important;width:100%}
+ #tgp .r{gap:10px}
+ #csh{width:100%;height:auto;white-space:normal;line-height:1.3}
+ .ctrl label:not([style]){display:block}
+ .ctrl label:not([style])>.slider-line{margin-top:2px}
+ label:has(>input[type=checkbox]){flex-direction:row;align-items:center;gap:8px}
+
+ input[type=range]{height:6px;margin:12px 0}
+ input[type=range]::-webkit-slider-thumb{width:28px;height:28px;margin-top:-11px}
+ input[type=range]::-moz-range-thumb{width:28px;height:28px}
+ .slider-line{display:flex;align-items:center;gap:12px}.slider-line>input{flex:1;min-width:0}
+ .step-btn{display:inline-flex;align-items:center;justify-content:center;flex:none;width:40px;min-height:40px;height:40px;padding:0;font-size:20px;line-height:1;color:inherit;background:transparent;border:1px solid #b9b7ae;border-radius:6px;cursor:pointer}
+ .step-btn:active{border-color:var(--ac)}.step-btn:disabled{opacity:.4}
+}
 </style></head><body>
     <a class="btn-home" href="https://simphysique.blogspot.com/">← Retour au site SimPhysique</a>
 <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><h1>TP : estérification de l'acide éthanoïque par l'éthanol</h1><button class="g" id="help" style="color:inherit;white-space:nowrap">❓ Aide</button></div>
@@ -83,8 +122,8 @@ margin-top: 30px;
 <li>À des instants variés, sortir un tube, le plonger dans l'eau glacée (la réaction est bloquée), le vider dans un erlenmeyer avec de l'eau distillée glacée et de la phénolphtaléine, puis rincer le tube.</li>
 <li>Doser l'acide restant par NaOH 1 mol/L jusqu'au rose persistant et noter V<sub>B</sub>.</li>
 <li>Calculer n(ester) = n₀ − C<sub>B</sub>·V<sub>B</sub> et tracer n(ester) = f(t).</li></ol></div><div id="prep"><h2>Préparation du mélange</h2>
-<svg id="pv" viewBox="0 0 690 195" style="width:100%;max-width:690px;color:var(--fg)"></svg>
-<div class="r" style="justify-content:center;gap:10px"><button class="o" id="pb"></button><small id="pst"></small></div></div><svg id="bath" viewBox="0 -150 690 406" style="width:100%;color:var(--fg)"></svg><div class="r" style="justify-content:center;gap:8px"><b>t (min:s)</b><div id="lcd" title="Chronomètre"><span id="tt">00:00</span></div><button id="go">▶ Démarrer</button><button class="g" id="rs">↺ Reset</button><button class="o" id="samp">🧪 Prélever un tube</button><button class="o" id="vid">⤵ Vider le tube</button></div></div></div>
+<div class="sx"><svg id="pv" viewBox="0 0 690 195" style="width:100%;max-width:690px;color:var(--fg)"></svg></div>
+<div class="r" style="justify-content:center;gap:10px"><button class="o" id="pb"></button><small id="pst"></small></div></div><small class="sxhint">↔ Faites glisser horizontalement pour voir tout le montage.</small><div class="sx"><svg id="bath" viewBox="0 -150 690 406" style="width:100%;color:var(--fg)"></svg></div><div class="r" style="justify-content:center;gap:8px"><b>t (min:s)</b><div id="lcd" title="Chronomètre"><span id="tt">00:00</span></div><button id="go">▶ Démarrer</button><button class="g" id="rs">↺ Reset</button><button class="o" id="samp">🧪 Prélever un tube</button><button class="o" id="vid">⤵ Vider le tube</button></div></div></div>
 
 <div class="main">
 <div class="card">
@@ -215,8 +254,8 @@ function tangent(g,X,Y,m,W,H){const t0=+$('t0').value,D=+$('dtt').value,mes=$('t
  g.beginPath();g.arc(X(t0),Y(x0),5,0,7);g.fill();g.restore();
  g.font='12px sans-serif';g.fillText('Δt',X(t0+D/2)-6,Y(x0)+14);g.fillText('Δn',X(t0+D)+5,Math.max(20,Y(x0+sl*D/2)));
  $('tgr').innerHTML=(mes?'<small>Tangente à la courbe lissée (orange) tracée au plus près des points mesurés.</small><br>':'')+`t = ${t0} min ; n(ester) = ${x0.toFixed(2)} mmol<br>Pente de la tangente = Δn/Δt = ${(sl*D).toFixed(2)} mmol / ${D} min = <b>${sl.toFixed(3)} mmol/min</b><br>Vitesse volumique v = (1/V)·dx/dt = ${sl.toFixed(3)} mmol/min ÷ 2 mL = <b>${(sl/2).toFixed(3)} mol·L⁻¹·min⁻¹</b>`}
-function draw(){const c=$('cv'),g=c.getContext('2d'),W=c.width,H=c.height,fg=cs('--fg'),ac=cs('--ac');
- g.clearRect(0,0,W,H);const m=40,ym=Math.min(p.na,p.nb)*1.05,X=v=>m+v/120*(W-m-10),Y=v=>H-25-v/ym*(H-40);
+function draw(){const c=$('cv');fitCv(c);const g=c.getContext('2d'),k=c._k||1,W=c.width/k,H=c.height/k,fg=cs('--fg'),ac=cs('--ac');
+ g.setTransform(k,0,0,k,0,0);g.clearRect(0,0,W,H);const m=40,ym=Math.min(p.na,p.nb)*1.05,X=v=>m+v/120*(W-m-10),Y=v=>H-25-v/ym*(H-40);
  g.strokeStyle=g.fillStyle=fg;g.globalAlpha=.5;g.font='12px sans-serif';g.beginPath();g.moveTo(m,10);g.lineTo(m,H-25);g.lineTo(W-10,H-25);g.stroke();
  for(let v=0;v<=120;v+=20)g.fillText(v,X(v)-6,H-8);for(let i=0;i<=4;i++){const v=ym*i/4;g.fillText(v.toFixed(0),4,Y(v)+4)}
  g.globalAlpha=1;g.setLineDash([4,4]);g.strokeStyle=ac;g.beginPath();cur.forEach((q,i)=>i?g.lineTo(X(q[0]),Y(q[1])):g.moveTo(X(q[0]),Y(q[1])));g.stroke();
@@ -266,4 +305,28 @@ function loop(ts){const dt=Math.min((ts-last)/1000,.1);last=ts;
  if(flow&&tit&&tit.emptied&&tit.vb==null){add(3*dt,false);if(Math.random()<.5)drops.push(0)}
  drops=drops.map(y=>y+220*dt).filter(y=>y<64);ang+=dt*10;rend();hl();requestAnimationFrame(loop)}
 reset();requestAnimationFrame(loop);
+
+// Graphe lisible sur mobile : résolution adaptée à la largeur réelle (texte non écrasé) et nette sur écran haute densité
+function fitCv(c){
+  if(!window.matchMedia('(max-width:700px)').matches){if(c._k){c._k=0;c._w=0;c.width=800;c.height=260;c.style.height=''}return}
+  const cw=Math.round(c.clientWidth);if(!cw)return;
+  const k=Math.min(window.devicePixelRatio||1,3),H=260;
+  if(c._k!==k||c._w!==cw){c._k=k;c._w=cw;c.width=Math.round(cw*k);c.height=H*k;c.style.height=H+'px'}
+}
+window.addEventListener('resize',()=>draw());
+
+// Réglage fin sans clavier : boutons − / + autour des curseurs (visibles sur mobile uniquement)
+document.querySelectorAll('.ctrl input[type=range], #tgp input[type=range]').forEach(inp=>{
+  const line=document.createElement('div');line.className='slider-line';
+  inp.parentNode.insertBefore(line,inp);
+  const mk=(txt,dir,lab)=>{const b=document.createElement('button');b.type='button';b.className='step-btn';b.textContent=txt;b.setAttribute('aria-label',lab);
+    b.addEventListener('click',()=>{if(inp.disabled)return;const mn=+inp.min,mx=+inp.max,st=+inp.step||1;
+      if(!inp.hasAttribute('step')&&(mx-mn)/st>200)inp.value=Math.max(mn,Math.min(mx,+inp.value+dir*(mx-mn)/100));else dir<0?inp.stepDown():inp.stepUp();
+      inp.dispatchEvent(new Event('input',{bubbles:true}))});
+    return b};
+  const bm=mk('−',-1,'Diminuer'),bp=mk('+',1,'Augmenter');
+  line.append(bm,inp,bp);
+  const sync=()=>{bm.disabled=bp.disabled=inp.disabled};sync();
+  new MutationObserver(sync).observe(inp,{attributes:true,attributeFilter:['disabled']});
+});
 </script></body></html>

@@ -67,6 +67,45 @@ button:disabled{opacity:.45;cursor:not-allowed}
   border-radius:8px;padding:7px 28px 7px 10px;cursor:pointer;max-width:100%}
 .tp-top select:hover,.tp-top select:focus{border-color:var(--tp-ac);outline:none}
 @media (max-width:560px){.tp-top .tp-main{font-size:18px;letter-spacing:.1em}.tp-top .tp-pick{width:100%;flex-wrap:wrap}.tp-top select{flex:1;min-width:0}}
+
+/* ===== Optimisation mobile ===== */
+.sxhint,.step-btn{display:none}
+.slider-line{display:block}
+@media (max-width:700px){
+ body{padding:10px max(10px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
+ h1{font-size:17px;line-height:1.3}
+ .btn-home{padding:.6rem .9rem;margin-bottom:.8rem}
+ .card{padding:10px}
+ button{min-height:44px;padding:8px 14px}
+ .r{gap:8px}
+ .tp-top{padding:10px 12px}
+ select{font-size:16px;min-height:42px}
+ .fg>*{min-width:0}
+ .sx{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:6px}
+ .sx>svg{min-width:560px}
+ .sxhint{display:block;margin:0 0 4px}
+ #lcd{font-size:22px}
+ .tubes{flex-wrap:wrap;gap:10px}
+ .tube{width:34px;height:60px}.tube b{font-size:12px}
+ .ctrl{padding:14px;gap:14px}
+ label{font-size:14px}
+ input[type=checkbox]{width:22px;height:22px}
+ .sc>table{min-width:480px}
+ th,td{padding:4px 6px}
+ #tgp label{min-width:0!important;width:100%}
+ #tgp .r{gap:10px}
+ #csh{width:100%;height:auto;white-space:normal;line-height:1.3}
+ .ctrl label:not([style]){display:block}
+ .ctrl label:not([style])>.slider-line{margin-top:2px}
+ label:has(>input[type=checkbox]){flex-direction:row;align-items:center;gap:8px}
+
+ input[type=range]{height:6px;margin:12px 0}
+ input[type=range]::-webkit-slider-thumb{width:28px;height:28px;margin-top:-11px}
+ input[type=range]::-moz-range-thumb{width:28px;height:28px}
+ .slider-line{display:flex;align-items:center;gap:12px}.slider-line>input{flex:1;min-width:0}
+ .step-btn{display:inline-flex;align-items:center;justify-content:center;flex:none;width:40px;min-height:40px;height:40px;padding:0;font-size:20px;line-height:1;color:inherit;background:transparent;border:1px solid #b9b7ae;border-radius:6px;cursor:pointer}
+ .step-btn:active{border-color:var(--ac)}.step-btn:disabled{opacity:.4}
+}
 </style></head><body>
 <header class="tp-top">
   <h1 class="tp-main">CINÉTIQUE CHIMIQUE</h1>
@@ -96,7 +135,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 <li>À t = 0, verser S₂ dans le bécher (V total = 60 mL), puis répartir aussitôt le mélange dans 10 erlenmeyers contenant chacun 5 mL. La réaction se poursuit à température ambiante.</li>
 <li>À des instants variés, plonger un erlenmeyer dans l'eau glacée (la réaction est bloquée), puis ajouter environ 40 mL d'eau glacée.</li>
 <li>Doser le diiode par Na₂S₂O₃ (C₃ = 1,0·10⁻² mol/L) jusqu'à décoloration de l'empois et noter V₃.</li>
-<li>Calculer x = 12 × C₃V₃ / 2 = 6·C₃·V₃ (quantité de I₂ formé dans les 60 mL) et tracer x = f(t).</li></ol></div><svg id="bath" viewBox="0 10 690 250" style="width:100%;color:var(--fg)"></svg><div class="r" style="justify-content:center;gap:8px"><b>t (min:s)</b><div id="lcd" title="Chronomètre"><span id="tt">00:00</span></div><button id="go">▶ Démarrer</button><button class="g" id="rs">↺ Reset</button><button class="o" id="samp">🧊 Bloquer un erlenmeyer</button><button class="o" id="vid">⤵ Ajouter l'eau glacée et doser</button></div></div></div>
+<li>Calculer x = 12 × C₃V₃ / 2 = 6·C₃·V₃ (quantité de I₂ formé dans les 60 mL) et tracer x = f(t).</li></ol></div><small class="sxhint">↔ Faites glisser horizontalement pour voir tout le montage.</small><div class="sx"><svg id="bath" viewBox="0 10 690 250" style="width:100%;color:var(--fg)"></svg></div><div class="r" style="justify-content:center;gap:8px"><b>t (min:s)</b><div id="lcd" title="Chronomètre"><span id="tt">00:00</span></div><button id="go">▶ Démarrer</button><button class="g" id="rs">↺ Reset</button><button class="o" id="samp">🧊 Bloquer un erlenmeyer</button><button class="o" id="vid">⤵ Ajouter l'eau glacée et doser</button></div></div></div>
 
 <div class="main">
 <div class="card">
@@ -216,8 +255,8 @@ function tangent(g,X,Y,m,W,H){const t0=+$('t0').value,D=+$('dtt').value,mes=$('t
  g.beginPath();g.arc(X(t0),Y(x0),5,0,7);g.fill();g.restore();
  g.font='12px sans-serif';g.fillText('Δt',X(t0+D/2)-6,Y(x0)+14);g.fillText('Δn',X(t0+D)+5,Math.max(20,Y(x0+sl*D/2)));
  $('tgr').innerHTML=(mes?'<small>Tangente à la courbe lissée (orange) tracée au plus près des points mesurés.</small><br>':'')+`t = ${t0} min ; x = ${x0.toFixed(3)} mmol<br>Pente de la tangente = Δn/Δt = ${(sl*D).toFixed(3)} mmol / ${D} min = <b>${sl.toFixed(3)} mmol/min</b><br>Vitesse volumique v = (1/V)·dx/dt = ${sl.toFixed(3)} mmol/min ÷ 60 mL = <b>${(sl/60).toFixed(4)} mol·L⁻¹·min⁻¹</b>`}
-function draw(){const c=$('cv'),g=c.getContext('2d'),W=c.width,H=c.height,fg=cs('--fg'),ac=cs('--ac');
- g.clearRect(0,0,W,H);const m=40,ym=Math.max(xeq(p),...saved.filter(s=>s.on).map(s=>s.xm))*1.1,X=v=>m+v/30*(W-m-10),Y=v=>H-25-v/ym*(H-40);
+function draw(){const c=$('cv');fitCv(c);const g=c.getContext('2d'),k=c._k||1,W=c.width/k,H=c.height/k,fg=cs('--fg'),ac=cs('--ac');
+ g.setTransform(k,0,0,k,0,0);g.clearRect(0,0,W,H);const m=40,ym=Math.max(xeq(p),...saved.filter(s=>s.on).map(s=>s.xm))*1.1,X=v=>m+v/30*(W-m-10),Y=v=>H-25-v/ym*(H-40);
  g.strokeStyle=g.fillStyle=fg;g.globalAlpha=.5;g.font='12px sans-serif';g.beginPath();g.moveTo(m,10);g.lineTo(m,H-25);g.lineTo(W-10,H-25);g.stroke();
  for(let v=0;v<=30;v+=5)g.fillText(v,X(v)-6,H-8);for(let i=0;i<=4;i++){const v=ym*i/4;g.fillText(v.toFixed(2),2,Y(v)+4)}
  g.globalAlpha=1;g.setLineDash([4,4]);g.strokeStyle=ac;g.beginPath();cur.forEach((q,i)=>i?g.lineTo(X(q[0]),Y(q[1])):g.moveTo(X(q[0]),Y(q[1])));g.stroke();
@@ -274,10 +313,10 @@ $('help').onclick=()=>{const h=$('hp'),o=h.style.display==='none';h.style.displa
 $('showt').onclick=()=>{const w=$('tw'),o=w.style.display==='none';w.style.display=o?'block':'none';$('showt').textContent=o?"📖 Masquer l'aperçu théorique":"📖 Afficher l'aperçu théorique"};
 $('showtg').onclick=()=>{tg=!tg;$('tgp').style.display=tg?'block':'none';$('showtg').textContent=tg?'📐 Masquer la tangente':'📐 Afficher la tangente';draw()};
 ['t0','dtt'].forEach(i=>$(i).oninput=draw);
-$('curon').onchange=e=>{curOn=e.target.checked;$('curbox').style.display=curOn?'block':'none';drag=null;draw()};
+$('curon').onchange=e=>{curOn=e.target.checked;$('cv').style.touchAction=curOn?'none':'auto';$('curbox').style.display=curOn?'block':'none';drag=null;draw()};
 $('csh').onclick=()=>{const tt=tOfX(srcArr(),xeq(p)/2);cA=0;if(tt!==null)cB=tt;draw()};
-{const cv=$('cv');cv.style.cursor='crosshair';cv.style.touchAction='none';
- const tOf=e=>{const r=cv.getBoundingClientRect(),m=40;return Math.max(0,Math.min(30,((e.clientX-r.left)*cv.width/(r.width||1)-m)/(cv.width-m-10)*30))};
+{const cv=$('cv');cv.style.cursor='crosshair';cv.style.touchAction='auto';
+ const tOf=e=>{const r=cv.getBoundingClientRect(),m=40;return Math.max(0,Math.min(30,((e.clientX-r.left)*(cv.width/(cv._k||1))/(r.width||1)-m)/((cv.width/(cv._k||1))-m-10)*30))};
  const tipOn=e=>{const tt=tOf(e),xv=xOfT(srcArr(),tt),tip=$('tip');let h='t = '+tt.toFixed(1)+' min<br>x = '+(xv!==null?xv.toFixed(3)+' mmol':'—');saved.filter(q=>q.on).forEach(q=>{const v=lerpSaved(q,tt);h+='<br><span style="color:'+q.col+'">■</span> '+(v!==null?v.toFixed(3):'—')+' mmol'});tip.innerHTML=h;tip.style.left=Math.min(e.clientX+14,innerWidth-200)+'px';tip.style.top=(e.clientY+14)+'px';tip.style.display='block'};
  cv.addEventListener('pointerdown',e=>{if(!curOn)return;const tt=tOf(e);drag=Math.abs(tt-cA)<=Math.abs(tt-cB)?'A':'B';if(drag==='A')cA=tt;else cB=tt;try{cv.setPointerCapture(e.pointerId)}catch(_){}hov=tt;draw();tipOn(e)});
  cv.addEventListener('pointermove',e=>{const tt=tOf(e);hov=tt;if(drag==='A')cA=tt;else if(drag==='B')cB=tt;draw();tipOn(e)});
@@ -312,4 +351,28 @@ $('savec').onclick=()=>{const m=$('svm');if(pts.length<2){m.textContent='Dosez a
  saved.push({pts:pts.map(q=>q.slice()),xm:xeq(p),col,on:true,label:'Courbe '+(++nSave)+' : '+$('T').value+' °C, C₁ = '+(+$('R').value).toFixed(2)+', C₂ = '+(+$('Q').value).toFixed(3)+' mol/L, '+($('cat').checked?'avec catalyseur Fe³⁺':'sans catalyseur')+' ('+pts.length+' points)'});
  renderLeg();m.textContent='Courbe enregistrée ✓ Elle reste affichée après « Réinitialiser » pour comparer.';if($('cw').style.display==='none')$('showc').click();else draw()};
 reset();renderLeg();requestAnimationFrame(loop);
+
+// Graphe lisible sur mobile : résolution adaptée à la largeur réelle (texte non écrasé) et nette sur écran haute densité
+function fitCv(c){
+  if(!window.matchMedia('(max-width:700px)').matches){if(c._k){c._k=0;c._w=0;c.width=800;c.height=260;c.style.height=''}return}
+  const cw=Math.round(c.clientWidth);if(!cw)return;
+  const k=Math.min(window.devicePixelRatio||1,3),H=260;
+  if(c._k!==k||c._w!==cw){c._k=k;c._w=cw;c.width=Math.round(cw*k);c.height=H*k;c.style.height=H+'px'}
+}
+window.addEventListener('resize',()=>draw());
+
+// Réglage fin sans clavier : boutons − / + autour des curseurs (visibles sur mobile uniquement)
+document.querySelectorAll('.ctrl input[type=range], #tgp input[type=range]').forEach(inp=>{
+  const line=document.createElement('div');line.className='slider-line';
+  inp.parentNode.insertBefore(line,inp);
+  const mk=(txt,dir,lab)=>{const b=document.createElement('button');b.type='button';b.className='step-btn';b.textContent=txt;b.setAttribute('aria-label',lab);
+    b.addEventListener('click',()=>{if(inp.disabled)return;const mn=+inp.min,mx=+inp.max,st=+inp.step||1;
+      if(!inp.hasAttribute('step')&&(mx-mn)/st>200)inp.value=Math.max(mn,Math.min(mx,+inp.value+dir*(mx-mn)/100));else dir<0?inp.stepDown():inp.stepUp();
+      inp.dispatchEvent(new Event('input',{bubbles:true}))});
+    return b};
+  const bm=mk('−',-1,'Diminuer'),bp=mk('+',1,'Augmenter');
+  line.append(bm,inp,bp);
+  const sync=()=>{bm.disabled=bp.disabled=inp.disabled};sync();
+  new MutationObserver(sync).observe(inp,{attributes:true,attributeFilter:['disabled']});
+});
 </script></body></html>
