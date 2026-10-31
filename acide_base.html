@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force des Acides et des Bases - Cours & Simulator Interactive</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- MathJax CDN pour le rendu des formules -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border-radius: 0.75rem;
+        }
+        .tab-btn.active {
+            border-bottom: 3px solid #2563eb;
+            color: #2563eb;
+            font-weight: 600;
+        }
+         .signature {
+    text-align: center; font-family: "Arial"; font-size: 12px; font-weight: bold;
+    color: rgb(1, 48, 66); margin-top: 30px;
+  }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+
+    <!-- En-tête / Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-blue-100 rounded-lg text-blue-600">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800">SimPhysique : Force des Acides et des Bases</h1>
+                    <p class="text-xs text-slate-500">Module interactif d'apprentissage (Ka, pKa, pH, $\tau$)</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="flex space-x-2 sm:space-x-6 text-sm font-medium text-slate-600 overflow-x-auto w-full sm:w-auto">
+                <button onclick="switchTab('cours')" id="tab-cours" class="tab-btn active py-2 px-3 whitespace-nowrap">📚 Cours théorique</button>
+                <button onclick="switchTab('simulator')" id="tab-simulator" class="tab-btn py-2 px-3 whitespace-nowrap">🧪 Simulateur & Tableaux</button>
+                <button onclick="switchTab('compare')" id="tab-compare" class="tab-btn py-2 px-3 whitespace-nowrap">⚖️ Comparateur</button>
+                <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn py-2 px-3 whitespace-nowrap">📝 Quiz Autocorrectif</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+
+        <!-- SECTION 1: COURS THÉORIQUE -->
+        <section id="section-cours" class="space-y-6">
+            <div class="card p-6">
+                <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">1. Définition et Équilibre de Dissociation</h2>
+                <p class="text-slate-600 mb-4">
+                    La force d'un acide ou d'une base mesure sa capacité à échanger un proton $H^+$ avec l'eau. Pour un acide $AH$ réagissant avec l'eau, la réaction d'équilibre s'écrit :
+                </p>
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded text-center text-lg font-medium text-blue-900 my-4">
+                    $$AH_{(aq)} + H_2O_{(l)} \rightleftharpoons A^-_{(aq)} + H_3O^+_{(aq)}$$
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <h3 class="font-bold text-blue-700 mb-2">La Constante d'Acidité ($K_a$)</h3>
+                        <p class="text-sm text-slate-600">
+                            C'est la constante d'équilibre associée à la réaction de dissociation de l'acide dans l'eau :
+                        </p>
+                        <div class="text-center my-3 text-slate-800">
+                            $$K_a = \frac{[A^-]_{\text{eq}} \cdot [H_3O^+]_{\text{eq}}}{[AH]_{\text{eq}} \cdot C^\circ}$$
+                        </div>
+                        <p class="text-xs text-slate-500 italic">Plus $K_a$ est grand, plus l'acide est dissocié et donc plus il est fort.</p>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <h3 class="font-bold text-blue-700 mb-2">Le $pK_a$</h3>
+                        <p class="text-sm text-slate-600">
+                            Pour manipuler des grandeurs plus simples, on utilise le potentiel d'acidité :
+                        </p>
+                        <div class="text-center my-3 text-slate-800">
+                            $$pK_a = -\log_{10}(K_a) \quad \iff \quad K_a = 10^{-pK_a}$$
+                        </div>
+                        <p class="text-xs text-slate-500 italic">Attention : En raison du signe moins, plus le $pK_a$ est petit, plus l'acide est fort !</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-6">
+                <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">2. Échelle de Force et Diagramme de Prédominance</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="p-4 rounded-lg bg-red-50 border border-red-200">
+                        <h4 class="font-bold text-red-700">Acide Fort</h4>
+                        <p class="text-sm text-slate-600 mt-1">$pK_a < 0$ ($K_a > 1$)</p>
+                        <p class="text-xs text-slate-500 mt-2">Dissociation totale dans l'eau ($\tau = 1$). Ex : $HCl$.</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-amber-50 border border-amber-200">
+                        <h4 class="font-bold text-amber-700">Acide Faible</h4>
+                        <p class="text-sm text-slate-600 mt-1">$0 < pK_a < 14$</p>
+                        <p class="text-xs text-slate-500 mt-2">Dissociation partielle ($\tau < 1$). Ex : $CH_3COOH$.</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-emerald-50 border border-emerald-200">
+                        <h4 class="font-bold text-emerald-700">Indifférent / Base Forte</h4>
+                        <p class="text-sm text-slate-600 mt-1">$pK_a > 14$</p>
+                        <p class="text-xs text-slate-500 mt-2">L'acide ne réagit pas. Sa base conjuguée est forte.</p>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-bold text-slate-700 mt-6 mb-2">Diagramme de prédominance</h3>
+                <p class="text-sm text-slate-600 mb-4">
+                    La relation entre le $pH$ de la solution et le $pK_a$ du couple s'écrit :
+                    $$pH = pK_a + \log_{10}\left(\frac{[A^-]_{\text{eq}}}{[AH]_{\text{eq}}}\right)$$
+                </p>
+                <div class="relative w-full h-20 bg-slate-100 rounded-lg border border-slate-300 flex items-center px-4 overflow-hidden">
+                    <div class="w-1/2 h-full bg-blue-100 border-r-2 border-dashed border-blue-600 flex items-center justify-center font-bold text-blue-800 text-sm sm:text-base">
+                        Prédominance de l'acide [AH] ($pH < pK_a$)
+                    </div>
+                    <div class="w-1/2 h-full bg-emerald-100 flex items-center justify-center font-bold text-emerald-800 text-sm sm:text-base">
+                        Prédominance de la base [A⁻] ($pH > pK_a$)
+                    </div>
+                    <div class="absolute left-1/2 top-0 bottom-0 transform -translate-x-1/2 bg-blue-600 text-white text-xs px-2 py-1 rounded-b shadow font-semibold">
+                        pH = pKa ([AH] = [A⁻])
+                    </div>
+                </div>
+                <div class="signature"> cours interactif comparaison des forces des acides et des bases   - chrif.md@gmail.com -  2026</div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: SIMULATEUR INTERACTIF -->
+        <section id="section-simulator" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Contrôles -->
+                <div class="card p-6 lg:col-span-1 space-y-5">
+                    <h2 class="text-lg font-bold text-slate-800 border-b border-slate-100 pb-2">Paramètres de la Solution</h2>
+                    
+                    <!-- Selection d'acides préconfigurés -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Acide préconfiguré</label>
+                        <select id="preset-select" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="custom">Personnalisé</option>
+                            <option value="ethanoic" selected>Acide éthanoïque (CH3COOH - pKa 4.76)</option>
+                            <option value="methanoic">Acide méthanoïque (HCOOH - pKa 3.75)</option>
+                            <option value="benzoic">Acide benzoïque (C6H5COOH - pKa 4.20)</option>
+                            <option value="ammonium">Ion ammonium (NH4+ - pKa 9.25)</option>
+                            <option value="hcl">Acide chlorhydrique (HCl - pKa -6.0)</option>
+                        </select>
+                    </div>
+
+                    <!-- Slider pKa -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-sm font-medium text-slate-700">pK<sub>a</sub> du couple</label>
+                            <span id="pka-val" class="text-sm font-bold text-blue-600">4.76</span>
+                        </div>
+                        <input id="pka-slider" type="range" min="-1" max="14" step="0.05" value="4.76" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                        <div class="flex justify-between text-xs text-slate-400 mt-1">
+                            <span>-1 (Fort)</span>
+                            <span>7</span>
+                            <span>14 (Très faible)</span>
+                        </div>
+                    </div>
+
+                    <!-- Slider Concentration -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-sm font-medium text-slate-700">Concentration C<sub>0</sub> (mol/L)</label>
+                            <span id="c0-val" class="text-sm font-bold text-blue-600">0.010</span>
+                        </div>
+                        <input id="c0-slider" type="range" min="-4" max="0" step="0.1" value="-2" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                        <div class="flex justify-between text-xs text-slate-400 mt-1">
+                            <span>10⁻⁴ M</span>
+                            <span>10⁻² M</span>
+                            <span>1 M</span>
+                        </div>
+                    </div>
+
+                    <!-- Volume -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Volume de solution V (L)</label>
+                        <input id="vol-input" type="number" min="0.1" max="10" step="0.1" value="1.0" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg p-2.5">
+                    </div>
+
+                    <!-- Indicateurs clés -->
+                    <div class="pt-4 border-t border-slate-100 space-y-3">
+                        <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                            <span class="text-sm font-medium text-blue-900">pH calculé :</span>
+                            <span id="res-ph" class="text-xl font-bold text-blue-600">3.38</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-emerald-50 rounded-lg">
+                            <span class="text-sm font-medium text-emerald-900">Taux d'avancement (τ) :</span>
+                            <span id="res-tau" class="text-xl font-bold text-emerald-600">4.17 %</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-slate-100 rounded-lg">
+                            <span class="text-sm font-medium text-slate-700">K<sub>a</sub> :</span>
+                            <span id="res-ka" class="text-sm font-mono font-bold text-slate-800">1.74 × 10⁻⁵</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Résultats & Tableau d'avancement -->
+                <div class="card p-6 lg:col-span-2 space-y-6">
+                    <h2 class="text-lg font-bold text-slate-800 border-b border-slate-100 pb-2">Tableau d'avancement en temps réel</h2>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-600">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+                                <tr>
+                                    <th class="px-3 py-3">État</th>
+                                    <th class="px-3 py-3">Avancement (mol)</th>
+                                    <th class="px-3 py-3">AH</th>
+                                    <th class="px-3 py-3">+ H₂O</th>
+                                    <th class="px-3 py-3">⇌ A⁻</th>
+                                    <th class="px-3 py-3">+ H₃O⁺</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 font-mono">
+                                <tr>
+                                    <td class="px-3 py-3 font-semibold">Initial</td>
+                                    <td class="px-3 py-3">0</td>
+                                    <td id="tb-ni-ah" class="px-3 py-3">1.00e-2</td>
+                                    <td class="px-3 py-3 text-slate-400">Excès</td>
+                                    <td class="px-3 py-3">0</td>
+                                    <td class="px-3 py-3">0</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-3 py-3 font-semibold">En cours</td>
+                                    <td class="px-3 py-3">x</td>
+                                    <td class="px-3 py-3">n₀ - x</td>
+                                    <td class="px-3 py-3 text-slate-400">Excès</td>
+                                    <td class="px-3 py-3">x</td>
+                                    <td class="px-3 py-3">x</td>
+                                </tr>
+                                <tr class="bg-blue-50/50 font-bold">
+                                    <td class="px-3 py-3 text-blue-700">Équilibre</td>
+                                    <td id="tb-xf" class="px-3 py-3 text-blue-600">4.17e-4</td>
+                                    <td id="tb-nf-ah" class="px-3 py-3">9.58e-3</td>
+                                    <td class="px-3 py-3 text-slate-400">Excès</td>
+                                    <td id="tb-nf-a" class="px-3 py-3 text-emerald-600">4.17e-4</td>
+                                    <td id="tb-nf-h3o" class="px-3 py-3 text-blue-600">4.17e-4</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Diagramme de spéciation -->
+                    <div class="pt-4 border-t border-slate-100">
+                        <h3 class="text-md font-bold text-slate-800 mb-2">Courbe de spéciation du couple en fonction du pH</h3>
+                        <div class="h-64">
+                            <canvas id="speciationChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+
+        <!-- SECTION 3: COMPARATEUR -->
+        <section id="section-compare" class="hidden space-y-6">
+            <div class="card p-6">
+                <h2 class="text-xl font-bold text-slate-800 mb-2">Comparaison directe de deux acides</h2>
+                <p class="text-sm text-slate-600 mb-6">Comparez la dissociation de deux acides différents introduits à la même concentration molaire initiale.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Acide 1 -->
+                    <div class="p-5 rounded-lg border-2 border-blue-200 bg-blue-50/30 space-y-4">
+                        <h3 class="font-bold text-blue-800 text-lg">Acide 1</h3>
+                        <div>
+                            <label class="text-sm font-medium text-slate-700">pK<sub>a</sub> Acide 1 : <span id="cmp-pka1-val" class="font-bold text-blue-600">3.75</span></label>
+                            <input id="cmp-pka1" type="range" min="0" max="14" step="0.1" value="3.75" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer mt-1">
+                        </div>
+                        <div class="space-y-2 pt-2 text-sm border-t border-blue-100">
+                            <div class="flex justify-between"><span>Nom d'exemple :</span> <span class="font-semibold text-slate-700">Acide méthanoïque</span></div>
+                            <div class="flex justify-between"><span>K<sub>a</sub> :</span> <span id="cmp-ka1" class="font-mono">1.78 × 10⁻⁴</span></div>
+                            <div class="flex justify-between"><span>pH (à C = 0.01 M) :</span> <span id="cmp-ph1" class="font-bold text-blue-600">2.91</span></div>
+                            <div class="flex justify-between"><span>Taux de dissociation (τ) :</span> <span id="cmp-tau1" class="font-bold text-emerald-600">12.28 %</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Acide 2 -->
+                    <div class="p-5 rounded-lg border-2 border-purple-200 bg-purple-50/30 space-y-4">
+                        <h3 class="font-bold text-purple-800 text-lg">Acide 2</h3>
+                        <div>
+                            <label class="text-sm font-medium text-slate-700">pK<sub>a</sub> Acide 2 : <span id="cmp-pka2-val" class="font-bold text-purple-600">4.76</span></label>
+                            <input id="cmp-pka2" type="range" min="0" max="14" step="0.1" value="4.76" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer mt-1">
+                        </div>
+                        <div class="space-y-2 pt-2 text-sm border-t border-purple-100">
+                            <div class="flex justify-between"><span>Nom d'exemple :</span> <span class="font-semibold text-slate-700">Acide éthanoïque</span></div>
+                            <div class="flex justify-between"><span>K<sub>a</sub> :</span> <span id="cmp-ka2" class="font-mono">1.74 × 10⁻⁵</span></div>
+                            <div class="flex justify-between"><span>pH (à C = 0.01 M) :</span> <span id="cmp-ph2" class="font-bold text-purple-600">3.38</span></div>
+                            <div class="flex justify-between"><span>Taux de dissociation (τ) :</span> <span id="cmp-tau2" class="font-bold text-emerald-600">4.17 %</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Synthèse comparative -->
+                <div class="mt-6 p-4 rounded-lg bg-slate-100 border border-slate-200">
+                    <h4 class="font-bold text-slate-800 mb-1">💡 Conclusion comparative :</h4>
+                    <p id="cmp-conclusion" class="text-sm text-slate-600">
+                        L'acide 1 possède un pKa inférieur (3.75 < 4.76), sa constante d'acidité Ka est donc plus grande. 
+                        Par conséquent, à concentration égale, l'acide 1 se dissocie davantage dans l'eau (τ = 12.28% vs 4.17%) et produit un pH plus acide (2.91 vs 3.38).
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: QUIZ -->
+        <section id="section-quiz" class="hidden space-y-6">
+            <div class="card p-6">
+                <h2 class="text-xl font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Quiz de Validation des Connaissances</h2>
+                
+                <form id="quiz-form" class="space-y-6">
+                    <!-- Q1 -->
+                    <div class="space-y-2">
+                        <p class="font-semibold text-slate-800">1. Entre deux acides, quel est le plus fort ?</p>
+                        <div class="space-y-1 text-sm text-slate-700">
+                            <label class="flex items-center space-x-2"><input type="radio" name="q1" value="a"> <span>Celui qui a le $pK_a$ le plus grand</span></label>
+                            <label class="flex items-center space-x-2"><input type="radio" name="q1" value="b"> <span>Celui qui a le $pK_a$ le plus petit</span></label>
+                            <label class="flex items-center space-x-2"><input type="radio" name="q1" value="c"> <span>Le $pK_a$ ne permet pas de comparer la force des acides</span></label>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="space-y-2 pt-4 border-t border-slate-100">
+                        <p class="font-semibold text-slate-800">2. Si le $pH$ d'une solution est égal au $pK_a$ du couple $AH/A^-$, quelle est la situation à l'équilibre ?</p>
+                        <div class="space-y-1 text-sm text-slate-700">
+                            <label class="flex items-center space-x-2"><input type="radio" name="q2" value="a"> <span>$[AH] > [A^-]$</span></label>
+                            <label class="flex items-center space-x-2"><input type="radio" name="q2" value="b"> <span>$[AH] < [A^-]$</span></label>
+                            <label class="flex items-center space-x-2"><input type="radio" name="q2" value="c"> <span>$[AH] = [A^-]$</span></label>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="space-y-2 pt-4 border-t border-slate-100">
+                        <p class="font-semibold text-slate-800">3. Quelle est la relation exacte entre $K_a$ et $pK_a$ ?</p>
+                        <div class="space-y-1 text-sm text-slate-700">
+                            <label class="flex items-center space-x-2"><input type="radio" name="q3" value="a"> <span>$pK_a = 10^{-K_a}$</span></label>
+                            <label class="flex items-center space-x-2"><input type="radio" name="q3" value="b"> <span>$pK_a = -\log_{10}(K_a)$</span></label>
+                            <label class="flex items-center space-x-2"><input type="radio" name="q3" value="c"> <span>$K_a = -\log_{10}(pK_a)$</span></label>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="checkQuiz()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm transition">
+                        Vérifier mes réponses
+                    </button>
+                </form>
+
+                <div id="quiz-result" class="hidden mt-6 p-4 rounded-lg bg-slate-50 border border-slate-200"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- JS Logic -->
+    <script>
+        // Navigation par onglets
+        function switchTab(tabId) {
+            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(`section-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            
+            if (tabId === 'simulator' && speciationChart) {
+                speciationChart.resize();
+            }
+        }
+
+        // Calculs Chimiques Exacts
+        function computeEquilibrium(pKa, C0) {
+            const Ka = Math.pow(10, -pKa);
+            // Équation : [H3O+]^2 + Ka*[H3O+] - Ka*C0 = 0
+            const a = 1;
+            const b = Ka;
+            const c = -Ka * C0;
+            
+            const delta = b * b - 4 * a * c;
+            const h3o = (-b + Math.sqrt(delta)) / (2 * a);
+            
+            const pH = -Math.log10(h3o);
+            const tau = (h3o / C0) * 100;
+            
+            return { Ka, h3o, pH, tau };
+        }
+
+        // Elements Simulateur
+        const pkaSlider = document.getElementById('pka-slider');
+        const c0Slider = document.getElementById('c0-slider');
+        const volInput = document.getElementById('vol-input');
+        const presetSelect = document.getElementById('preset-select');
+
+        let speciationChart;
+
+        function initChart() {
+            const ctx = document.getElementById('speciationChart').getContext('2d');
+            speciationChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        { label: '% AH (Acide)', data: [], borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true },
+                        { label: '% A⁻ (Base)', data: [], borderColor: '#059669', backgroundColor: 'rgba(5, 150, 105, 0.1)', fill: true }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: 'pH de la solution' } },
+                        y: { title: { display: true, text: 'Pourcentage (%)' }, min: 0, max: 100 }
+                    }
+                }
+            });
+        }
+
+        function updateChart(pKa) {
+            const labels = [];
+            const dataAH = [];
+            const dataA = [];
+            
+            for (let ph = 0; ph <= 14; ph += 0.5) {
+                labels.push(ph.toFixed(1));
+                const ratio = Math.pow(10, ph - pKa);
+                const pctA = (ratio / (1 + ratio)) * 100;
+                const pctAH = 100 - pctA;
+                
+                dataAH.push(pctAH.toFixed(1));
+                dataA.push(pctA.toFixed(1));
+            }
+            
+            speciationChart.data.labels = labels;
+            speciationChart.data.datasets[0].data = dataAH;
+            speciationChart.data.datasets[1].data = dataA;
+            speciationChart.update();
+        }
+
+        function updateSimulator() {
+            const pKa = parseFloat(pkaSlider.value);
+            const logC0 = parseFloat(c0Slider.value);
+            const C0 = Math.pow(10, logC0);
+            const V = parseFloat(volInput.value) || 1.0;
+
+            document.getElementById('pka-val').innerText = pKa.toFixed(2);
+            document.getElementById('c0-val').innerText = C0 >= 0.01 ? C0.toFixed(3) : C0.toExponential(2);
+
+            const { Ka, h3o, pH, tau } = computeEquilibrium(pKa, C0);
+
+            document.getElementById('res-ph').innerText = pH.toFixed(2);
+            document.getElementById('res-tau').innerText = tau.toFixed(2) + " %";
+            document.getElementById('res-ka').innerText = Ka.toExponential(2);
+
+            // Tableau d'avancement
+            const n0 = C0 * V;
+            const xf = h3o * V;
+            const nfAH = n0 - xf;
+
+            document.getElementById('tb-ni-ah').innerText = n0.toExponential(2);
+            document.getElementById('tb-xf').innerText = xf.toExponential(2);
+            document.getElementById('tb-nf-ah').innerText = nfAH > 0 ? nfAH.toExponential(2) : "0.00";
+            document.getElementById('tb-nf-a').innerText = xf.toExponential(2);
+            document.getElementById('tb-nf-h3o').innerText = xf.toExponential(2);
+
+            updateChart(pKa);
+        }
+
+        // Preset Listener
+        presetSelect.addEventListener('change', (e) => {
+            const val = e.target.value;
+            if (val === 'ethanoic') pkaSlider.value = 4.76;
+            if (val === 'methanoic') pkaSlider.value = 3.75;
+            if (val === 'benzoic') pkaSlider.value = 4.20;
+            if (val === 'ammonium') pkaSlider.value = 9.25;
+            if (val === 'hcl') pkaSlider.value = -1.0;
+            updateSimulator();
+        });
+
+        pkaSlider.addEventListener('input', () => { presetSelect.value = 'custom'; updateSimulator(); });
+        c0Slider.addEventListener('input', updateSimulator);
+        volInput.addEventListener('input', updateSimulator);
+
+        // Comparateur
+        const cmpPka1 = document.getElementById('cmp-pka1');
+        const cmpPka2 = document.getElementById('cmp-pka2');
+
+        function updateCompare() {
+            const pKa1 = parseFloat(cmpPka1.value);
+            const pKa2 = parseFloat(cmpPka2.value);
+            const C0 = 0.01;
+
+            document.getElementById('cmp-pka1-val').innerText = pKa1.toFixed(2);
+            document.getElementById('cmp-pka2-val').innerText = pKa2.toFixed(2);
+
+            const res1 = computeEquilibrium(pKa1, C0);
+            const res2 = computeEquilibrium(pKa2, C0);
+
+            document.getElementById('cmp-ka1').innerText = res1.Ka.toExponential(2);
+            document.getElementById('cmp-ph1').innerText = res1.pH.toFixed(2);
+            document.getElementById('cmp-tau1').innerText = res1.tau.toFixed(2) + " %";
+
+            document.getElementById('cmp-ka2').innerText = res2.Ka.toExponential(2);
+            document.getElementById('cmp-ph2').innerText = res2.pH.toFixed(2);
+            document.getElementById('cmp-tau2').innerText = res2.tau.toFixed(2) + " %";
+
+            const conclusion = document.getElementById('cmp-conclusion');
+            if (pKa1 < pKa2) {
+                conclusion.innerText = `L'Acide 1 possède un pKa inférieur (${pKa1.toFixed(2)} < ${pKa2.toFixed(2)}). Il est donc PLUS FORT que l'Acide 2. À concentration égale, il produit plus d'ions H3O+, donnant un pH plus faible (${res1.pH.toFixed(2)} vs ${res2.pH.toFixed(2)}) et un taux de dissociation supérieur (${res1.tau.toFixed(1)}% vs ${res2.tau.toFixed(1)}%).`;
+            } else if (pKa2 < pKa1) {
+                conclusion.innerText = `L'Acide 2 possède un pKa inférieur (${pKa2.toFixed(2)} < ${pKa1.toFixed(2)}). Il est donc PLUS FORT que l'Acide 1. À concentration égale, il produit plus d'ions H3O+, donnant un pH plus faible (${res2.pH.toFixed(2)} vs ${res1.pH.toFixed(2)}) et un taux de dissociation supérieur (${res2.tau.toFixed(1)}% vs ${res1.tau.toFixed(1)}%).`;
+            } else {
+                conclusion.innerText = `Les deux acides ont le même pKa (${pKa1.toFixed(2)}). Ils ont une force strictement identique.`;
+            }
+        }
+
+        cmpPka1.addEventListener('input', updateCompare);
+        cmpPka2.addEventListener('input', updateCompare);
+
+        // Quiz Logic
+        function checkQuiz() {
+            const form = document.getElementById('quiz-form');
+            let score = 0;
+            
+            if (form.q1.value === 'b') score++;
+            if (form.q2.value === 'c') score++;
+            if (form.q3.value === 'b') score++;
+
+            const resDiv = document.getElementById('quiz-result');
+            resDiv.classList.remove('hidden');
+            resDiv.innerHTML = `
+                <h4 class="font-bold text-slate-800">Résultat du Quiz : ${score} / 3</h4>
+                <p class="text-sm text-slate-600 mt-1">
+                    ${score === 3 ? '🎉 Excellent ! Vous avez parfaitement assimilé la relation entre Ka, pKa et la force des couples.' : '💡 Relisez la section cours puis réessayez pour corriger vos erreurs.'}
+                </p>
+            `;
+        }
+
+        // Init Page
+        window.addEventListener('DOMContentLoaded', () => {
+            initChart();
+            updateSimulator();
+            updateCompare();
+        });
+    </script>
+</body>
+</html>
