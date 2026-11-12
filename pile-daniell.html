@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Piles électrochimiques – La pile Daniell : cours interactif</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#F2F6F8;--panel:#FFFFFF;--ink:#14252E;--mute:#52666F;--line:#C9D6DC;--zn:#6F8FA3;--cu:#B8672C;--cusol:#6EB6E4;--znsol:#DCE9EF;--glass:#E6EEF2;--e:#F2B705;--k:#D1495B;--no3:#2E8B6E;--ok:#1E7A4F;--ko:#B3261E;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0F1B22;--panel:#16262F;--ink:#E4EEF2;--mute:#9DB1BB;--line:#2D4552;--zn:#8CA9BA;--cu:#E08D4E;--cusol:#2F78A8;--znsol:#1E3541;--glass:#223843;--ok:#59C48C;--ko:#FF8A80}}
+:root[data-theme="dark"]{--bg:#0F1B22;--panel:#16262F;--ink:#E4EEF2;--mute:#9DB1BB;--line:#2D4552;--zn:#8CA9BA;--cu:#E08D4E;--cusol:#2F78A8;--znsol:#1E3541;--glass:#223843;--ok:#59C48C;--ko:#FF8A80}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Instrument Sans",system-ui,sans-serif}
+.wrap{max-width:920px;margin:0 auto;padding:20px 16px 48px}
+h2.pg{font-size:clamp(28px,5vw,42px);line-height:1.1;margin:8px 0 6px;letter-spacing:-.02em}
+.lead{color:var(--mute);margin:0 0 18px;max-width:62ch}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px}
+svg{width:100%;height:auto;display:block}
+svg text{font-family:inherit;fill:var(--ink)}
+.ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:8px 6px 4px}
+button{font:inherit;cursor:pointer;color:var(--ink)}
+.btn{background:var(--ink);color:var(--bg);border:0;border-radius:8px;padding:8px 14px;font-weight:600}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:400}
+label.t{display:inline-flex;align-items:center;gap:6px;font-size:14px;cursor:pointer}
+.leg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--mute);padding:4px 6px 2px}
+.leg i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:-1px;border:1px solid var(--ink)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:22px 0 0}
+.tab{background:transparent;border:1px solid var(--line);border-radius:8px 8px 0 0;padding:9px 14px;font-weight:600;font-size:15px}
+.tab[aria-selected="true"]{background:var(--panel);border-bottom-color:var(--panel);box-shadow:inset 0 3px 0 var(--cu)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:0 12px 12px 12px;padding:18px 20px;margin-top:-1px}
+.panel[hidden]{display:none}
+.panel h2{font-size:20px;margin:0 0 8px}
+.panel p{margin:8px 0;max-width:68ch}
+.eq{background:var(--bg);border:1px solid var(--line);border-left:4px solid var(--cu);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:17px;overflow-x:auto;white-space:nowrap}
+.eq small{display:block;color:var(--mute);font-size:13px;white-space:normal}
+.eq.red{border-left-color:#3E8ED0}
+.eq.bil{border-left-color:var(--ink)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.q{border-top:1px solid var(--line);padding:12px 0}
+.q:first-of-type{border-top:0}
+.q p{font-weight:600;margin:0 0 8px}
+.opt{display:block;width:100%;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:5px 0}
+.opt.ok{border-color:var(--ok);color:var(--ok);font-weight:600}
+.opt.ko{border-color:var(--ko);color:var(--ko)}
+.why{font-size:14px;color:var(--mute);margin-top:4px;min-height:1px}
+button:focus-visible,input:focus-visible,g[role=button]:focus-visible{outline:3px solid var(--cu);outline-offset:2px}
+
+/* ---- bandeau commun « Piles électrochimiques » ---- */
+.pe-head{box-sizing:border-box;background:#2a2a7a;color:#fff;border-radius:6px;padding:14px 18px;font-family:Arial,Helvetica,sans-serif}
+.pe-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px;margin:0 0 10px}
+.pe-back{flex:none;padding:6px 12px;border:1px solid rgba(255,255,255,.75);border-radius:6px;color:#fff;text-decoration:none;font-size:13px;font-weight:600;line-height:1.3;white-space:nowrap}
+.pe-back:hover{background:rgba(255,255,255,.2)}
+.pe-back:focus-visible{outline:3px solid #ffd54a;outline-offset:2px}
+.pe-title{margin:0;font-size:clamp(20px,4vw,28px);line-height:1.15;font-weight:700;letter-spacing:.01em;color:#fff}
+.pe-nav{display:flex;flex-wrap:wrap;gap:6px}
+.pe-nav a{padding:7px 14px;border-radius:6px;background:rgba(255,255,255,.14);color:#fff;text-decoration:none;font-size:14px;font-weight:600;line-height:1.3}
+.pe-nav a:hover{background:rgba(255,255,255,.28)}
+.pe-nav a[aria-current="page"]{background:#fff;color:#2a2a7a}
+.pe-nav a:focus-visible{outline:3px solid #ffd54a;outline-offset:2px}
+@media print{.pe-nav,.pe-back{display:none}.pe-head{background:none;color:#000;padding:0 0 8px}.pe-title{color:#000;margin:0}}
+.wrap .pe-head{margin-bottom:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="pe-head">
+<div class="pe-top"><h1 class="pe-title">Piles électrochimiques</h1><a class="pe-back" href="https://simphysique.tn/">← Retour à simphysique.tn</a></div>
+<nav class="pe-nav" aria-label="Pages du site"><a href="pile-daniell.html" aria-current="page">La pile Daniell</a><a href="index_pile.html">Influence des concentrations</a><a href="index_enh.html">Potentiel normal d’un couple</a></nav>
+</header>
+<h2 class="pg">La pile Daniell</h2>
+<p class="lead">Une pile transforme de l’énergie chimique en énergie électrique. Cliquez sur l’interrupteur K pour fermer le circuit, observez les électrons, les ions et le pont salin, puis parcourez les cinq onglets.</p>
+
+<div class="stage">
+<svg id="sc" viewBox="0 0 760 440" role="img" aria-label="Schéma animé de la pile Daniell : une électrode de zinc et une électrode de cuivre reliées par un fil, un interrupteur K, un ampèremètre, un résistor et un pont salin">
+  <g id="beakers">
+    <path id="lz" d="M91,240H299V370Q299,384 285,384H105Q91,384 91,370Z" fill="var(--znsol)"/>
+    <path id="lc" d="M461,240H669V370Q669,384 655,384H475Q461,384 461,370Z" fill="var(--cusol)" fill-opacity=".8"/>
+    <path d="M90,200V370Q90,385 105,385H285Q300,385 300,370V200M460,200V370Q460,385 475,385H655Q670,385 670,370V200" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+    <text x="195" y="374" text-anchor="middle" font-size="12" fill="var(--mute)" style="fill:var(--mute)">Zn²⁺ + SO₄²⁻ (incolore)</text>
+    <text x="565" y="374" text-anchor="middle" font-size="12" style="fill:var(--ink)">Cu²⁺ + SO₄²⁻ (bleue)</text>
+  </g>
+  <g id="bridge">
+    <path d="M262,330V172H498V330" fill="none" stroke="var(--ink)" stroke-width="26" stroke-linecap="butt" stroke-linejoin="round"/>
+    <path d="M262,330V172H498V330" fill="none" stroke="var(--glass)" stroke-width="21" stroke-linecap="butt" stroke-linejoin="round"/>
+    <text x="380" y="150" text-anchor="middle" font-size="14" font-weight="600">pont salin (K⁺, NO₃⁻)</text>
+  </g>
+  <rect id="pz" x="155" y="120" width="20" height="220" fill="var(--zn)" stroke="var(--ink)" stroke-width="1.5"/>
+  <rect id="pc" x="555" y="120" width="20" height="220" fill="var(--cu)" stroke="var(--ink)" stroke-width="1.5"/>
+  <text x="136" y="160" text-anchor="middle" font-size="16" font-weight="700">Zn</text>
+  <text x="594" y="160" text-anchor="middle" font-size="16" font-weight="700">Cu</text>
+  <g id="wire" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round">
+    <path d="M165,120V60H250M290,60H322M358,60H430M500,60H565V120"/>
+  </g>
+  <g id="sw" role="button" tabindex="0" aria-label="Interrupteur K" style="cursor:pointer">
+    <rect x="240" y="20" width="60" height="60" fill="transparent"/>
+    <path id="blade" d="M250,60L282,34" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <circle cx="250" cy="60" r="5" fill="var(--ink)"/><circle cx="290" cy="60" r="5" fill="var(--ink)"/>
+    <text x="270" y="100" text-anchor="middle" font-size="16" font-weight="700">K</text>
+  </g>
+  <g id="amm">
+    <circle cx="340" cy="60" r="18" fill="var(--panel)" stroke="var(--ink)" stroke-width="3"/>
+    <text x="340" y="67" text-anchor="middle" font-size="20" font-weight="700">A</text>
+    <text id="ird" x="340" y="100" text-anchor="middle" font-size="13" font-weight="600">I = 0,0 mA</text>
+  </g>
+  <g id="res">
+    <rect x="430" y="47" width="70" height="26" fill="var(--panel)" stroke="var(--ink)" stroke-width="3"/>
+    <text x="465" y="65" text-anchor="middle" font-size="13" font-weight="600">R = 50 Ω</text>
+  </g>
+  <g id="pol" font-weight="700" font-size="20">
+    <circle cx="140" cy="104" r="13" fill="var(--panel)" stroke="var(--ink)" stroke-width="2"/><text x="140" y="111" text-anchor="middle">−</text>
+    <circle cx="590" cy="104" r="13" fill="var(--panel)" stroke="var(--ink)" stroke-width="2"/><text x="590" y="111" text-anchor="middle">+</text>
+  </g>
+  <g id="rx" opacity="0" style="transition:opacity .4s">
+    <text x="195" y="412" text-anchor="middle" font-size="14" font-weight="700">Anode (−) : oxydation</text>
+    <text x="195" y="431" text-anchor="middle" font-size="14">Zn → Zn²⁺ + 2 e⁻</text>
+    <text x="565" y="412" text-anchor="middle" font-size="14" font-weight="700">Cathode (+) : réduction</text>
+    <text x="565" y="431" text-anchor="middle" font-size="14">Cu²⁺ + 2 e⁻ → Cu</text>
+  </g>
+  <g id="chg" opacity="0" font-weight="700" font-size="22">
+    <text x="215" y="300" text-anchor="middle" style="fill:var(--k)">+ + +</text>
+    <text x="620" y="300" text-anchor="middle" style="fill:var(--no3)">− − −</text>
+    <text x="380" y="235" text-anchor="middle" font-size="14" style="fill:var(--ko)">Sans pont salin, les charges s’accumulent : le courant s’arrête.</text>
+  </g>
+  <g id="parts"></g>
+</svg>
+<div class="ctl">
+  <button class="btn" id="bsw" aria-pressed="false">Fermer K</button>
+  <label class="t"><input type="checkbox" id="cb" checked> Pont salin</label>
+  <label class="t"><input type="checkbox" id="ce" checked> Électrons</label>
+  <label class="t"><input type="checkbox" id="ci" checked> Courant conventionnel</label>
+  <label class="t"><input type="checkbox" id="cn" checked> Ions</label>
+  <button class="btn ghost" id="brs">Remettre les électrodes à neuf</button>
+</div>
+<div class="leg" id="rdo" style="font-weight:600;color:var(--ink);font-size:14px"></div>
+<div class="leg"><span><i style="background:var(--e)"></i>électron e⁻</span><span><i style="background:var(--ink)"></i>sens du courant (flèches)</span><span><i style="background:var(--zn)"></i>Zn²⁺</span><span><i style="background:var(--cusol)"></i>Cu²⁺</span><span><i style="background:var(--k)"></i>K⁺ (cation)</span><span><i style="background:var(--no3)"></i>NO₃⁻ (anion)</span></div>
+</div>
+
+<div class="tabs" role="tablist" id="tabs"></div>
+
+<section class="panel" id="p1" role="tabpanel">
+<h2>Le schéma de la pile</h2>
+<p>Deux demi-piles sont reliées : une lame de <b>zinc</b> plongée dans une solution de sulfate de zinc, une lame de <b>cuivre</b> plongée dans une solution de sulfate de cuivre. Un <b>pont salin</b> relie les solutions et un circuit extérieur relie les électrodes : un interrupteur <b>K</b>, un <b>ampèremètre</b> (A) et un <b>résistor</b> (R) en série. K est ouvert au départ : cliquez sur K pour fermer le circuit.</p>
+<div class="eq">Zn(s) | Zn²⁺(aq) || Cu²⁺(aq) | Cu(s)<small>Symbole de la pile. « | » : séparation entre deux phases. « || » : pont salin. Le pôle − (anode) s’écrit à gauche, le pôle + (cathode) à droite.</small></div>
+<div class="cols">
+<p><b>Couples redox</b><br>Zn²⁺/Zn : E° = −0,76 V<br>Cu²⁺/Cu : E° = +0,34 V</p>
+<p><b>Polarité</b><br>Le cuivre, de potentiel plus élevé, est le pôle +. Le zinc est le pôle −.</p>
+<p><b>Force électromotrice</b><br>E = E°(Cu²⁺/Cu) − E°(Zn²⁺/Zn) = 0,34 − (−0,76) = 1,10 V</p>
+</div>
+</section>
+
+<section class="panel" id="p2" role="tabpanel" hidden>
+<h2>Les équations quand la pile débite</h2>
+<div class="eq">Zn(s) → Zn²⁺(aq) + 2 e⁻<small>À l’anode (pôle −) : oxydation. Le zinc s’use.</small></div>
+<div class="eq red">Cu²⁺(aq) + 2 e⁻ → Cu(s)<small>À la cathode (pôle +) : réduction. Un dépôt de cuivre se forme, la solution bleue s’éclaircit.</small></div>
+<div class="eq bil">Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s)<small>Équation de la réaction spontanée (bilan).</small></div>
+<h2 style="margin-top:18px">Loi de Nernst et constante d’équilibre K</h2>
+<div class="eq">π = [Zn²⁺] / [Cu²⁺]<small>Fonction des concentrations (le solide n’y figure pas). Au départ, avec des solutions de même concentration, π<sub>i</sub> = 1.</small></div>
+<p><b>Étape 1 : Nernst pour chaque électrode</b> (à 25 °C, n = 2)</p>
+<div class="eq">E(Cu²⁺/Cu) = E°(Cu²⁺/Cu) + (0,059 / 2) · log [Cu²⁺]<br>E(Zn²⁺/Zn) = E°(Zn²⁺/Zn) + (0,059 / 2) · log [Zn²⁺]</div>
+<p><b>Étape 2 : fem de la pile</b> E = E(pôle +) − E(pôle −)</p>
+<div class="eq">E = E° − (0,059 / 2) · log ( [Zn²⁺] / [Cu²⁺] ) = E° − (0,059 / 2) · log π<small>avec E° = E°(Cu²⁺/Cu) − E°(Zn²⁺/Zn) = 1,10 V.</small></div>
+<p><b>Étape 3 : à l’équilibre</b>, la pile ne débite plus : E = 0 et π = π<sub>éq</sub> = K.</p>
+<div class="eq bil">0 = E° − (0,059 / 2) · log K ⇒ log K = 2E° / 0,059<br>K = 10<sup>2E°/0,059</sup> = 10<sup>(2 × 1,10 / 0,059)</sup> ≈ 10<sup>37</sup> (environ 2 × 10³⁷)</div>
+<p><b>Sens d’évolution spontanée :</b> si π<sub>i</sub> &lt; K, alors E &gt; 0 : le système évolue dans le sens direct (Zn + Cu²⁺ → Zn²⁺ + Cu). Au cours du fonctionnement, [Zn²⁺] augmente et [Cu²⁺] diminue : π croît, donc E diminue (l’ampèremètre affiche une intensité I = E / R de plus en plus faible).</p>
+<h2 style="margin-top:18px">Quand la pile est-elle usée ?</h2>
+<div class="eq">Pile usée ⇔ équilibre chimique atteint ⇔ π = K ⇔ E = 0 ⇔ I = 0<small>L’ampèremètre indique 0 alors que K est fermé : la pile ne débite plus.</small></div>
+<p>Comme K ≈ 10³⁷ est très grand, la réaction est quasi totale : l’équilibre n’est atteint que lorsque le <b>réactif limitant</b> est pratiquement épuisé, soit la lame de zinc entièrement consommée, soit les ions Cu²⁺ presque tous réduits (alors [Cu²⁺] = [Zn²⁺] / K, une valeur infime).</p>
+<p><b>Mnémotechnique :</b> l’<b>a</b>node subit une <b>o</b>xydation (deux voyelles), la <b>c</b>athode subit une <b>r</b>éduction (deux consonnes).</p>
+</section>
+
+<section class="panel" id="p3" role="tabpanel" hidden>
+<h2>Sens des électrons et du courant</h2>
+<div class="cols">
+<p><b>Électrons (circuit extérieur)</b><br>Ils sont libérés à l’anode Zn (−) et circulent dans le fil, à travers l’ampèremètre et le résistor, jusqu’à la cathode Cu (+).</p>
+<p><b>Courant conventionnel</b><br>Par convention, il circule en sens inverse des électrons : il sort par la borne +, donc de Cu vers Zn dans le circuit extérieur.</p>
+<p><b>Dans la solution</b><br>Les électrons ne traversent jamais les solutions. Le courant y est porté par les ions : les cations vont vers la cathode, les anions vers l’anode. Le courant interne va de Zn vers Cu.</p>
+</div>
+<div class="eq">Extérieur : e⁻ de Zn vers Cu ; courant I de Cu vers Zn<small>Le circuit forme une boucle : courant de Zn vers Cu dans la pile, de Cu vers Zn à l’extérieur.</small></div>
+<p>Essayez de décocher « Électrons » ou « Courant conventionnel » pour comparer les deux sens.</p>
+</section>
+
+<section class="panel" id="p4" role="tabpanel" hidden>
+<h2>Le rôle du pont salin</h2>
+<p>Le pont est rempli d’un gel contenant un électrolyte inerte (ici nitrate de potassium, KNO₃). Il joue trois rôles.</p>
+<div class="cols">
+<p><b>1. Fermer le circuit</b><br>Il permet le passage du courant par migration des ions entre les deux demi-piles.</p>
+<p><b>2. Garder l’électroneutralité</b><br>À l’anode, Zn²⁺ s’accumule (excès de +) : des anions NO₃⁻ arrivent. À la cathode, Cu²⁺ disparaît (excès de −) : des cations K⁺ arrivent.</p>
+<p><b>3. Séparer les solutions</b><br>Zn et Cu²⁺ ne sont pas en contact direct : les électrons doivent passer par le fil, donc par le résistor.</p>
+</div>
+<p><b>Expérience :</b> fermez K, puis décochez « Pont salin ». Les charges s’accumulent et le courant s’arrête presque aussitôt. Les ions du pont (K⁺ et NO₃⁻) ne réagissent pas aux électrodes.</p>
+</section>
+
+<section class="panel" id="p5" role="tabpanel" hidden>
+<h2>Testez-vous</h2>
+<div id="quiz"></div>
+</section>
+</div>
+
+<script>
+(function(){
+var NS="http://www.w3.org/2000/svg",$=function(i){return document.getElementById(i)};
+var closed=false,act=0,cons=0,step=0,ph=0;
+var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+function path(pts){var L=[0];for(var i=1;i<pts.length;i++)L.push(L[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));return{p:pts,L:L,T:L[L.length-1]}}
+function at(P,s){s=((s%P.T)+P.T)%P.T;var i=1;while(P.L[i]<s)i++;var f=(s-P.L[i-1])/(P.L[i]-P.L[i-1]),a=P.p[i-1],b=P.p[i];return{x:a[0]+(b[0]-a[0])*f,y:a[1]+(b[1]-a[1])*f,a:Math.atan2(b[1]-a[1],b[0]-a[0])}}
+var W=path([[165,120],[165,60],[565,60],[565,120]]),B=path([[262,330],[262,172],[498,172],[498,330]]);
+var parts=$("parts");
+function mk(t,a,par){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);(par||parts).appendChild(e);return e}
+var el=[],ar=[],ka=[],na=[],zn=[],cu=[];
+for(var i=0;i<16;i++)el.push(mk("circle",{r:4.5,fill:"var(--e)",stroke:"var(--ink)","stroke-width":1}));
+for(i=0;i<5;i++)ar.push(mk("polygon",{points:"-7,-6 7,0 -7,6",fill:"var(--ink)"}));
+function ion(fill,txt){var g=mk("g",{});mk("circle",{r:7,fill:fill,stroke:"var(--ink)","stroke-width":1},g);var t=mk("text",{"text-anchor":"middle",y:3.5,"font-size":10,"font-weight":700,style:"fill:#fff"},g);t.textContent=txt;return g}
+for(i=0;i<7;i++){ka.push(ion("var(--k)","+"));na.push(ion("var(--no3)","−"))}
+for(i=0;i<12;i++){zn.push({g:ion("var(--zn)","2+"),on:0});cu.push({g:ion("#3E8ED0","2+"),on:0})}
+zn.concat(cu).forEach(function(o){o.g.setAttribute("opacity",0)});
+
+function show(c,v){c.forEach(function(e){(e.g||e).setAttribute("display",v?"inline":"none")})}
+function frame(){
+  var bridge=$("cb").checked,tgt=(closed&&bridge)?1:0;
+  act+=(tgt-act)*(reduce?.03:.05);if(Math.abs(tgt-act)<.002)act=tgt;
+  var sp=(reduce?.8:1.7)*act;ph+=sp;
+  var sE=$("ce").checked,sI=$("ci").checked,sN=$("cn").checked;
+  el.forEach(function(e,i){var p=at(W,ph+i*W.T/16);e.setAttribute("cx",p.x);e.setAttribute("cy",p.y);e.setAttribute("opacity",sE?Math.min(1,act*2):0)});
+  ar.forEach(function(e,i){var p=at(W,W.T-((ph*.8+i*W.T/5)%W.T));var x=p.x,y=p.y;if(y>62)x+=x<400?-16:16;else y-=16;e.setAttribute("transform","translate("+x+","+y+") rotate("+((p.a+Math.PI)*180/Math.PI)+")");e.setAttribute("opacity",sI?Math.min(1,act*2):0)});
+  ka.forEach(function(g,i){var p=at(B,ph*.45+i*B.T/7),n=-5;g.setAttribute("transform","translate("+(p.x-Math.sin(p.a)*n)+","+(p.y+Math.cos(p.a)*n)+")");g.setAttribute("opacity",sN?Math.min(1,act*2):0)});
+  na.forEach(function(g,i){var p=at(B,B.T-((ph*.45+i*B.T/7+40)%B.T)),n=5;g.setAttribute("transform","translate("+(p.x+Math.sin(p.a)*n)+","+(p.y-Math.cos(p.a)*n)+")");g.setAttribute("opacity",sN?Math.min(1,act*2):0)});
+  zn.forEach(function(o){if(!o.on){if(sN&&Math.random()<.03*act){o.on=1;o.x=180;o.y=250+Math.random()*100;o.vx=.25+Math.random()*.35;o.l=1}}else{o.x+=o.vx;o.l-=.008;if(o.l<=0)o.on=0}
+    o.g.setAttribute("opacity",o.on?Math.max(0,o.l):0);o.g.setAttribute("transform","translate("+(o.x||0)+","+(o.y||0)+")")});
+  cu.forEach(function(o){if(!o.on){if(sN&&Math.random()<.03*act){o.on=1;o.x=480+Math.random()*60;if(Math.random()<.5)o.x=585+Math.random()*60;o.y=250+Math.random()*100;o.vx=o.x<565?.45:-.45;o.l=1}}else{o.x+=o.vx;if(Math.abs(o.x-565)<14)o.on=0}
+    o.g.setAttribute("opacity",o.on?.95:0);o.g.setAttribute("transform","translate("+(o.x||0)+","+(o.y||0)+")")});
+  cons=Math.min(1,cons+act*.0005);
+  var wz=20-12*cons,wc=20+8*cons;
+  $("pz").setAttribute("x",165-wz/2);$("pz").setAttribute("width",wz);
+  $("pc").setAttribute("x",565-wc/2);$("pc").setAttribute("width",wc);
+  $("lc").setAttribute("fill-opacity",.8-.45*cons);
+  var xx=cons*.98,pi=(1+xx)/(1-xx),E=1.10-0.0295*Math.log10(pi),I=E/50*1000*act,f=function(v,d){return v.toFixed(d).replace(".",",")};$("ird").textContent="I = "+f(I,1)+" mA";$("rdo").textContent="π = "+f(pi,2)+"  ·  E = "+f(E,3)+" V  ·  I = "+f(I,1)+" mA (R = 50 Ω)";
+  $("chg").setAttribute("opacity",(closed&&!bridge)?Math.max(.15,1-act):0);
+  requestAnimationFrame(frame)
+}
+function setClosed(v){closed=v;$("blade").setAttribute("d",v?"M250,60L290,60":"M250,60L282,34");$("bsw").textContent=v?"Ouvrir K":"Fermer K";$("bsw").setAttribute("aria-pressed",v)}
+$("bsw").onclick=function(){setClosed(!closed)};
+$("sw").onclick=function(){setClosed(!closed)};
+$("sw").onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();setClosed(!closed)}};
+$("cb").onchange=function(){$("bridge").setAttribute("display",this.checked?"inline":"none")};
+$("brs").onclick=function(){cons=0};
+
+var names=["Schéma","Équations","Électrons et courant","Pont salin","Quiz"],tabs=$("tabs");
+function sel(n){step=n;for(var i=0;i<5;i++){$("p"+(i+1)).hidden=i!==n;tabs.children[i].setAttribute("aria-selected",i===n)}
+  $("rx").setAttribute("opacity",(n===1||n===2)?1:0);
+  if(n===2){$("ce").checked=$("ci").checked=true}
+  if(n===3){$("cn").checked=true}}
+names.forEach(function(t,i){var b=document.createElement("button");b.className="tab";b.setAttribute("role","tab");b.textContent=t;b.onclick=function(){sel(i)};tabs.appendChild(b)});
+
+var Q=[
+["Quel est le pôle négatif de la pile Daniell ?",["L’électrode de zinc","L’électrode de cuivre"],0,"Le zinc s’oxyde (Zn → Zn²⁺ + 2 e⁻) : il libère les électrons, c’est l’anode, pôle −."],
+["Dans le fil, les électrons circulent…",["de Zn vers Cu","de Cu vers Zn"],0,"Ils partent de l’anode (Zn) vers la cathode (Cu). Le courant conventionnel va en sens inverse."],
+["Dans le pont salin, les ions NO₃⁻ migrent vers…",["l’électrode de zinc (anode)","l’électrode de cuivre (cathode)"],0,"À l’anode, Zn²⁺ s’accumule : les anions viennent compenser cet excès de charges positives."],
+["Quand on retire le pont salin, que se passe-t-il ?",["Le courant s’arrête","Le courant augmente","Rien ne change"],0,"Le circuit est coupé dans les solutions et l’électroneutralité n’est plus assurée : la réaction cesse."],
+["π_i = 1 et K ≈ 10³⁷. Dans quel sens évolue la pile ?",["Sens direct : Zn + Cu²⁺ → Zn²⁺ + Cu","Sens inverse : Zn²⁺ + Cu → Zn + Cu²⁺"],0,"π_i < K, donc E > 0 : le système évolue spontanément dans le sens direct."],
+["Quand la pile est-elle usée ?",["Quand π = K : E = 0 et l’ampèremètre indique 0","Quand π = 1","Quand E atteint 1,10 V"],0,"À l’équilibre, E = E° − (0,059/2) log K = 0 : plus de courant, la pile est usée."]];
+var qz=$("quiz");
+Q.forEach(function(q){var d=document.createElement("div");d.className="q";var p=document.createElement("p");p.textContent=q[0];d.appendChild(p);var w=document.createElement("div");w.className="why";
+  q[1].forEach(function(o,j){var b=document.createElement("button");b.className="opt";b.textContent=o;b.onclick=function(){var bs=d.querySelectorAll(".opt");bs.forEach(function(x){x.classList.remove("ok","ko")});b.classList.add(j===q[2]?"ok":"ko");w.textContent=(j===q[2]?"Exact. ":"Pas tout à fait. ")+q[3]};d.appendChild(b)});
+  d.appendChild(w);qz.appendChild(d)});
+setClosed(false);sel(0);requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
