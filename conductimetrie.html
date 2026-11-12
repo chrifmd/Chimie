@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP : Dosage conductimétrique par étalonnage — Sérum physiologique</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Fallback CSS natif complet et variables de thème */
+        :root {
+            --bg-page: #f8fafc;
+            --text-main: #0f172a;
+            --primary: #0284c7;
+            --primary-dark: #0369a1;
+            --slate-dark: #0f172a;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .font-mono-tech {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+        /* Animations d'oscillation sinusoïdale des ions à 500 Hz */
+        @keyframes ionOscillateRight {
+            0%, 100% { transform: translateX(-4px); }
+            50% { transform: translateX(4px); }
+        }
+        @keyframes ionOscillateLeft {
+            0%, 100% { transform: translateX(4px); }
+            50% { transform: translateX(-4px); }
+        }
+        .ion-na {
+            animation: ionOscillateRight 0.28s infinite ease-in-out;
+        }
+        .ion-cl {
+            animation: ionOscillateLeft 0.28s infinite ease-in-out;
+        }
+        .ions-paused .ion-na,
+        .ions-paused .ion-cl {
+            animation-play-state: paused;
+        }
+        /* Barre de défilement masquée sur navigation mobile */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+          .signature {
+    text-align: center; font-family: "Arial"; font-size: 12px; font-weight: bold;
+    color: rgb(1, 48, 66); margin-top: 30px;
+  }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col overflow-x-hidden bg-slate-50 text-slate-900">
+
+    <!-- En-tête scientifique avec bouton retour vers simphysique.tn -->
+    <header class="bg-slate-900 text-white border-b border-slate-800 shadow-md">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+                <!-- Bouton retour vers simphysique.tn (hauteur minimale tactile 44px) -->
+                <a href="https://simphysique.tn" target="_top" rel="noopener noreferrer"
+                   class="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 min-h-[44px] rounded-xl bg-slate-800 hover:bg-sky-600 active:bg-sky-700 text-slate-100 hover:text-white border border-slate-700 hover:border-sky-400 text-xs sm:text-sm font-semibold shadow-sm transition-colors shrink-0"
+                   title="Retourner sur simphysique.tn">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    <span class="hidden sm:inline">Retour à simphysique.tn</span>
+                    <span class="sm:hidden">simphysique.tn</span>
+                </a>
+
+                <div class="min-w-0 flex-1">
+                    <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                        <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-sky-500/20 text-sky-300 border border-sky-500/30">TP Chimie </span>
+                        <span class="text-xs text-slate-400 hidden md:inline">Dosage par étalonnage</span>
+                    </div>
+                    <h1 class="text-sm sm:text-lg lg:text-xl font-bold tracking-tight mt-0.5 leading-snug">
+                        Dosage conductimétrique d'un sérum physiologique
+                    </h1>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 text-xs text-slate-300 bg-slate-800/90 px-3 py-2 rounded-xl border border-slate-700 self-start lg:self-auto shrink-0">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                <span>Chlorure de sodium (Na⁺ + Cl⁻) • 25 °C</span>
+            </div>
+        </div>
+
+        <!-- Navigation en 3 onglets interactifs -->
+        <nav class="bg-slate-800/70 border-t border-slate-700/80" aria-label="Étapes du TP">
+            <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+                <div class="flex md:grid md:grid-cols-3 gap-2 py-2 overflow-x-auto no-scrollbar snap-x">
+                    <button type="button" id="tab-btn-1" onclick="switchTab(1)"
+                            class="tab-btn min-w-[230px] md:min-w-0 min-h-[48px] snap-start flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-left transition-all bg-sky-600 text-white shadow-sm font-medium shrink-0 md:shrink">
+                        <span class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold shrink-0">1</span>
+                        <div class="min-w-0">
+                            <div class="text-xs sm:text-sm font-semibold leading-tight truncate">Préparation des étalons</div>
+                            <div class="text-[11px] text-sky-100 opacity-90 truncate">Dilution (S₀) → (S₁)…(S₆)</div>
+                        </div>
+                    </button>
+
+                    <button type="button" id="tab-btn-2" onclick="switchTab(2)"
+                            class="tab-btn min-w-[230px] md:min-w-0 min-h-[48px] snap-start flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-left transition-all text-slate-300 hover:bg-slate-700/60 font-medium shrink-0 md:shrink">
+                        <span class="w-7 h-7 rounded-full bg-slate-700 flex items-center justify-center text-sm font-bold shrink-0">2</span>
+                        <div class="min-w-0">
+                            <div class="text-xs sm:text-sm font-semibold leading-tight truncate">Mesures & Étalonnage</div>
+                            <div class="text-[11px] text-slate-400 truncate">Montage GBF et droite G = f(C)</div>
+                        </div>
+                    </button>
+
+                    <button type="button" id="tab-btn-3" onclick="switchTab(3)"
+                            class="tab-btn min-w-[230px] md:min-w-0 min-h-[48px] snap-start flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-left transition-all text-slate-300 hover:bg-slate-700/60 font-medium shrink-0 md:shrink">
+                        <span class="w-7 h-7 rounded-full bg-slate-700 flex items-center justify-center text-sm font-bold shrink-0">3</span>
+                        <div class="min-w-0">
+                            <div class="text-xs sm:text-sm font-semibold leading-tight truncate">Sérum physiologique</div>
+                            <div class="text-[11px] text-slate-400 truncate">Dilution 20×, projection & titre</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Zone de notifications non bloquantes (remplace alert) -->
+    <div id="toast-container" class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 z-50 flex flex-col gap-2 sm:max-w-sm pointer-events-none"></div>
+
+    <!-- Contenu Principal -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+
+        <!-- ===================================================================== -->
+        <!-- ONGLET 1 : PRÉPARATION DES SOLUTIONS ÉTALONS PAR DILUTION             -->
+        <!-- ===================================================================== -->
+        <section id="step-1" class="step-section space-y-5 sm:space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold text-slate-900 flex flex-wrap items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded-md bg-sky-100 text-sky-700 text-xs sm:text-sm font-mono-tech">II.1.a</span>
+                            Préparation des solutions étalons par dilution
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">
+                            Par dilution d'une solution mère <strong class="text-slate-800">(S₀)</strong> de chlorure de sodium de concentration molaire <strong class="text-sky-700 font-mono-tech">C₀ = 0,05 mol·L⁻¹</strong> (= 50 × 10⁻³ mol·L⁻¹), préparer un volume <strong class="text-sky-700 font-mono-tech">V = 100 mL</strong> de chacune des solutions filles <strong class="text-slate-800">(S₁)</strong> à <strong class="text-slate-800">(S₆)</strong>.
+                        </p>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 shrink-0">
+                        <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Conservation de la matière</div>
+                        <div class="text-xs sm:text-sm font-mono-tech font-bold text-slate-800 mt-0.5">C₀ · v = C · V  ⇒  v = (C · V) / C₀</div>
+                    </div>
+                </div>
+
+                <!-- Tableau interactif de calcul des volumes v(mL) -->
+                <div class="mt-4 sm:mt-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3">
+                        <span class="text-xs sm:text-sm font-semibold text-slate-700">
+                            1. Compléter le tableau des volumes <span class="font-mono-tech text-sky-700">v (mL)</span> à prélever de (S₀) :
+                        </span>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" onclick="checkDilutionTable()"
+                                    class="flex-1 sm:flex-none min-h-[44px] px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition flex items-center justify-center gap-1.5">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                Vérifier mes calculs
+                            </button>
+                            <button type="button" onclick="autoFillDilutionTable()"
+                                    class="flex-1 sm:flex-none min-h-[44px] px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold border border-slate-300 transition">
+                                Auto-compléter
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full min-w-[560px] text-xs sm:text-sm text-center border-collapse">
+                            <thead>
+                                <tr class="bg-slate-800 text-white">
+                                    <th class="py-2.5 sm:py-3 px-3 sm:px-4 text-left font-semibold border-r border-slate-700 w-44">Solution</th>
+                                    <th class="py-2.5 sm:py-3 px-2 font-semibold border-r border-slate-700">(S₁)</th>
+                                    <th class="py-2.5 sm:py-3 px-2 font-semibold border-r border-slate-700">(S₂)</th>
+                                    <th class="py-2.5 sm:py-3 px-2 font-semibold border-r border-slate-700">(S₃)</th>
+                                    <th class="py-2.5 sm:py-3 px-2 font-semibold border-r border-slate-700">(S₄)</th>
+                                    <th class="py-2.5 sm:py-3 px-2 font-semibold border-r border-slate-700">(S₅)</th>
+                                    <th class="py-2.5 sm:py-3 px-2 font-semibold">(S₆)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200">
+                                <tr class="bg-sky-50/70">
+                                    <td class="py-2.5 sm:py-3 px-3 sm:px-4 text-left font-semibold text-slate-800 border-r border-slate-200">C (10⁻³ mol·L⁻¹)</td>
+                                    <td class="py-2.5 sm:py-3 px-2 font-mono-tech font-semibold text-slate-700 border-r border-slate-200">1,0</td>
+                                    <td class="py-2.5 sm:py-3 px-2 font-mono-tech font-semibold text-slate-700 border-r border-slate-200">2,0</td>
+                                    <td class="py-2.5 sm:py-3 px-2 font-mono-tech font-semibold text-slate-700 border-r border-slate-200">3,0</td>
+                                    <td class="py-2.5 sm:py-3 px-2 font-mono-tech font-semibold text-slate-700 border-r border-slate-200">5,0</td>
+                                    <td class="py-2.5 sm:py-3 px-2 font-mono-tech font-semibold text-slate-700 border-r border-slate-200">8,0</td>
+                                    <td class="py-2.5 sm:py-3 px-2 font-mono-tech font-semibold text-slate-700">10,0</td>
+                                </tr>
+                                <tr class="bg-white">
+                                    <td class="py-2.5 sm:py-3 px-3 sm:px-4 text-left font-semibold text-slate-800 border-r border-slate-200">
+                                        v (mL) <span class="text-[11px] font-normal text-slate-500 block">Volume de (S₀)</span>
+                                    </td>
+                                    <td class="p-1.5 border-r border-slate-200">
+                                        <input type="number" inputmode="decimal" step="0.1" min="0" id="vol-input-0" aria-label="Volume v pour S1 en mL" placeholder="?" class="w-16 sm:w-20 min-h-[44px] text-center font-mono-tech font-bold py-1.5 px-2 rounded-lg border-2 border-slate-300 focus:border-sky-500 focus:outline-none transition">
+                                    </td>
+                                    <td class="p-1.5 border-r border-slate-200">
+                                        <input type="number" inputmode="decimal" step="0.1" min="0" id="vol-input-1" aria-label="Volume v pour S2 en mL" placeholder="?" class="w-16 sm:w-20 min-h-[44px] text-center font-mono-tech font-bold py-1.5 px-2 rounded-lg border-2 border-slate-300 focus:border-sky-500 focus:outline-none transition">
+                                    </td>
+                                    <td class="p-1.5 border-r border-slate-200">
+                                        <input type="number" inputmode="decimal" step="0.1" min="0" id="vol-input-2" aria-label="Volume v pour S3 en mL" placeholder="?" class="w-16 sm:w-20 min-h-[44px] text-center font-mono-tech font-bold py-1.5 px-2 rounded-lg border-2 border-slate-300 focus:border-sky-500 focus:outline-none transition">
+                                    </td>
+                                    <td class="p-1.5 border-r border-slate-200">
+                                        <input type="number" inputmode="decimal" step="0.1" min="0" id="vol-input-3" aria-label="Volume v pour S4 en mL" placeholder="?" class="w-16 sm:w-20 min-h-[44px] text-center font-mono-tech font-bold py-1.5 px-2 rounded-lg border-2 border-slate-300 focus:border-sky-500 focus:outline-none transition">
+                                    </td>
+                                    <td class="p-1.5 border-r border-slate-200">
+                                        <input type="number" inputmode="decimal" step="0.1" min="0" id="vol-input-4" aria-label="Volume v pour S5 en mL" placeholder="?" class="w-16 sm:w-20 min-h-[44px] text-center font-mono-tech font-bold py-1.5 px-2 rounded-lg border-2 border-slate-300 focus:border-sky-500 focus:outline-none transition">
+                                    </td>
+                                    <td class="p-1.5">
+                                        <input type="number" inputmode="decimal" step="0.1" min="0" id="vol-input-5" aria-label="Volume v pour S6 en mL" placeholder="?" class="w-16 sm:w-20 min-h-[44px] text-center font-mono-tech font-bold py-1.5 px-2 rounded-lg border-2 border-slate-300 focus:border-sky-500 focus:outline-none transition">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="dilution-feedback" class="hidden mt-4 p-3.5 sm:p-4 rounded-xl border text-xs sm:text-sm leading-relaxed"></div>
+                </div>
+            </div>
+
+            <!-- Animation SVG de la dilution -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">2. Simulation visuelle du protocole expérimental</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 mt-0.5">Choisissez une solution étalon pour visualiser le prélèvement à la pipette jaugée et la mise au trait de jauge dans la fiole de 100 mL.</p>
+                    </div>
+                    <div class="grid grid-cols-3 sm:flex sm:flex-wrap gap-1.5 bg-slate-100 p-1.5 rounded-xl">
+                        <button type="button" onclick="selectDilutionSim(0)" id="sim-sol-btn-0" class="sim-sol-btn min-h-[44px] px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-sky-600 text-white shadow-sm transition">(S₁)</button>
+                        <button type="button" onclick="selectDilutionSim(1)" id="sim-sol-btn-1" class="sim-sol-btn min-h-[44px] px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-slate-600 hover:bg-white transition">(S₂)</button>
+                        <button type="button" onclick="selectDilutionSim(2)" id="sim-sol-btn-2" class="sim-sol-btn min-h-[44px] px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-slate-600 hover:bg-white transition">(S₃)</button>
+                        <button type="button" onclick="selectDilutionSim(3)" id="sim-sol-btn-3" class="sim-sol-btn min-h-[44px] px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-slate-600 hover:bg-white transition">(S₄)</button>
+                        <button type="button" onclick="selectDilutionSim(4)" id="sim-sol-btn-4" class="sim-sol-btn min-h-[44px] px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-slate-600 hover:bg-white transition">(S₅)</button>
+                        <button type="button" onclick="selectDilutionSim(5)" id="sim-sol-btn-5" class="sim-sol-btn min-h-[44px] px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-slate-600 hover:bg-white transition">(S₆)</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+                    <div class="lg:col-span-5 space-y-3">
+                        <div class="p-3.5 sm:p-4 rounded-xl bg-sky-50 border border-sky-200">
+                            <div class="text-xs font-bold uppercase tracking-wider text-sky-700">Solution sélectionnée</div>
+                            <div class="text-base sm:text-lg font-bold text-slate-900 mt-1" id="sim-sol-title">Solution (S₁) — C₁ = 1,0 × 10⁻³ mol·L⁻¹</div>
+                            <div class="mt-2 flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm">
+                                <span class="px-2.5 py-1 rounded-lg bg-white border border-sky-200 font-mono-tech font-bold text-sky-800" id="sim-sol-vol">v = 2,0 mL</span>
+                                <span class="text-slate-600">Facteur de dilution : <strong id="sim-sol-factor" class="text-slate-800">50×</strong></span>
+                            </div>
+                        </div>
+
+                        <ol class="space-y-2 text-xs sm:text-sm text-slate-700">
+                            <li id="proto-step-1" class="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-200 bg-slate-50 transition">
+                                <span class="w-6 h-6 rounded-full bg-sky-600 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+                                <span>Prélever <strong id="proto-vol-text" class="text-sky-700">2,0 mL</strong> de solution mère (S₀) à l'aide d'une pipette jaugée munie d'une propipette.</span>
+                            </li>
+                            <li id="proto-step-2" class="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-200 bg-slate-50 transition">
+                                <span class="w-6 h-6 rounded-full bg-sky-600 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+                                <span>Verser ce prélèvement dans une <strong>fiole jaugée de 100 mL</strong> propre.</span>
+                            </li>
+                            <li id="proto-step-3" class="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-200 bg-slate-50 transition">
+                                <span class="w-6 h-6 rounded-full bg-sky-600 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+                                <span>Compléter avec de l'eau distillée jusqu'au <strong>trait de jauge</strong> (bas du ménisque) et homogénéiser.</span>
+                            </li>
+                        </ol>
+
+                        <button type="button" onclick="runDilutionAnimation()" id="btn-run-dilution"
+                                class="w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold text-xs sm:text-sm shadow-sm transition flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Lancer la préparation animée
+                        </button>
+                    </div>
+
+                    <!-- Scène SVG Verrerie avec <defs> complets -->
+                    <div class="lg:col-span-7 bg-slate-50 rounded-2xl border border-slate-200 p-2.5 sm:p-4 flex items-center justify-center overflow-hidden">
+                        <svg id="dilution-svg" viewBox="0 0 620 305" preserveAspectRatio="xMidYMid meet" class="w-full max-w-2xl h-auto">
+                            <defs>
+                                <linearGradient id="glassGrad" x1="0" y1="0" x2="1" y2="0">
+                                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"/>
+                                    <stop offset="50%" stop-color="#e2e8f0" stop-opacity="0.15"/>
+                                    <stop offset="100%" stop-color="#ffffff" stop-opacity="0.45"/>
+                                </linearGradient>
+                                <clipPath id="becherS0Clip">
+                                    <path d="M 45 162 L 45 270 Q 45 275 52 275 L 128 275 Q 135 275 135 270 L 135 162 Z"/>
+                                </clipPath>
+                                <clipPath id="fioleClip">
+                                    <path d="M 332 70 L 348 70 L 348 165 C 378 182, 392 212, 385 245 C 380 265, 365 275, 340 275 C 315 275, 300 265, 295 245 C 288 212, 302 182, 332 165 Z"/>
+                                </clipPath>
+                            </defs>
+
+                            <!-- Bandeau statut -->
+                            <rect x="160" y="10" width="300" height="24" rx="12" fill="#e2e8f0"/>
+                            <text id="anim-status-text" x="310" y="26" text-anchor="middle" font-size="11" font-weight="600" fill="#334155">Prêt pour la dilution de (S₁)</text>
+
+                            <!-- 1. Bécher solution mère S0 -->
+                            <g id="becher-s0">
+                                <text x="90" y="143" text-anchor="middle" font-size="13" font-weight="700" fill="#1e293b">Solution (S₀)</text>
+                                <text x="90" y="156" text-anchor="middle" font-size="10" fill="#475569">0,05 mol·L⁻¹</text>
+                                <g clip-path="url(#becherS0Clip)">
+                                    <rect x="45" y="185" width="90" height="90" fill="#0284c7" fill-opacity="0.35" />
+                                    <ellipse cx="90" cy="185" rx="45" ry="4" fill="#38bdf8" fill-opacity="0.5" />
+                                </g>
+                                <path d="M 45 162 L 45 270 Q 45 275 52 275 L 128 275 Q 135 275 135 270 L 135 162" fill="url(#glassGrad)" stroke="#475569" stroke-width="2.5" />
+                                <line x1="115" y1="200" x2="132" y2="200" stroke="#64748b" stroke-width="1.5"/>
+                                <line x1="120" y1="225" x2="132" y2="225" stroke="#64748b" stroke-width="1.5"/>
+                                <line x1="115" y1="250" x2="132" y2="250" stroke="#64748b" stroke-width="1.5"/>
+                            </g>
+
+                            <!-- 2. Pipette jaugée -->
+                            <g id="pipette-group" transform="translate(0, 0)" style="transition: transform 0.85s ease-in-out;">
+                                <ellipse cx="90" cy="32" rx="14" ry="18" fill="#ef4444" stroke="#b91c1c" stroke-width="1.5"/>
+                                <rect x="84" y="48" width="12" height="10" rx="2" fill="#dc2626"/>
+                                <rect x="85" y="58" width="10" height="128" fill="#ffffff" fill-opacity="0.85" stroke="#475569" stroke-width="1.8"/>
+                                <rect id="pipette-liquid" x="86" y="186" width="8" height="0" fill="#0284c7" fill-opacity="0.75" style="transition: all 0.65s ease;"/>
+                                <polygon points="85,186 95,186 91,210 89,210" fill="#ffffff" stroke="#475569" stroke-width="1.8"/>
+                                <circle id="pipette-drop" cx="90" cy="218" r="0" fill="#0284c7" />
+                                <rect x="102" y="95" width="82" height="24" rx="6" fill="#0f172a" fill-opacity="0.88"/>
+                                <text id="pipette-label" x="143" y="111" text-anchor="middle" font-size="11" font-weight="700" fill="#38bdf8">v = 2,0 mL</text>
+                            </g>
+
+                            <!-- 3. Fiole jaugée 100 mL -->
+                            <g id="fiole-group">
+                                <text x="340" y="47" text-anchor="middle" font-size="13" font-weight="700" fill="#1e293b">Fiole jaugée 100 mL</text>
+                                <text id="fiole-sublabel" x="340" y="61" text-anchor="middle" font-size="11" font-weight="600" fill="#0284c7">Préparation de (S₁)</text>
+
+                                <g clip-path="url(#fioleClip)">
+                                    <rect id="fiole-liquid" x="285" y="275" width="110" height="0" fill="#0284c7" fill-opacity="0.35" style="transition: all 0.85s ease;"/>
+                                    <ellipse id="fiole-meniscus" cx="340" cy="275" rx="45" ry="2.5" fill="#0284c7" fill-opacity="0.6" style="transition: all 0.85s ease;"/>
+                                </g>
+
+                                <path d="M 332 70 L 348 70 L 348 165 C 378 182, 392 212, 385 245 C 380 265, 365 275, 340 275 C 315 275, 300 265, 295 245 C 288 212, 302 182, 332 165 Z" fill="url(#glassGrad)" stroke="#334155" stroke-width="2.5" />
+                                <line x1="329" y1="112" x2="351" y2="112" stroke="#dc2626" stroke-width="2"/>
+                                <text x="357" y="115" font-size="10" font-weight="700" fill="#dc2626">Trait de jauge (100 mL)</text>
+                                <text x="340" y="225" text-anchor="middle" font-size="12" font-weight="700" fill="#334155" opacity="0.7">100 mL</text>
+                                <text x="340" y="238" text-anchor="middle" font-size="9" fill="#475569" opacity="0.7">20 °C</text>
+                            </g>
+
+                            <!-- 4. Pissette d'eau distillée -->
+                            <g id="pissette-group" transform="translate(0, 0)" style="transition: transform 0.75s ease;">
+                                <text x="535" y="135" text-anchor="middle" font-size="12" font-weight="700" fill="#1e293b">Eau distillée</text>
+                                <rect x="500" y="165" width="70" height="110" rx="14" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+                                <rect x="502" y="195" width="66" height="78" rx="10" fill="#7dd3fc" fill-opacity="0.5"/>
+                                <rect x="520" y="148" width="30" height="17" rx="3" fill="#0284c7"/>
+                                <path d="M 535 148 L 535 115 Q 535 95 515 95 L 470 110" fill="none" stroke="#0284c7" stroke-width="3" stroke-linecap="round"/>
+                                <path id="water-jet" d="M 470 110 Q 400 105 340 112" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="6,4" opacity="0"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex justify-end">
+                    <button type="button" onclick="switchTab(2)"
+                            class="w-full sm:w-auto min-h-[44px] px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold shadow-sm transition flex items-center justify-center gap-2">
+                        Passer à l'Étape 2 : Mesures de conductance
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- ONGLET 2 : MONTAGE ÉLECTRIQUE & COURBE D'ÉTALONNAGE G = f(C)          -->
+        <!-- ===================================================================== -->
+        <section id="step-2" class="step-section hidden space-y-5 sm:space-y-6">
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 sm:gap-6">
+
+                <!-- Colonne gauche : Montage électrique SVG animé -->
+                <div class="xl:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 flex flex-col justify-between">
+                    <div>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-100 pb-3">
+                            <div>
+                                <h2 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                                    <span class="px-2.5 py-0.5 rounded-md bg-sky-100 text-sky-700 text-xs sm:text-sm font-mono-tech">II.1.b</span>
+                                    Montage conductimétrique
+                                </h2>
+                                <p class="text-xs text-slate-500 mt-0.5">GBF : f = 500 Hz • Ampèremètre : 20 mA • Voltmètre : 2 V</p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button type="button" id="gbf-power-btn" onclick="toggleGBF()"
+                                        class="flex-1 sm:flex-none min-h-[44px] px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-sm transition flex items-center justify-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
+                                    GBF : ON (500 Hz)
+                                </button>
+                                <button type="button" onclick="setExactVoltage()"
+                                        class="flex-1 sm:flex-none min-h-[44px] px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 transition">
+                                    Régler U = 1,00 V
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Réglage de la tension efficace U -->
+                        <div class="mt-3 bg-slate-50 border border-slate-200 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                            <div class="flex items-center justify-between sm:justify-start gap-2">
+                                <label for="gbf-u-slider" class="text-xs font-semibold text-slate-700">Tension efficace GBF :</label>
+                                <span id="gbf-u-label" class="font-mono-tech font-bold text-sm text-sky-700">1,00 V</span>
+                            </div>
+                            <div class="flex items-center gap-3 flex-1 sm:max-w-xs min-h-[36px]">
+                                <span class="text-xs text-slate-400">0,2V</span>
+                                <input type="range" id="gbf-u-slider" min="0.20" max="1.50" step="0.05" value="1.00" oninput="updateVoltage(this.value)" class="w-full h-2 accent-sky-600 cursor-pointer">
+                                <span class="text-xs text-slate-400">1,5V</span>
+                            </div>
+                        </div>
+
+                        <!-- Schéma électrique SVG -->
+                        <div class="mt-4 bg-slate-900 rounded-2xl p-2 sm:p-4 border border-slate-800 overflow-hidden">
+                            <svg id="circuit-svg" viewBox="0 0 600 410" preserveAspectRatio="xMidYMid meet" class="w-full h-auto select-none">
+                                <defs>
+                                    <pattern id="techGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1e293b" stroke-width="0.8"/>
+                                    </pattern>
+                                    <clipPath id="cellBeakerClip">
+                                        <path d="M 215 245 L 215 372 Q 215 382 225 382 L 375 382 Q 385 382 385 372 L 385 245 Z"/>
+                                    </clipPath>
+                                </defs>
+                                <rect width="600" height="410" fill="url(#techGrid)" rx="12"/>
+
+                                <!-- Fils électriques -->
+                                <polyline points="245,65 110,65 110,205 255,205 255,245" fill="none" stroke="#ef4444" stroke-width="3.5" stroke-linejoin="round"/>
+                                <polyline points="355,65 495,65 495,115" fill="none" stroke="#38bdf8" stroke-width="3.5" stroke-linejoin="round"/>
+                                <polyline points="495,185 495,205 345,205 345,245" fill="none" stroke="#38bdf8" stroke-width="3.5" stroke-linejoin="round"/>
+
+                                <!-- Voltmètre en dérivation -->
+                                <polyline points="255,205 255,155 268,155" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-dasharray="4,2"/>
+                                <polyline points="345,205 345,155 332,155" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-dasharray="4,2"/>
+                                <circle cx="255" cy="205" r="4.5" fill="#fbbf24"/>
+                                <circle cx="345" cy="205" r="4.5" fill="#fbbf24"/>
+
+                                <!-- GBF -->
+                                <g transform="translate(300, 65)">
+                                    <circle cx="0" cy="0" r="48" fill="#0f172a" stroke="#64748b" stroke-width="3"/>
+                                    <circle cx="0" cy="0" r="42" fill="none" stroke="#334155" stroke-width="1"/>
+                                    <text x="0" y="-12" text-anchor="middle" font-size="16" font-weight="800" fill="#f8fafc">GBF</text>
+                                    <path d="M -14 4 Q -7 -6 0 4 T 14 4" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+                                    <text id="svg-gbf-freq" x="0" y="24" text-anchor="middle" font-size="11" font-weight="700" fill="#34d399">f = 500 Hz</text>
+                                </g>
+
+                                <!-- Ampèremètre -->
+                                <g transform="translate(495, 150)">
+                                    <rect x="-58" y="-35" width="116" height="70" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5"/>
+                                    <text x="0" y="-18" text-anchor="middle" font-size="10" font-weight="700" fill="#94a3b8">AMPÈREMÈTRE (20 mA)</text>
+                                    <rect x="-48" y="-10" width="96" height="32" rx="6" fill="#020617" stroke="#334155" stroke-width="1"/>
+                                    <text id="svg-ammeter-val" x="0" y="12" text-anchor="middle" font-size="16" font-weight="700" fill="#38bdf8">1,45 mA</text>
+                                </g>
+
+                                <!-- Voltmètre -->
+                                <g transform="translate(300, 155)">
+                                    <rect x="-46" y="-26" width="92" height="52" rx="10" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+                                    <text x="0" y="-12" text-anchor="middle" font-size="9" font-weight="700" fill="#fcd34d">VOLTMÈTRE (2 V)</text>
+                                    <rect x="-38" y="-5" width="76" height="24" rx="5" fill="#020617" stroke="#334155" stroke-width="1"/>
+                                    <text id="svg-voltmeter-val" x="0" y="12" text-anchor="middle" font-size="13" font-weight="700" fill="#fbbf24">1,00 V</text>
+                                </g>
+
+                                <!-- Bécher et Cellule conductimétrique -->
+                                <g>
+                                    <g clip-path="url(#cellBeakerClip)">
+                                        <rect id="beaker-solution-fill" x="215" y="280" width="170" height="105" fill="#0284c7" fill-opacity="0.32"/>
+                                        <ellipse cx="300" cy="280" rx="85" ry="4" fill="#38bdf8" fill-opacity="0.45"/>
+                                        <g id="ions-layer"></g>
+                                    </g>
+
+                                    <path d="M 208 240 L 215 245 L 215 372 Q 215 382 225 382 L 375 382 Q 385 382 385 372 L 385 245 L 392 240" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <rect x="242" y="232" width="116" height="10" rx="3" fill="#475569" stroke="#94a3b8" stroke-width="1"/>
+                                    <rect x="250" y="242" width="10" height="122" rx="2" fill="#94a3b8" stroke="#f8fafc" stroke-width="1.2"/>
+                                    <rect x="340" y="242" width="10" height="122" rx="2" fill="#94a3b8" stroke="#f8fafc" stroke-width="1.2"/>
+
+                                    <rect x="225" y="388" width="150" height="18" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+                                    <text id="svg-beaker-label" x="300" y="400" text-anchor="middle" font-size="10" font-weight="700" fill="#e2e8f0">Solution (S₁) • 1,0 mM</text>
+                                </g>
+
+                                <!-- Légende ions -->
+                                <g transform="translate(18, 330)">
+                                    <rect x="0" y="0" width="175" height="62" rx="8" fill="#0f172a" fill-opacity="0.88" stroke="#334155"/>
+                                    <circle cx="16" cy="18" r="6" fill="#38bdf8"/>
+                                    <text x="28" y="22" font-size="10" fill="#cbd5e1">Cation Na⁺ (oscille à 500 Hz)</text>
+                                    <circle cx="16" cy="40" r="6" fill="#10b981"/>
+                                    <text x="28" y="44" font-size="10" fill="#cbd5e1">Anion Cl⁻ (pas d'électrolyse)</text>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Sélecteur de solution dans le bécher (Eau distillée + S1..S6) -->
+                    <div class="mt-4 pt-3 border-t border-slate-100">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-600">Verser une solution dans le bécher (après rinçage) :</span>
+                            <span class="text-xs text-slate-500">Relation : <strong class="font-mono-tech text-slate-800">G = I / U</strong> (en mS)</span>
+                        </div>
+                        <div class="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
+                            <button type="button" onclick="pourBeakerSolution(0)" id="beaker-btn-0" class="beaker-sol-btn min-h-[46px] py-1.5 px-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                                Eau<br><span class="font-normal text-[11px] opacity-80">0 mM</span>
+                            </button>
+                            <button type="button" onclick="pourBeakerSolution(1)" id="beaker-btn-1" class="beaker-sol-btn min-h-[46px] py-1.5 px-1 rounded-xl text-xs font-bold bg-sky-600 text-white shadow-sm transition">
+                                (S₁)<br><span class="font-normal text-[11px] opacity-90">1,0 mM</span>
+                            </button>
+                            <button type="button" onclick="pourBeakerSolution(2)" id="beaker-btn-2" class="beaker-sol-btn min-h-[46px] py-1.5 px-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                                (S₂)<br><span class="font-normal text-[11px] opacity-80">2,0 mM</span>
+                            </button>
+                            <button type="button" onclick="pourBeakerSolution(3)" id="beaker-btn-3" class="beaker-sol-btn min-h-[46px] py-1.5 px-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                                (S₃)<br><span class="font-normal text-[11px] opacity-80">3,0 mM</span>
+                            </button>
+                            <button type="button" onclick="pourBeakerSolution(4)" id="beaker-btn-4" class="beaker-sol-btn min-h-[46px] py-1.5 px-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                                (S₄)<br><span class="font-normal text-[11px] opacity-80">5,0 mM</span>
+                            </button>
+                            <button type="button" onclick="pourBeakerSolution(5)" id="beaker-btn-5" class="beaker-sol-btn min-h-[46px] py-1.5 px-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                                (S₅)<br><span class="font-normal text-[11px] opacity-80">8,0 mM</span>
+                            </button>
+                            <button type="button" onclick="pourBeakerSolution(6)" id="beaker-btn-6" class="beaker-sol-btn min-h-[46px] py-1.5 px-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                                (S₆)<br><span class="font-normal text-[11px] opacity-80">10,0 mM</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colonne droite : Tableau des mesures & Graphique SVG G = f(C) -->
+                <div class="xl:col-span-5 flex flex-col gap-5 sm:gap-6">
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                            <h3 class="text-base font-bold text-slate-900">Tableau des mesures</h3>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="recordCurrentMeasurement()"
+                                        class="flex-1 sm:flex-none min-h-[44px] px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold shadow-sm transition">
+                                    + Relever la mesure active
+                                </button>
+                                <button type="button" onclick="autoFillAllMeasurements()"
+                                        class="min-h-[44px] px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-300 transition">
+                                    Tout relever
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto rounded-xl border border-slate-200">
+                            <table class="w-full min-w-[380px] text-xs text-center border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-800 text-white">
+                                        <th class="py-2.5 px-2">Sol.</th>
+                                        <th class="py-2.5 px-2">C (10⁻³ mol/L)</th>
+                                        <th class="py-2.5 px-2">U (V)</th>
+                                        <th class="py-2.5 px-2">I (mA)</th>
+                                        <th class="py-2.5 px-2">G = I/U (mS)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="measurements-tbody" class="divide-y divide-slate-200 font-mono-tech">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Courbe d'étalonnage SVG -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 flex-1 flex flex-col">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
+                            <div>
+                                <h3 class="text-base font-bold text-slate-900">Courbe d'étalonnage G = f(C)</h3>
+                                <p id="calibration-eq-text" class="text-xs font-mono-tech text-slate-500">En attente de mesures...</p>
+                            </div>
+                            <button type="button" id="btn-fit-line" onclick="toggleCalibrationLine()"
+                                    class="min-h-[44px] px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm transition">
+                                Tracer la droite G = a · C
+                            </button>
+                        </div>
+
+                        <div class="flex-1 flex items-center justify-center bg-slate-50 rounded-xl border border-slate-200 p-2 overflow-hidden">
+                            <svg id="calibration-chart" viewBox="0 0 460 285" preserveAspectRatio="xMidYMid meet" class="w-full h-auto"></svg>
+                        </div>
+
+                        <div class="mt-3 flex justify-end">
+                            <button type="button" onclick="switchTab(3)"
+                                    class="w-full sm:w-auto min-h-[44px] px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold shadow-sm transition flex items-center justify-center gap-1.5">
+                                Passer à l'Étape 3 : Sérum physiologique
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- ONGLET 3 : DÉTERMINATION DE LA CONCENTRATION DU SÉRUM PHYSIOLOGIQUE   -->
+        <!-- ===================================================================== -->
+        <section id="step-3" class="step-section hidden space-y-5 sm:space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-xs font-bold uppercase tracking-wider">Application • Dosage</span>
+                            <span class="text-xs text-slate-500">M(NaCl) = 58,5 g·mol⁻¹</span>
+                        </div>
+                        <h2 class="text-base sm:text-lg font-bold text-slate-900">Détermination de la concentration d'un sérum physiologique</h2>
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                            L'étiquette d'un sérum physiologique indique une teneur de <strong>0,9 % en masse de NaCl</strong> (soit <strong>9,0 g·L⁻¹</strong>, environ <span class="font-mono-tech font-semibold text-slate-800">0,154 mol·L⁻¹</span>). Pour rester dans le domaine de linéarité de la cellule conductimétrique (C ≤ 10⁻² mol·L⁻¹), on réalise une <strong>dilution préalable d'un facteur F = 20</strong>.
+                        </p>
+                    </div>
+                    <button type="button" onclick="generateNewSerumSample()"
+                            class="w-full sm:w-auto min-h-[44px] px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-xs sm:text-sm font-semibold transition shrink-0 flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 text-sky-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        Nouveau flacon de sérum
+                    </button>
+                </div>
+
+                <!-- 3 cartes expérimentales -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-sky-700 uppercase">1. Dilution préalable (F = 20)</div>
+                            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                                Prélever <strong>5,0 mL</strong> de sérum physiologique commercial, les introduire dans une fiole jaugée de <strong>100,0 mL</strong> et compléter à l'eau distillée : on obtient la solution diluée <strong>(S_dil)</strong>.
+                            </p>
+                        </div>
+                        <button type="button" id="btn-dilute-serum" onclick="diluteSerumStep()"
+                                class="mt-3 w-full min-h-[44px] py-2 px-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold shadow-sm transition">
+                            Préparer la solution diluée (S_dil)
+                        </button>
+                    </div>
+
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-sky-700 uppercase">2. Mesure conductimétrique</div>
+                            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                                Verser <strong>(S_dil)</strong> dans le bécher sous <span class="font-mono-tech font-semibold">U = 1,00 V</span> (f = 500 Hz) et mesurer <span class="font-mono-tech font-semibold">I</span> et <span class="font-mono-tech font-semibold">G_dil = I / U</span>.
+                            </p>
+                            <div id="serum-meter-box" class="mt-2 p-2.5 rounded-lg bg-slate-900 text-center font-mono-tech text-xs text-slate-400">
+                                En attente de dilution...
+                            </div>
+                        </div>
+                        <button type="button" id="btn-measure-serum" onclick="measureSerumStep()" disabled
+                                class="mt-3 w-full min-h-[44px] py-2 px-3 rounded-xl bg-slate-300 text-slate-500 text-xs font-semibold cursor-not-allowed transition">
+                            Mesurer G_dil et projeter
+                        </button>
+                    </div>
+
+                    <div class="p-4 rounded-xl border border-amber-200 bg-amber-50/70 flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-amber-800 uppercase">3. Grandeurs relevées</div>
+                            <ul class="mt-2 space-y-1 text-xs text-slate-700 font-mono-tech">
+                                <li>• Tension : <strong>U = 1,00 V</strong></li>
+                                <li>• Intensité : <strong id="summary-serum-i">— mA</strong></li>
+                                <li>• Conductance : <strong id="summary-serum-g">— mS</strong></li>
+                                <li>• Coefficient : <strong id="summary-serum-k">a = 1,45 S·L·mol⁻¹</strong></li>
+                            </ul>
+                        </div>
+                        <div class="text-[11px] text-amber-900 mt-2">
+                            Lire <span class="font-mono-tech font-bold">C_dil</span> par projection graphique ou par <span class="font-mono-tech font-bold">C_dil = G_dil / a</span>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Graphique projection + Formulaire d'exploitation -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
+                <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900">Détermination graphique de C_dil</h3>
+                            <p class="text-xs text-slate-500">Projection orthogonale de G_dil sur la droite d'étalonnage G = f(C)</p>
+                        </div>
+                        <span id="projection-badge" class="hidden px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-700">Point (S_dil) projeté</span>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl border border-slate-200 p-2 overflow-hidden">
+                        <svg id="serum-chart" viewBox="0 0 460 285" preserveAspectRatio="xMidYMid meet" class="w-full h-auto"></svg>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3">Exploitation et déduction</h3>
+                        <p class="text-xs text-slate-600 mt-2">
+                            Déduire les grandeurs caractéristiques du sérum physiologique étudié :
+                        </p>
+
+                        <div class="mt-4 space-y-4">
+                            <div>
+                                <label for="ans-cdil" class="block text-xs font-bold text-slate-700 mb-1">
+                                    1. Concentration de la solution diluée <span class="font-mono-tech text-sky-700">C_dil</span> (en 10⁻³ mol·L⁻¹) :
+                                </label>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" inputmode="decimal" step="0.01" id="ans-cdil" placeholder="ex: 7.70"
+                                           class="w-full min-h-[44px] font-mono-tech font-bold text-sm px-3 py-2 rounded-xl border-2 border-slate-300 focus:border-sky-500 focus:outline-none">
+                                    <span class="text-xs font-mono-tech text-slate-500 shrink-0">× 10⁻³ mol·L⁻¹</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="ans-cserum" class="block text-xs font-bold text-slate-700 mb-1">
+                                    2. Concentration molaire du sérum <span class="font-mono-tech text-sky-700">C_sérum = 20 × C_dil</span> :
+                                </label>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" inputmode="decimal" step="0.001" id="ans-cserum" placeholder="ex: 0.154"
+                                           class="w-full min-h-[44px] font-mono-tech font-bold text-sm px-3 py-2 rounded-xl border-2 border-slate-300 focus:border-sky-500 focus:outline-none">
+                                    <span class="text-xs font-mono-tech text-slate-500 shrink-0">mol·L⁻¹</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="ans-cm" class="block text-xs font-bold text-slate-700 mb-1">
+                                    3. Concentration massique <span class="font-mono-tech text-sky-700">Cm = C_sérum × M(NaCl)</span> :
+                                </label>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" inputmode="decimal" step="0.01" id="ans-cm" placeholder="ex: 9.01"
+                                           class="w-full min-h-[44px] font-mono-tech font-bold text-sm px-3 py-2 rounded-xl border-2 border-slate-300 focus:border-sky-500 focus:outline-none">
+                                    <span class="text-xs font-mono-tech text-slate-500 shrink-0">g·L⁻¹</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 flex flex-wrap items-center gap-2">
+                            <button type="button" onclick="checkSerumCalculations()"
+                                    class="flex-1 min-h-[44px] py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition">
+                                Vérifier mes résultats
+                            </button>
+                            <button type="button" onclick="showSerumCorrection()"
+                                    class="min-h-[44px] py-2.5 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-300 transition">
+                                Correction
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="serum-feedback" class="hidden mt-4 p-3.5 rounded-xl border text-xs space-y-1.5 leading-relaxed"></div>
+                </div>
+            </div>
+        </section>
+<div class="signature"> TP interactif (contenu IA):    Dosage conductimétrique d'un sérum physiologique   - chrif.md@gmail.com -  2026</div>
+    </main>
+
+    <script>
+        /* =========================================================================
+         * DONNÉES SCIENTIFIQUES ET CONSTANTES DU TP (MANUEL TUNISIEN PAGE 48)
+         * ========================================================================= */
+        const C0 = 0.05; // mol/L (solution mère S0)
+        const V_FIOLE = 100; // mL
+        const CELL_CONSTANT_K = 1.45; // S·L·mol^-1 => G(mS) = 1.45 * C(10^-3 mol/L)
+        const M_NACL = 58.5; // g/mol
+        const DILUTION_FACTOR = 20;
+
+        // Gamme des 6 solutions étalons (S1) à (S6)
+        const STANDARDS = [
+            { name: '(S₁)', c_mM: 1.0, v_mL: 2.0 },
+            { name: '(S₂)', c_mM: 2.0, v_mL: 4.0 },
+            { name: '(S₃)', c_mM: 3.0, v_mL: 6.0 },
+            { name: '(S₄)', c_mM: 5.0, v_mL: 10.0 },
+            { name: '(S₅)', c_mM: 8.0, v_mL: 16.0 },
+            { name: '(S₆)', c_mM: 10.0, v_mL: 20.0 }
+        ];
+
+        // Solutions disponibles dans le bécher (Eau distillée + S1..S6)
+        const BEAKER_SOLUTIONS = [
+            { name: 'Eau distillée', c_mM: 0.0, standardIdx: null },
+            { name: 'Solution (S₁)', c_mM: 1.0, standardIdx: 0 },
+            { name: 'Solution (S₂)', c_mM: 2.0, standardIdx: 1 },
+            { name: 'Solution (S₃)', c_mM: 3.0, standardIdx: 2 },
+            { name: 'Solution (S₄)', c_mM: 5.0, standardIdx: 3 },
+            { name: 'Solution (S₅)', c_mM: 8.0, standardIdx: 4 },
+            { name: 'Solution (S₆)', c_mM: 10.0, standardIdx: 5 }
+        ];
+
+        // État global de l'application
+        const state = {
+            currentTab: 1,
+            selectedDilutionIdx: 0,
+            isDilutionAnimating: false,
+            gbfOn: true,
+            voltageU: 1.00,
+            activeBeakerIdx: 1, // Par défaut (S1)
+            recordedMeasurements: [null, null, null, null, null, null], // pour S1..S6
+            showRegressionLine: true,
+            serum: {
+                c_molL: 0.154, // Concentration réelle du flacon (0.154 mol/L = 9.01 g/L)
+                isDiluted: false,
+                isMeasured: false
+            }
+        };
+
+        /* =========================================================================
+         * UTILITAIRES D'AFFICHAGE ET NOTIFICATIONS
+         * ========================================================================= */
+        function formatFr(num, decimals) {
+            if (typeof num !== 'number' || Number.isNaN(num)) return '—';
+            return num.toFixed(decimals).replace('.', ',');
+        }
+
+        function showToast(message, type) {
+            try {
+                const container = document.getElementById('toast-container');
+                if (!container) return;
+                const toast = document.createElement('div');
+                const palette = type === 'success'
+                    ? 'bg-emerald-900 text-emerald-50 border-emerald-700'
+                    : type === 'warning'
+                    ? 'bg-amber-900 text-amber-50 border-amber-700'
+                    : 'bg-slate-900 text-white border-slate-700';
+
+                toast.className = `pointer-events-auto px-4 py-3 rounded-xl border shadow-lg text-xs sm:text-sm font-medium transition-all duration-300 ${palette}`;
+                toast.textContent = message;
+                container.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(6px)';
+                    setTimeout(() => {
+                        if (toast.parentNode) toast.parentNode.removeChild(toast);
+                    }, 300);
+                }, 3200);
+            } catch (err) {
+                console.error('Erreur toast:', err);
+            }
+        }
+
+        /* =========================================================================
+         * NAVIGATION ENTRE LES 3 ONGLETS
+         * ========================================================================= */
+        function switchTab(stepNumber) {
+            try {
+                state.currentTab = stepNumber;
+                document.querySelectorAll('.step-section').forEach((sec, idx) => {
+                    sec.classList.toggle('hidden', idx + 1 !== stepNumber);
+                });
+
+                document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+                    const isActive = idx + 1 === stepNumber;
+                    const badge = btn.querySelector('span');
+                    const subtext = btn.querySelectorAll('div > div')[1];
+                    if (isActive) {
+                        btn.className = 'tab-btn min-w-[230px] md:min-w-0 min-h-[48px] snap-start flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-left transition-all bg-sky-600 text-white shadow-sm font-medium shrink-0 md:shrink';
+                        if (badge) badge.className = 'w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold shrink-0';
+                        if (subtext) subtext.className = 'text-[11px] text-sky-100 opacity-90 truncate';
+                    } else {
+                        btn.className = 'tab-btn min-w-[230px] md:min-w-0 min-h-[48px] snap-start flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-left transition-all text-slate-300 hover:bg-slate-700/60 font-medium shrink-0 md:shrink';
+                        if (badge) badge.className = 'w-7 h-7 rounded-full bg-slate-700 flex items-center justify-center text-sm font-bold shrink-0';
+                        if (subtext) subtext.className = 'text-[11px] text-slate-400 truncate';
+                    }
+                });
+
+                if (stepNumber === 2) {
+                    renderMeasurementsTable();
+                    renderCalibrationChart('calibration-chart', false);
+                } else if (stepNumber === 3) {
+                    renderCalibrationChart('serum-chart', true);
+                }
+            } catch (err) {
+                console.error('Erreur switchTab:', err);
+            }
+        }
+
+        /* =========================================================================
+         * ONGLET 1 : TABLEAU DE DILUTION & ANIMATION VERRERIE
+         * ========================================================================= */
+        function checkDilutionTable() {
+            try {
+                let allCorrect = true;
+                STANDARDS.forEach((sol, idx) => {
+                    const input = document.getElementById(`vol-input-${idx}`);
+                    if (!input) return;
+                    const rawVal = String(input.value).replace(',', '.');
+                    const val = parseFloat(rawVal);
+
+                    if (!Number.isNaN(val) && Math.abs(val - sol.v_mL) <= 0.05) {
+                        input.classList.remove('border-slate-300', 'border-rose-500', 'bg-rose-50');
+                        input.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-900');
+                    } else {
+                        allCorrect = false;
+                        input.classList.remove('border-slate-300', 'border-emerald-500', 'bg-emerald-50', 'text-emerald-900');
+                        input.classList.add('border-rose-500', 'bg-rose-50');
+                    }
+                });
+
+                const fb = document.getElementById('dilution-feedback');
+                if (!fb) return;
+                fb.classList.remove('hidden');
+
+                if (allCorrect) {
+                    fb.className = 'mt-4 p-3.5 sm:p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-900 text-xs sm:text-sm leading-relaxed';
+                    fb.innerHTML = `<strong>Parfait !</strong> Tous les volumes prélevés sont exacts : <span class="font-mono-tech font-bold">v = (C · V) / C₀ = (C · 100) / 0,05</span>. Par exemple pour (S₁) : <span class="font-mono-tech">v₁ = (1,0×10⁻³ × 100) / 0,05 = 2,0 mL</span>.`;
+                    showToast('Tableau de dilution validé avec succès !', 'success');
+                } else {
+                    fb.className = 'mt-4 p-3.5 sm:p-4 rounded-xl border border-amber-300 bg-amber-50 text-amber-900 text-xs sm:text-sm leading-relaxed';
+                    fb.innerHTML = `<strong>Vérifiez les cases en rouge :</strong> Appliquez la relation <span class="font-mono-tech font-bold">v (mL) = (C × 100) / 0,05</span> en convertissant C en mol·L⁻¹ (ex. : pour C = 2,0 × 10⁻³ mol·L⁻¹, v = 4,0 mL).`;
+                    showToast('Certains volumes sont incorrects ou manquants.', 'warning');
+                }
+            } catch (err) {
+                console.error('Erreur checkDilutionTable:', err);
+            }
+        }
+
+        function autoFillDilutionTable() {
+            try {
+                STANDARDS.forEach((sol, idx) => {
+                    const input = document.getElementById(`vol-input-${idx}`);
+                    if (input) {
+                        input.value = sol.v_mL.toFixed(1);
+                        input.classList.remove('border-slate-300', 'border-rose-500', 'bg-rose-50');
+                        input.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-900');
+                    }
+                });
+                const fb = document.getElementById('dilution-feedback');
+                if (fb) {
+                    fb.classList.remove('hidden');
+                    fb.className = 'mt-4 p-3.5 sm:p-4 rounded-xl border border-sky-200 bg-sky-50 text-sky-900 text-xs sm:text-sm leading-relaxed';
+                    fb.innerHTML = `<strong>Tableau complété :</strong> Volumes respectifs à prélever de (S₀) : <span class="font-mono-tech font-bold">2,0 mL ; 4,0 mL ; 6,0 mL ; 10,0 mL ; 16,0 mL ; 20,0 mL</span>.`;
+                }
+                showToast('Volumes de dilution remplis automatiquement.', 'info');
+            } catch (err) {
+                console.error('Erreur autoFillDilutionTable:', err);
+            }
+        }
+
+        function selectDilutionSim(idx) {
+            try {
+                state.selectedDilutionIdx = idx;
+                const sol = STANDARDS[idx];
+                if (!sol) return;
+
+                document.querySelectorAll('.sim-sol-btn').forEach((btn, i) => {
+                    if (i === idx) {
+                        btn.className = 'sim-sol-btn min-h-[44px] px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-sky-600 text-white shadow-sm transition';
+                    } else {
+                        btn.className = 'sim-sol-btn min-h-[44px] px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-slate-600 hover:bg-white transition';
+                    }
+                });
+
+                const factor = Math.round(C0 / (sol.c_mM * 1e-3));
+                const titleEl = document.getElementById('sim-sol-title');
+                const volEl = document.getElementById('sim-sol-vol');
+                const facEl = document.getElementById('sim-sol-factor');
+                const protoVolEl = document.getElementById('proto-vol-text');
+                const pipLabel = document.getElementById('pipette-label');
+                const fioleSub = document.getElementById('fiole-sublabel');
+                const statusTxt = document.getElementById('anim-status-text');
+
+                if (titleEl) titleEl.textContent = `Solution ${sol.name} — C = ${formatFr(sol.c_mM, 1)} × 10⁻³ mol·L⁻¹`;
+                if (volEl) volEl.textContent = `v = ${formatFr(sol.v_mL, 1)} mL`;
+                if (facEl) facEl.textContent = `${factor}×`;
+                if (protoVolEl) protoVolEl.textContent = `${formatFr(sol.v_mL, 1)} mL`;
+                if (pipLabel) pipLabel.textContent = `v = ${formatFr(sol.v_mL, 1)} mL`;
+                if (fioleSub) fioleSub.textContent = `Préparation de ${sol.name}`;
+                if (statusTxt) statusTxt.textContent = `Prêt pour la dilution de ${sol.name}`;
+
+                resetDilutionVisuals();
+            } catch (err) {
+                console.error('Erreur selectDilutionSim:', err);
+            }
+        }
+
+        function resetDilutionVisuals() {
+            const pipette = document.getElementById('pipette-group');
+            const pipLiq = document.getElementById('pipette-liquid');
+            const pipDrop = document.getElementById('pipette-drop');
+            const fioleLiq = document.getElementById('fiole-liquid');
+            const fioleMen = document.getElementById('fiole-meniscus');
+            const waterJet = document.getElementById('water-jet');
+
+            if (pipette) pipette.setAttribute('transform', 'translate(0, 0)');
+            if (pipLiq) {
+                pipLiq.setAttribute('y', '186');
+                pipLiq.setAttribute('height', '0');
+            }
+            if (pipDrop) pipDrop.setAttribute('r', '0');
+            if (fioleLiq) {
+                fioleLiq.setAttribute('y', '275');
+                fioleLiq.setAttribute('height', '0');
+            }
+            if (fioleMen) {
+                fioleMen.setAttribute('cy', '275');
+                fioleMen.setAttribute('rx', '45');
+            }
+            if (waterJet) waterJet.setAttribute('opacity', '0');
+
+            [1, 2, 3].forEach(n => {
+                const stepEl = document.getElementById(`proto-step-${n}`);
+                if (stepEl) stepEl.classList.remove('border-sky-500', 'bg-sky-50', 'ring-1', 'ring-sky-400');
+            });
+        }
+
+        function runDilutionAnimation() {
+            if (state.isDilutionAnimating) return;
+            state.isDilutionAnimating = true;
+
+            const sol = STANDARDS[state.selectedDilutionIdx];
+            const btn = document.getElementById('btn-run-dilution');
+            if (btn) btn.disabled = true;
+
+            resetDilutionVisuals();
+
+            const statusTxt = document.getElementById('anim-status-text');
+            const pipette = document.getElementById('pipette-group');
+            const pipLiq = document.getElementById('pipette-liquid');
+            const fioleLiq = document.getElementById('fiole-liquid');
+            const fioleMen = document.getElementById('fiole-meniscus');
+            const waterJet = document.getElementById('water-jet');
+
+            // Hauteur proportionnelle au volume prélevé dans la pipette
+            const pipFillHeight = Math.min(95, 22 + sol.v_mL * 3.5);
+            const pipFillY = 186 - pipFillHeight;
+
+            // Étape 1 : Prélèvement dans (S0)
+            const s1 = document.getElementById('proto-step-1');
+            if (s1) s1.classList.add('border-sky-500', 'bg-sky-50', 'ring-1', 'ring-sky-400');
+            if (statusTxt) statusTxt.textContent = `1. Aspiration de ${formatFr(sol.v_mL, 1)} mL de (S₀)...`;
+            if (pipette) pipette.setAttribute('transform', 'translate(0, 16)');
+
+            setTimeout(() => {
+                if (pipLiq) {
+                    pipLiq.setAttribute('y', String(pipFillY));
+                    pipLiq.setAttribute('height', String(pipFillHeight));
+                }
+            }, 350);
+
+            // Étape 2 : Transfert vers la fiole jaugée
+            setTimeout(() => {
+                if (s1) s1.classList.remove('border-sky-500', 'bg-sky-50', 'ring-1', 'ring-sky-400');
+                const s2 = document.getElementById('proto-step-2');
+                if (s2) s2.classList.add('border-sky-500', 'bg-sky-50', 'ring-1', 'ring-sky-400');
+                if (statusTxt) statusTxt.textContent = `2. Introduction dans la fiole jaugée de 100 mL...`;
+                if (pipette) pipette.setAttribute('transform', 'translate(250, -135)');
+            }, 1300);
+
+            setTimeout(() => {
+                if (pipLiq) {
+                    pipLiq.setAttribute('y', '186');
+                    pipLiq.setAttribute('height', '0');
+                }
+                const initHeight = 16 + sol.v_mL * 1.3;
+                if (fioleLiq) {
+                    fioleLiq.setAttribute('y', String(275 - initHeight));
+                    fioleLiq.setAttribute('height', String(initHeight));
+                }
+                if (fioleMen) fioleMen.setAttribute('cy', String(275 - initHeight));
+            }, 2150);
+
+            // Étape 3 : Ajout d'eau distillée jusqu'au trait de jauge (y = 112)
+            setTimeout(() => {
+                if (pipette) pipette.setAttribute('transform', 'translate(0, 0)');
+                const s2 = document.getElementById('proto-step-2');
+                if (s2) s2.classList.remove('border-sky-500', 'bg-sky-50', 'ring-1', 'ring-sky-400');
+                const s3 = document.getElementById('proto-step-3');
+                if (s3) s3.classList.add('border-sky-500', 'bg-sky-50', 'ring-1', 'ring-sky-400');
+                if (statusTxt) statusTxt.textContent = `3. Ajustement à l'eau distillée jusqu'au trait de jauge...`;
+                if (waterJet) waterJet.setAttribute('opacity', '1');
+            }, 3000);
+
+            setTimeout(() => {
+                if (fioleLiq) {
+                    fioleLiq.setAttribute('y', '112');
+                    fioleLiq.setAttribute('height', '163');
+                }
+                if (fioleMen) {
+                    fioleMen.setAttribute('cy', '112');
+                    fioleMen.setAttribute('rx', '8');
+                }
+            }, 3450);
+
+            setTimeout(() => {
+                if (waterJet) waterJet.setAttribute('opacity', '0');
+                if (statusTxt) statusTxt.textContent = `✓ Solution ${sol.name} (100 mL) préparée et homogénéisée !`;
+                state.isDilutionAnimating = false;
+                if (btn) btn.disabled = false;
+            }, 4400);
+        }
+
+        /* =========================================================================
+         * ONGLET 2 : MONTAGE CONDUCTIMÉTRIQUE, MESURES & DROITE D'ÉTALONNAGE
+         * ========================================================================= */
+        function getActivePhysicalValues() {
+            const sol = BEAKER_SOLUTIONS[state.activeBeakerIdx] || BEAKER_SOLUTIONS[1];
+            const U = state.gbfOn ? state.voltageU : 0.00;
+            // Conductance G en mS : G = k * C (avec C en 10^-3 mol/L et k = 1.45 S·L·mol^-1)
+            const G_mS = CELL_CONSTANT_K * sol.c_mM;
+            // Intensité efficace I en mA : I = G * U
+            const I_mA = G_mS * U;
+            return { sol, U, G_mS, I_mA };
+        }
+
+        function updateCircuitDisplays() {
+            try {
+                const { sol, U, I_mA } = getActivePhysicalValues();
+                const uLabel = document.getElementById('gbf-u-label');
+                const voltTxt = document.getElementById('svg-voltmeter-val');
+                const ammTxt = document.getElementById('svg-ammeter-val');
+                const freqTxt = document.getElementById('svg-gbf-freq');
+                const beakerTxt = document.getElementById('svg-beaker-label');
+                const ionsLayer = document.getElementById('ions-layer');
+
+                if (uLabel) uLabel.textContent = `${formatFr(U, 2)} V`;
+                if (voltTxt) voltTxt.textContent = `${formatFr(U, 2)} V`;
+                if (ammTxt) ammTxt.textContent = `${formatFr(I_mA, 2)} mA`;
+                if (freqTxt) {
+                    freqTxt.textContent = state.gbfOn ? 'f = 500 Hz' : 'GBF ARRÊTÉ';
+                    freqTxt.setAttribute('fill', state.gbfOn ? '#34d399' : '#f87171');
+                }
+                if (beakerTxt) {
+                    beakerTxt.textContent = `${sol.name} • ${formatFr(sol.c_mM, 1)} mM`;
+                }
+                if (ionsLayer) {
+                    if (state.gbfOn && sol.c_mM > 0) {
+                        ionsLayer.classList.remove('ions-paused');
+                    } else {
+                        ionsLayer.classList.add('ions-paused');
+                    }
+                }
+            } catch (err) {
+                console.error('Erreur updateCircuitDisplays:', err);
+            }
+        }
+
+        function toggleGBF() {
+            state.gbfOn = !state.gbfOn;
+            const btn = document.getElementById('gbf-power-btn');
+            if (btn) {
+                if (state.gbfOn) {
+                    btn.className = 'flex-1 sm:flex-none min-h-[44px] px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-sm transition flex items-center justify-center gap-1.5';
+                    btn.innerHTML = `<span class="w-2 h-2 rounded-full bg-white animate-ping"></span> GBF : ON (500 Hz)`;
+                } else {
+                    btn.className = 'flex-1 sm:flex-none min-h-[44px] px-3.5 py-1.5 rounded-xl text-xs font-bold bg-rose-600 text-white shadow-sm transition flex items-center justify-center gap-1.5';
+                    btn.innerHTML = `<span class="w-2 h-2 rounded-full bg-white"></span> GBF : OFF`;
+                }
+            }
+            updateCircuitDisplays();
+        }
+
+        function updateVoltage(val) {
+            const parsed = parseFloat(val);
+            if (!Number.isNaN(parsed)) {
+                state.voltageU = parsed;
+                updateCircuitDisplays();
+            }
+        }
+
+        function setExactVoltage() {
+            state.voltageU = 1.00;
+            const slider = document.getElementById('gbf-u-slider');
+            if (slider) slider.value = '1.00';
+            if (!state.gbfOn) toggleGBF();
+            updateCircuitDisplays();
+            showToast('Tension efficace réglée à U = 1,00 V.', 'info');
+        }
+
+        function pourBeakerSolution(idx) {
+            state.activeBeakerIdx = idx;
+            document.querySelectorAll('.beaker-sol-btn').forEach((btn, i) => {
+                if (i === idx) {
+                    btn.className = 'beaker-sol-btn min-h-[46px] py-1.5 px-1 rounded-xl text-xs font-bold bg-sky-600 text-white shadow-sm transition';
+                } else {
+                    btn.className = 'beaker-sol-btn min-h-[46px] py-1.5 px-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition';
+                }
+            });
+            updateCircuitDisplays();
+            renderIonsInBeaker();
+        }
+
+        function renderIonsInBeaker() {
+            try {
+                const layer = document.getElementById('ions-layer');
+                if (!layer) return;
+                const sol = BEAKER_SOLUTIONS[state.activeBeakerIdx] || BEAKER_SOLUTIONS[1];
+                layer.innerHTML = '';
+
+                if (sol.c_mM <= 0) return;
+
+                // Nombre de paires d'ions proportionnel à la concentration (entre 4 et 18 paires)
+                const pairsCount = Math.min(18, Math.max(4, Math.round(sol.c_mM * 1.8)));
+                const svgNS = 'http://www.w3.org/2000/svg';
+
+                for (let i = 0; i < pairsCount; i++) {
+                    // Position déterministe équilibrée entre les deux électrodes (x: 268..332, y: 292..370)
+                    const xNa = 268 + ((i * 23) % 60);
+                    const yNa = 292 + ((i * 19) % 76);
+                    const xCl = 272 + ((i * 31 + 13) % 58);
+                    const yCl = 295 + ((i * 29 + 7) % 74);
+
+                    const na = document.createElementNS(svgNS, 'circle');
+                    na.setAttribute('cx', String(xNa));
+                    na.setAttribute('cy', String(yNa));
+                    na.setAttribute('r', '4');
+                    na.setAttribute('fill', '#38bdf8');
+                    na.setAttribute('class', 'ion-na');
+                    layer.appendChild(na);
+
+                    const cl = document.createElementNS(svgNS, 'circle');
+                    cl.setAttribute('cx', String(xCl));
+                    cl.setAttribute('cy', String(yCl));
+                    cl.setAttribute('r', '4.3');
+                    cl.setAttribute('fill', '#10b981');
+                    cl.setAttribute('class', 'ion-cl');
+                    layer.appendChild(cl);
+                }
+            } catch (err) {
+                console.error('Erreur renderIonsInBeaker:', err);
+            }
+        }
+
+        function recordCurrentMeasurement() {
+            try {
+                const { sol, U, G_mS, I_mA } = getActivePhysicalValues();
+                if (sol.standardIdx === null) {
+                    showToast('L’eau distillée a une conductance quasi nulle (G ≈ 0 mS). Sélectionnez une solution (S₁) à (S₆).', 'warning');
+                    return;
+                }
+                if (!state.gbfOn || U <= 0) {
+                    showToast('Allumez le GBF et réglez une tension U > 0 V avant de relever la mesure.', 'warning');
+                    return;
+                }
+
+                state.recordedMeasurements[sol.standardIdx] = {
+                    c_mM: sol.c_mM,
+                    U: U,
+                    I_mA: I_mA,
+                    G_mS: G_mS
+                };
+
+                renderMeasurementsTable();
+                renderCalibrationChart('calibration-chart', false);
+                showToast(`Mesure enregistrée pour ${STANDARDS[sol.standardIdx].name} : G = ${formatFr(G_mS, 2)} mS`, 'success');
+            } catch (err) {
+                console.error('Erreur recordCurrentMeasurement:', err);
+            }
+        }
+
+        function autoFillAllMeasurements() {
+            try {
+                STANDARDS.forEach((sol, idx) => {
+                    const G_mS = CELL_CONSTANT_K * sol.c_mM;
+                    state.recordedMeasurements[idx] = {
+                        c_mM: sol.c_mM,
+                        U: 1.00,
+                        I_mA: G_mS * 1.00,
+                        G_mS: G_mS
+                    };
+                });
+                state.showRegressionLine = true;
+                renderMeasurementsTable();
+                renderCalibrationChart('calibration-chart', false);
+                showToast('Toutes les mesures (S₁) à (S₆) ont été relevées sous U = 1,00 V.', 'success');
+            } catch (err) {
+                console.error('Erreur autoFillAllMeasurements:', err);
+            }
+        }
+
+        function renderMeasurementsTable() {
+            try {
+                const tbody = document.getElementById('measurements-tbody');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+
+                STANDARDS.forEach((sol, idx) => {
+                    const rec = state.recordedMeasurements[idx];
+                    const tr = document.createElement('tr');
+                    tr.className = rec ? 'bg-emerald-50/40' : 'bg-white';
+
+                    tr.innerHTML = `
+                        <td class="py-2 px-2 font-bold text-slate-800">${sol.name}</td>
+                        <td class="py-2 px-2 text-slate-700">${formatFr(sol.c_mM, 1)}</td>
+                        <td class="py-2 px-2 text-slate-700">${rec ? formatFr(rec.U, 2) : '—'}</td>
+                        <td class="py-2 px-2 text-sky-700 font-semibold">${rec ? formatFr(rec.I_mA, 2) : '—'}</td>
+                        <td class="py-2 px-2 text-indigo-700 font-bold">${rec ? formatFr(rec.G_mS, 2) : '—'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error('Erreur renderMeasurementsTable:', err);
+            }
+        }
+
+        function toggleCalibrationLine() {
+            state.showRegressionLine = !state.showRegressionLine;
+            const btn = document.getElementById('btn-fit-line');
+            if (btn) {
+                btn.textContent = state.showRegressionLine ? 'Masquer la droite' : 'Tracer la droite G = a · C';
+            }
+            renderCalibrationChart('calibration-chart', false);
+        }
+
+        /* =========================================================================
+         * RENDU DU GRAPHIQUE SVG D'ÉTALONNAGE G = f(C) (SANS DÉPENDANCE EXTERNE)
+         * ========================================================================= */
+        function renderCalibrationChart(svgId, includeSerumProjection) {
+            try {
+                const svg = document.getElementById(svgId);
+                if (!svg) return;
+                const svgNS = 'http://www.w3.org/2000/svg';
+                svg.innerHTML = '';
+
+                // Dimensions et marges du repère SVG (viewBox 0 0 460 285)
+                const padLeft = 52;
+                const padRight = 22;
+                const padTop = 20;
+                const padBottom = 44;
+                const plotW = 460 - padLeft - padRight;
+                const plotH = 285 - padTop - padBottom;
+
+                const maxC = 11.0; // en 10^-3 mol/L
+                const maxG = 16.0; // en mS
+
+                const xOfC = (c) => padLeft + (c / maxC) * plotW;
+                const yOfG = (g) => padTop + plotH - (g / maxG) * plotH;
+
+                // Fond du graphique
+                const bg = document.createElementNS(svgNS, 'rect');
+                bg.setAttribute('x', String(padLeft));
+                bg.setAttribute('y', String(padTop));
+                bg.setAttribute('width', String(plotW));
+                bg.setAttribute('height', String(plotH));
+                bg.setAttribute('fill', '#ffffff');
+                bg.setAttribute('stroke', '#cbd5e1');
+                bg.setAttribute('stroke-width', '1');
+                svg.appendChild(bg);
+
+                // Grille verticale (C de 0 à 11)
+                for (let c = 0; c <= 11; c += 1) {
+                    const x = xOfC(c);
+                    const line = document.createElementNS(svgNS, 'line');
+                    line.setAttribute('x1', String(x));
+                    line.setAttribute('y1', String(padTop));
+                    line.setAttribute('x2', String(x));
+                    line.setAttribute('y2', String(padTop + plotH));
+                    line.setAttribute('stroke', c % 2 === 0 ? '#e2e8f0' : '#f1f5f9');
+                    line.setAttribute('stroke-width', '1');
+                    svg.appendChild(line);
+
+                    if (c % 2 === 0) {
+                        const lbl = document.createElementNS(svgNS, 'text');
+                        lbl.setAttribute('x', String(x));
+                        lbl.setAttribute('y', String(padTop + plotH + 16));
+                        lbl.setAttribute('text-anchor', 'middle');
+                        lbl.setAttribute('font-size', '10');
+                        lbl.setAttribute('fill', '#475569');
+                        lbl.textContent = String(c);
+                        svg.appendChild(lbl);
+                    }
+                }
+
+                // Grille horizontale (G de 0 à 16 mS)
+                for (let g = 0; g <= 16; g += 2) {
+                    const y = yOfG(g);
+                    const line = document.createElementNS(svgNS, 'line');
+                    line.setAttribute('x1', String(padLeft));
+                    line.setAttribute('y1', String(y));
+                    line.setAttribute('x2', String(padLeft + plotW));
+                    line.setAttribute('y2', String(y));
+                    line.setAttribute('stroke', '#e2e8f0');
+                    line.setAttribute('stroke-width', '1');
+                    svg.appendChild(line);
+
+                    const lbl = document.createElementNS(svgNS, 'text');
+                    lbl.setAttribute('x', String(padLeft - 8));
+                    lbl.setAttribute('y', String(y + 3.5));
+                    lbl.setAttribute('text-anchor', 'end');
+                    lbl.setAttribute('font-size', '10');
+                    lbl.setAttribute('fill', '#475569');
+                    lbl.textContent = String(g);
+                    svg.appendChild(lbl);
+                }
+
+                // Axes principaux
+                const xAxis = document.createElementNS(svgNS, 'line');
+                xAxis.setAttribute('x1', String(padLeft));
+                xAxis.setAttribute('y1', String(padTop + plotH));
+                xAxis.setAttribute('x2', String(padLeft + plotW));
+                xAxis.setAttribute('y2', String(padTop + plotH));
+                xAxis.setAttribute('stroke', '#334155');
+                xAxis.setAttribute('stroke-width', '1.8');
+                svg.appendChild(xAxis);
+
+                const yAxis = document.createElementNS(svgNS, 'line');
+                yAxis.setAttribute('x1', String(padLeft));
+                yAxis.setAttribute('y1', String(padTop));
+                yAxis.setAttribute('x2', String(padLeft));
+                yAxis.setAttribute('y2', String(padTop + plotH));
+                yAxis.setAttribute('stroke', '#334155');
+                yAxis.setAttribute('stroke-width', '1.8');
+                svg.appendChild(yAxis);
+
+                // Titres des axes
+                const xTitle = document.createElementNS(svgNS, 'text');
+                xTitle.setAttribute('x', String(padLeft + plotW / 2));
+                xTitle.setAttribute('y', '277');
+                xTitle.setAttribute('text-anchor', 'middle');
+                xTitle.setAttribute('font-size', '11');
+                xTitle.setAttribute('font-weight', '700');
+                xTitle.setAttribute('fill', '#1e293b');
+                xTitle.textContent = 'Concentration C (10⁻³ mol·L⁻¹)';
+                svg.appendChild(xTitle);
+
+                const yTitle = document.createElementNS(svgNS, 'text');
+                yTitle.setAttribute('x', '15');
+                yTitle.setAttribute('y', String(padTop + plotH / 2));
+                yTitle.setAttribute('text-anchor', 'middle');
+                yTitle.setAttribute('font-size', '11');
+                yTitle.setAttribute('font-weight', '700');
+                yTitle.setAttribute('fill', '#1e293b');
+                yTitle.setAttribute('transform', `rotate(-90, 15, ${padTop + plotH / 2})`);
+                yTitle.textContent = 'Conductance G (mS)';
+                svg.appendChild(yTitle);
+
+                // Droite d'étalonnage G = a * C passant par l'origine
+                const validPoints = state.recordedMeasurements.filter(Boolean);
+                const eqText = document.getElementById('calibration-eq-text');
+
+                if (state.showRegressionLine || includeSerumProjection) {
+                    const cEnd = 10.6;
+                    const gEnd = CELL_CONSTANT_K * cEnd;
+                    const regLine = document.createElementNS(svgNS, 'line');
+                    regLine.setAttribute('x1', String(xOfC(0)));
+                    regLine.setAttribute('y1', String(yOfG(0)));
+                    regLine.setAttribute('x2', String(xOfC(cEnd)));
+                    regLine.setAttribute('y2', String(yOfG(gEnd)));
+                    regLine.setAttribute('stroke', '#4f46e5');
+                    regLine.setAttribute('stroke-width', '2.2');
+                    svg.appendChild(regLine);
+
+                    if (eqText && !includeSerumProjection) {
+                        eqText.textContent = `Droite linéaire : G (mS) = 1,45 × C (10⁻³ mol·L⁻¹)`;
+                    }
+                } else if (eqText) {
+                    eqText.textContent = `${validPoints.length}/6 point(s) relevé(s)`;
+                }
+
+                // Points expérimentaux enregistrés (ou tous en mode projection sérum)
+                const pointsToDraw = includeSerumProjection
+                    ? STANDARDS.map(s => ({ c_mM: s.c_mM, G_mS: CELL_CONSTANT_K * s.c_mM }))
+                    : validPoints;
+
+                pointsToDraw.forEach(pt => {
+                    const cx = xOfC(pt.c_mM);
+                    const cy = yOfG(pt.G_mS);
+
+                    const dot = document.createElementNS(svgNS, 'circle');
+                    dot.setAttribute('cx', String(cx));
+                    dot.setAttribute('cy', String(cy));
+                    dot.setAttribute('r', '4.5');
+                    dot.setAttribute('fill', '#0284c7');
+                    dot.setAttribute('stroke', '#ffffff');
+                    dot.setAttribute('stroke-width', '1.5');
+                    svg.appendChild(dot);
+                });
+
+                // Projection orthogonale du sérum physiologique dilué (Onglet 3)
+                if (includeSerumProjection && state.serum.isMeasured) {
+                    const cDil_mM = (state.serum.c_molL / DILUTION_FACTOR) * 1000;
+                    const gDil_mS = CELL_CONSTANT_K * cDil_mM;
+
+                    const px = xOfC(cDil_mM);
+                    const py = yOfG(gDil_mS);
+                    const x0 = xOfC(0);
+                    const y0 = yOfG(0);
+
+                    // Ligne horizontale G_dil -> droite
+                    const hLine = document.createElementNS(svgNS, 'line');
+                    hLine.setAttribute('x1', String(x0));
+                    hLine.setAttribute('y1', String(py));
+                    hLine.setAttribute('x2', String(px));
+                    hLine.setAttribute('y2', String(py));
+                    hLine.setAttribute('stroke', '#e11d48');
+                    hLine.setAttribute('stroke-width', '2');
+                    hLine.setAttribute('stroke-dasharray', '5,4');
+                    svg.appendChild(hLine);
+
+                    // Ligne verticale droite -> C_dil
+                    const vLine = document.createElementNS(svgNS, 'line');
+                    vLine.setAttribute('x1', String(px));
+                    vLine.setAttribute('y1', String(py));
+                    vLine.setAttribute('x2', String(px));
+                    vLine.setAttribute('y2', String(y0));
+                    vLine.setAttribute('stroke', '#e11d48');
+                    vLine.setAttribute('stroke-width', '2');
+                    vLine.setAttribute('stroke-dasharray', '5,4');
+                    svg.appendChild(vLine);
+
+                    // Point (S_dil)
+                    const sDot = document.createElementNS(svgNS, 'circle');
+                    sDot.setAttribute('cx', String(px));
+                    sDot.setAttribute('cy', String(py));
+                    sDot.setAttribute('r', '6');
+                    sDot.setAttribute('fill', '#e11d48');
+                    sDot.setAttribute('stroke', '#ffffff');
+                    sDot.setAttribute('stroke-width', '2');
+                    svg.appendChild(sDot);
+
+                    // Étiquettes de lecture graphique
+                    const gTag = document.createElementNS(svgNS, 'text');
+                    gTag.setAttribute('x', String(x0 + 6));
+                    gTag.setAttribute('y', String(py - 5));
+                    gTag.setAttribute('font-size', '10');
+                    gTag.setAttribute('font-weight', '700');
+                    gTag.setAttribute('fill', '#be123c');
+                    gTag.textContent = `G_dil = ${formatFr(gDil_mS, 2)} mS`;
+                    svg.appendChild(gTag);
+
+                    const cTag = document.createElementNS(svgNS, 'text');
+                    cTag.setAttribute('x', String(px + 5));
+                    cTag.setAttribute('y', String(y0 - 6));
+                    cTag.setAttribute('font-size', '10');
+                    cTag.setAttribute('font-weight', '700');
+                    cTag.setAttribute('fill', '#be123c');
+                    cTag.textContent = `C_dil = ${formatFr(cDil_mM, 2)}`;
+                    svg.appendChild(cTag);
+                }
+            } catch (err) {
+                console.error('Erreur renderCalibrationChart:', err);
+            }
+        }
+
+        /* =========================================================================
+         * ONGLET 3 : DOSAGE DU SÉRUM PHYSIOLOGIQUE
+         * ========================================================================= */
+        function generateNewSerumSample() {
+            try {
+                // Concentration aléatoire réaliste autour de 0,154 mol/L (entre 0,145 et 0,162 mol/L)
+                const randomC = 0.145 + Math.round(Math.random() * 17) * 0.001;
+                state.serum.c_molL = Number(randomC.toFixed(3));
+                state.serum.isDiluted = false;
+                state.serum.isMeasured = false;
+
+                const btnDil = document.getElementById('btn-dilute-serum');
+                if (btnDil) {
+                    btnDil.textContent = 'Préparer la solution diluée (S_dil)';
+                    btnDil.className = 'mt-3 w-full min-h-[44px] py-2 px-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold shadow-sm transition';
+                }
+
+                const btnMeas = document.getElementById('btn-measure-serum');
+                if (btnMeas) {
+                    btnMeas.disabled = true;
+                    btnMeas.className = 'mt-3 w-full min-h-[44px] py-2 px-3 rounded-xl bg-slate-300 text-slate-500 text-xs font-semibold cursor-not-allowed transition';
+                }
+
+                const meterBox = document.getElementById('serum-meter-box');
+                if (meterBox) meterBox.innerHTML = 'En attente de dilution...';
+
+                const sumI = document.getElementById('summary-serum-i');
+                const sumG = document.getElementById('summary-serum-g');
+                if (sumI) sumI.textContent = '— mA';
+                if (sumG) sumG.textContent = '— mS';
+
+                const badge = document.getElementById('projection-badge');
+                if (badge) badge.classList.add('hidden');
+
+                ['ans-cdil', 'ans-cserum', 'ans-cm'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.value = '';
+                        el.classList.remove('border-emerald-500', 'bg-emerald-50', 'border-rose-500', 'bg-rose-50');
+                        el.classList.add('border-slate-300');
+                    }
+                });
+
+                const fb = document.getElementById('serum-feedback');
+                if (fb) fb.classList.add('hidden');
+
+                renderCalibrationChart('serum-chart', true);
+                showToast('Nouveau flacon de sérum physiologique chargé.', 'info');
+            } catch (err) {
+                console.error('Erreur generateNewSerumSample:', err);
+            }
+        }
+
+        function diluteSerumStep() {
+            state.serum.isDiluted = true;
+            state.serum.isMeasured = false;
+
+            const btnDil = document.getElementById('btn-dilute-serum');
+            if (btnDil) {
+                btnDil.textContent = '✓ Solution diluée (S_dil) prête';
+                btnDil.className = 'mt-3 w-full min-h-[44px] py-2 px-3 rounded-xl bg-emerald-600 text-white text-xs font-semibold shadow-sm transition';
+            }
+
+            const btnMeas = document.getElementById('btn-measure-serum');
+            if (btnMeas) {
+                btnMeas.disabled = false;
+                btnMeas.className = 'mt-3 w-full min-h-[44px] py-2 px-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold shadow-sm cursor-pointer transition';
+            }
+
+            const meterBox = document.getElementById('serum-meter-box');
+            if (meterBox) {
+                meterBox.innerHTML = `<span class="text-sky-400">Solution (S_dil) prête (dilution 20×)</span>`;
+            }
+            showToast('Sérum physiologique dilué 20 fois avec succès.', 'success');
+        }
+
+        function measureSerumStep() {
+            if (!state.serum.isDiluted) return;
+            state.serum.isMeasured = true;
+
+            const cDil_mM = (state.serum.c_molL / DILUTION_FACTOR) * 1000;
+            const gDil_mS = CELL_CONSTANT_K * cDil_mM;
+            const iDil_mA = gDil_mS * 1.00; // sous U = 1,00 V
+
+            const meterBox = document.getElementById('serum-meter-box');
+            if (meterBox) {
+                meterBox.innerHTML = `<span class="text-emerald-400 font-bold">U = 1,00 V  •  I = ${formatFr(iDil_mA, 2)} mA  •  G_dil = ${formatFr(gDil_mS, 2)} mS</span>`;
+            }
+
+            const sumI = document.getElementById('summary-serum-i');
+            const sumG = document.getElementById('summary-serum-g');
+            if (sumI) sumI.textContent = `${formatFr(iDil_mA, 2)} mA`;
+            if (sumG) sumG.textContent = `${formatFr(gDil_mS, 2)} mS`;
+
+            const badge = document.getElementById('projection-badge');
+            if (badge) badge.classList.remove('hidden');
+
+            renderCalibrationChart('serum-chart', true);
+            showToast(`Conductance mesurée : G_dil = ${formatFr(gDil_mS, 2)} mS`, 'success');
+        }
+
+        function checkSerumCalculations() {
+            try {
+                if (!state.serum.isMeasured) {
+                    showToast('Effectuez d’abord la dilution puis la mesure sur (S_dil).', 'warning');
+                    return;
+                }
+
+                const expectedCdil = (state.serum.c_molL / DILUTION_FACTOR) * 1000; // en 10^-3 mol/L
+                const expectedCserum = state.serum.c_molL; // en mol/L
+                const expectedCm = expectedCserum * M_NACL; // en g/L
+
+                const inCdil = document.getElementById('ans-cdil');
+                const inCser = document.getElementById('ans-cserum');
+                const inCm = document.getElementById('ans-cm');
+
+                const vCdil = parseFloat(String(inCdil.value).replace(',', '.'));
+                const vCser = parseFloat(String(inCser.value).replace(',', '.'));
+                const vCm = parseFloat(String(inCm.value).replace(',', '.'));
+
+                const okCdil = !Number.isNaN(vCdil) && Math.abs(vCdil - expectedCdil) <= 0.15;
+                const okCser = !Number.isNaN(vCser) && Math.abs(vCser - expectedCserum) <= 0.005;
+                const okCm = !Number.isNaN(vCm) && Math.abs(vCm - expectedCm) <= 0.25;
+
+                [
+                    { el: inCdil, ok: okCdil },
+                    { el: inCser, ok: okCser },
+                    { el: inCm, ok: okCm }
+                ].forEach(item => {
+                    if (!item.el) return;
+                    item.el.classList.remove('border-slate-300', 'border-emerald-500', 'bg-emerald-50', 'border-rose-500', 'bg-rose-50');
+                    item.el.classList.add(item.ok ? 'border-emerald-500' : 'border-rose-500', item.ok ? 'bg-emerald-50' : 'bg-rose-50');
+                });
+
+                const fb = document.getElementById('serum-feedback');
+                if (!fb) return;
+                fb.classList.remove('hidden');
+
+                if (okCdil && okCser && okCm) {
+                    const pct = (expectedCm / 10).toFixed(2).replace('.', ',');
+                    fb.className = 'mt-4 p-3.5 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-900 text-xs space-y-1.5 leading-relaxed';
+                    fb.innerHTML = `
+                        <div><strong>Félicitations !</strong> Vos calculs sont exacts :</div>
+                        <div class="font-mono-tech">• C_dil = ${formatFr(expectedCdil, 2)} × 10⁻³ mol·L⁻¹</div>
+                        <div class="font-mono-tech">• C_sérum = 20 × C_dil = ${formatFr(expectedCserum, 3)} mol·L⁻¹</div>
+                        <div class="font-mono-tech">• Cm = ${formatFr(expectedCm, 2)} g·L⁻¹ (soit ${pct} % en masse, conforme à l'indication pharmaceutique 0,9 %).</div>
+                    `;
+                    showToast('Dosage du sérum physiologique validé !', 'success');
+                } else {
+                    fb.className = 'mt-4 p-3.5 rounded-xl border border-amber-300 bg-amber-50 text-amber-900 text-xs space-y-1.5 leading-relaxed';
+                    fb.innerHTML = `
+                        <div><strong>Vérifiez vos valeurs :</strong></div>
+                        <div>1. <span class="font-mono-tech">C_dil = G_dil / 1,45</span> (en 10⁻³ mol·L⁻¹)</div>
+                        <div>2. <span class="font-mono-tech">C_sérum = 20 × C_dil</span> (convertir en mol·L⁻¹)</div>
+                        <div>3. <span class="font-mono-tech">Cm = C_sérum × 58,5</span> (en g·L⁻¹)</div>
+                    `;
+                    showToast('Certaines réponses nécessitent une correction.', 'warning');
+                }
+            } catch (err) {
+                console.error('Erreur checkSerumCalculations:', err);
+            }
+        }
+
+        function showSerumCorrection() {
+            try {
+                if (!state.serum.isMeasured) {
+                    diluteSerumStep();
+                    measureSerumStep();
+                }
+
+                const expectedCdil = (state.serum.c_molL / DILUTION_FACTOR) * 1000;
+                const expectedCserum = state.serum.c_molL;
+                const expectedCm = expectedCserum * M_NACL;
+                const pct = (expectedCm / 10).toFixed(2).replace('.', ',');
+
+                const inCdil = document.getElementById('ans-cdil');
+                const inCser = document.getElementById('ans-cserum');
+                const inCm = document.getElementById('ans-cm');
+
+                if (inCdil) inCdil.value = expectedCdil.toFixed(2);
+                if (inCser) inCser.value = expectedCserum.toFixed(3);
+                if (inCm) inCm.value = expectedCm.toFixed(2);
+
+                const fb = document.getElementById('serum-feedback');
+                if (fb) {
+                    fb.classList.remove('hidden');
+                    fb.className = 'mt-4 p-3.5 rounded-xl border border-sky-200 bg-sky-50 text-sky-950 text-xs space-y-1.5 leading-relaxed';
+                    fb.innerHTML = `
+                        <div class="font-bold text-sky-900">Correction détaillée :</div>
+                        <div class="font-mono-tech">1. C_dil = G_dil / 1,45 = ${formatFr(expectedCdil, 2)} × 10⁻³ mol·L⁻¹</div>
+                        <div class="font-mono-tech">2. C_sérum = 20 × ${formatFr(expectedCdil, 2)}×10⁻³ = ${formatFr(expectedCserum, 3)} mol·L⁻¹</div>
+                        <div class="font-mono-tech">3. Cm = ${formatFr(expectedCserum, 3)} × 58,5 = ${formatFr(expectedCm, 2)} g·L⁻¹ (${pct} %)</div>
+                    `;
+                }
+            } catch (err) {
+                console.error('Erreur showSerumCorrection:', err);
+            }
+        }
+
+        /* =========================================================================
+         * INITIALISATION SÉCURISÉE AU CHARGEMENT DU DOM
+         * ========================================================================= */
+        window.addEventListener('DOMContentLoaded', () => {
+            try {
+                selectDilutionSim(0);
+                pourBeakerSolution(1);
+                renderMeasurementsTable();
+                renderCalibrationChart('calibration-chart', false);
+            } catch (err) {
+                console.error('Erreur lors de l’initialisation:', err);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Les deux types d’électrolyse et leurs applications</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f8fafc;color:#0f172a}body{overflow-x:clip}body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:rgba(255,255,255,.95)}</style></head>
+<body class="min-h-screen">
+<header class="bg-white border-b border-slate-200"><div class="max-w-[1400px] mx-auto px-4 py-6">
+<p class="text-xs font-semibold tracking-wider text-cyan-700 uppercase">Physique-chimie · Oxydoréduction forcée</p>
+<h1 class="text-2xl sm:text-3xl font-bold mt-1">Les deux types d’électrolyse et leurs applications</h1>
+<p class="text-slate-700 mt-3 max-w-3xl">Une électrolyse impose, grâce à un générateur, une transformation qui ne se produirait pas spontanément. À l’<b>anode (+)</b> a lieu une oxydation, à la <b>cathode (−)</b> une réduction ; les cations migrent vers la cathode, les anions vers l’anode. Les quantités formées suivent la loi de Faraday : <span class="font-mono">m = M · I · t / (n · F)</span>.</p>
+</div></header>
+<nav class="sticky z-30 bg-white/95 backdrop-blur border-b border-slate-200" style="top:env(safe-area-inset-top,0px)"><div class="max-w-[1400px] mx-auto px-4 py-2 flex items-center gap-2 overflow-x-auto whitespace-nowrap" role="tablist">
+<a href="https://simphysique.tn" target="_blank" rel="noopener noreferrer" class="shrink-0 inline-flex items-center px-3 py-2 rounded-xl text-sm font-semibold bg-cyan-700 text-white hover:bg-cyan-800 transition">← simphysique.tn</a><span class="shrink-0 w-px h-6 bg-slate-300"></span>
+<button data-tab="a" class="tab">1 · Électrode soluble</button>
+<button data-tab="b" class="tab">2 · Électrodes inattaquables</button>
+<button data-tab="c" class="tab">3 · Accumulateurs</button></div></nav>
+<div class="max-w-[1400px] mx-auto px-4 py-6">
+<section id="panel-a"><h2 class="text-xl font-bold text-slate-900">Type 1 : l’électrolyse à électrode soluble</h2>
+<p class="text-slate-700 mt-2 max-w-3xl">Ici, l’anode est en cuivre et c’est elle qui réagit : le cuivre qu’elle perd se retrouve sur l’objet placé à la cathode, une clé dans la simulation. Le métal est simplement transféré d’une électrode à l’autre.</p>
+<div class="grid md:grid-cols-2 gap-4 my-4">
+<div class="font-mono text-[13px] overflow-x-auto bg-slate-100 border border-slate-200 rounded-xl p-3 space-y-1 text-slate-800"><div><span class="font-bold text-rose-700">Anode (+) · oxydation</span> Cu(s) → Cu²⁺(aq) + 2 e⁻</div><div><span class="font-bold text-blue-700">Cathode (−) · réduction</span> Cu²⁺(aq) + 2 e⁻ → Cu(s)</div><div class="border-t border-slate-300 pt-1 text-emerald-700 font-bold">Bilan : transfert de Cu de l’anode vers la cathode</div></div>
+<div class="text-sm text-slate-700 bg-cyan-50 border border-cyan-200 rounded-xl p-3"><b class="text-cyan-800">À observer :</b> la plaque s’amincit pendant que la clé se couvre de cuivre. La masse perdue à l’anode égale la masse gagnée à la cathode, et la concentration en Cu²⁺ ne change pas : la solution reste bleue.</div></div>
+
+
+        <!-- PANNEAU DE SIMULATION (GRAPHISME & SVG) -->
+        <section class="lg:col-span-8 bg-white rounded-2xl border border-slate-300 p-4 flex flex-col relative overflow-hidden backdrop-blur-sm min-h-0 lg:min-h-[500px]">
+            
+            <!-- Barre supérieure d'état -->
+            <div class="flex flex-wrap gap-2 justify-between items-center mb-2 z-10">
+                <div class="flex items-center space-x-4">
+                    <div id="a_statusBadge" class="flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-200 text-slate-700 text-xs font-semibold">
+                        <span id="a_statusDot" class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                        <span id="a_statusText">Générateur éteint</span>
+                    </div>
+                    <div class="text-xs font-mono bg-slate-100 px-3 py-1 rounded-lg border border-slate-300 text-emerald-700">
+                        Chrono t = <span id="a_timerDisplay" class="text-sm font-bold">00:00</span> s
+                    </div>
+                </div>
+
+                <!-- Toggle Options d'affichage -->
+                <div class="flex items-center space-x-2 text-xs">
+                    <label class="flex items-center cursor-pointer bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-lg border border-slate-300 transition">
+                        <input type="checkbox" id="a_toggleIons" checked class="rounded border-slate-300 text-cyan-500 focus:ring-0 mr-2">
+                        <span class="text-slate-700">Ions (Cu²⁺, SO₄²⁻)</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-lg border border-slate-300 transition">
+                        <input type="checkbox" id="a_toggleElectrons" checked class="rounded border-slate-300 text-amber-500 focus:ring-0 mr-2">
+                        <span class="text-slate-700">Électrons (e⁻)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- LAB SVG GRAPHICS -->
+            <div class="relative flex-1 flex items-center justify-center w-full h-full min-h-[260px] sm:min-h-[420px]">
+                <svg id="a_labSvg" viewBox="0 0 800 500" class="w-full h-full max-h-[550px] drop-shadow-xl">
+                    <defs>
+                        <!-- Gradients pour l'électrolyte et métaux -->
+                        <linearGradient id="a_cuSolutionGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#7dd3fc" stop-opacity="0.5"/>
+                            <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.8"/>
+                        </linearGradient>
+
+                        <linearGradient id="a_copperGrad" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="#b45309"/>
+                            <stop offset="50%" stop-color="#d97706"/>
+                            <stop offset="100%" stop-color="#78350f"/>
+                        </linearGradient>
+
+                        <linearGradient id="a_keyGrad" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="#94a3b8"/>
+                            <stop offset="50%" stop-color="#cbd5e1"/>
+                            <stop offset="100%" stop-color="#64748b"/>
+                        </linearGradient>
+
+                        <linearGradient id="a_glassGrad" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.2"/>
+                            <stop offset="20%" stop-color="#ffffff" stop-opacity="0.05"/>
+                            <stop offset="90%" stop-color="#ffffff" stop-opacity="0.05"/>
+                            <stop offset="100%" stop-color="#ffffff" stop-opacity="0.25"/>
+                        </linearGradient>
+
+                        <!-- Filtre d'effet de lueur -->
+                        <filter id="a_glow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur stdDeviation="3" result="blur" />
+                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        </filter>
+                    </defs>
+
+                    <!-- FIL'S ET CIRCUIT ÉLECTRIQUE -->
+                    <!-- Wire Anode (+, Rouge) -->
+                    <path d="M 260 210 V 90 H 350" fill="none" stroke="#ef4444" stroke-width="4" stroke-linecap="round"/>
+                    <!-- Wire Cathode (-, Bleu) -->
+                    <path d="M 540 210 V 90 H 450" fill="none" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
+
+                    <!-- FLÈCHES COURANT / ÉLECTRONS -->
+                    <!-- Direction du courant I (Anode vers Cathode via Générateur) -->
+                    <g id="a_currentArrows" class="opacity-0 transition-opacity duration-300">
+                        <text x="305" y="75" fill="#ef4444" font-size="12" font-weight="bold">I ➔</text>
+                        <text x="480" y="75" fill="#ef4444" font-size="12" font-weight="bold">I ➔</text>
+                    </g>
+
+                    <!-- CABLE ELECTRONS CONTAINER -->
+                    <g id="a_wireElectronsGroup"></g>
+
+                    <!-- BOÎTIER GÉNÉRATEUR (DC POWER SUPPLY) -->
+                    <g transform="translate(325, 40)">
+                        <rect x="0" y="0" width="150" height="80" rx="10" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+                        <rect x="10" y="10" width="130" height="30" rx="4" fill="#0f172a"/>
+                        <!-- Écran d'affichage I et U -->
+                        <text x="20" y="30" fill="#10b981" font-family="monospace" font-size="14" font-weight="bold">U: <tspan id="a_svgVoltDisplay">5.0</tspan>V</text>
+                        <text x="85" y="30" fill="#f59e0b" font-family="monospace" font-size="14" font-weight="bold">I: <tspan id="a_svgAmpDisplay">1.50</tspan>A</text>
+                        <!-- Bornes -->
+                        <circle cx="25" cy="60" r="8" fill="#ef4444"/>
+                        <text x="22" y="64" fill="#ffffff" font-size="12" font-weight="bold">+</text>
+
+                        <circle cx="125" cy="60" r="8" fill="#3b82f6"/>
+                        <text x="122" y="64" fill="#ffffff" font-size="12" font-weight="bold">-</text>
+
+                        <text x="60" y="62" fill="#475569" font-size="10" font-weight="bold">GÉNÉRATEUR CC</text>
+                    </g>
+
+                    <!-- BECHER (CUVE ÉLECTROLYTIQUE) -->
+                    <!-- Solution liquide -->
+                    <rect x="180" y="220" width="440" height="230" rx="10" fill="url(#a_cuSolutionGrad)" />
+                    <line x1="180" y1="220" x2="620" y2="220" stroke="#38bdf8" stroke-width="2" stroke-opacity="0.8"/>
+
+                    <!-- Graduations du bécher -->
+                    <g stroke="#0c4a6e" stroke-opacity="0.35" stroke-width="1.5">
+                        <line x1="600" y1="260" x2="615" y2="260"/>
+                        <line x1="595" y1="300" x2="615" y2="300"/>
+                        <line x1="600" y1="340" x2="615" y2="340"/>
+                        <line x1="595" y1="380" x2="615" y2="380"/>
+                        <text x="565" y="304" fill="#0c4a6e" fill-opacity="0.7" font-size="10">800 mL</text>
+                        <text x="565" y="384" fill="#0c4a6e" fill-opacity="0.7" font-size="10">400 mL</text>
+                    </g>
+
+                    <!-- ANODE (Cuivre Soluble - Lame Gauche) -->
+                    <g id="a_anodeGroup">
+                        <!-- Support suspension -->
+                        <rect x="250" y="195" width="20" height="20" fill="#475569" rx="2"/>
+                        <!-- Plaque de Cuivre (Dissolution dynamique de l'épaisseur) -->
+                        <rect id="a_anodePlate" x="252" y="215" width="16" height="190" fill="url(#a_copperGrad)" rx="3" stroke="#78350f" stroke-width="1"/>
+                        <!-- Étiquette Anode -->
+                        <rect x="140" y="160" width="110" height="30" rx="6" fill="#ffffff" stroke="#ef4444" stroke-width="1.5"/>
+                        <text x="195" y="175" fill="#ef4444" font-size="11" font-weight="bold" text-anchor="middle">ANODE (+)</text>
+                        <text x="195" y="186" fill="#475569" font-size="9" text-anchor="middle">Cu(s) ➔ Cu²⁺ + 2e⁻</text>
+                        <line x1="195" y1="190" x2="250" y2="210" stroke="#ef4444" stroke-dasharray="2 2" stroke-width="1"/>
+                    </g>
+
+                    <!-- CATHODE (Clé/Objet à cuivrer - Droite) -->
+                    <g id="a_cathodeGroup">
+                        <!-- Support suspension -->
+                        <rect x="530" y="195" width="20" height="20" fill="#475569" rx="2"/>
+                        
+                        <!-- Forme de l'objet (Clé Métallique Base) -->
+                        <g id="a_keyObject" transform="translate(525, 220)">
+                            <!-- Couche de dépôt de cuivre (s'épaissit dynamiquement) -->
+                            <path id="a_copperDeposit" d="M 12 10 C 2 10 0 25 10 38 C 15 45 15 150 15 160 C 15 165 25 165 25 160 C 25 150 25 45 30 38 C 40 25 38 10 28 10 Z" 
+                                  fill="#b45309" opacity="0" stroke="#d97706" stroke-width="0"/>
+
+                            <!-- Clé métallique d'origine (Gris) -->
+                            <path id="a_baseKey" d="M 12 10 C 2 10 0 25 10 38 C 15 45 15 150 15 160 C 15 165 25 165 25 160 C 25 150 25 45 30 38 C 40 25 38 10 28 10 Z" 
+                                  fill="url(#a_keyGrad)" stroke="#475569" stroke-width="1.5"/>
+                            <circle cx="20" cy="24" r="6" fill="#1e293b"/>
+                        </g>
+
+                        <!-- Étiquette Cathode -->
+                        <rect x="550" y="160" width="120" height="30" rx="6" fill="#ffffff" stroke="#3b82f6" stroke-width="1.5"/>
+                        <text x="610" y="175" fill="#3b82f6" font-size="11" font-weight="bold" text-anchor="middle">CATHODE (-)</text>
+                        <text x="610" y="186" fill="#475569" font-size="9" text-anchor="middle">Cu²⁺ + 2e⁻ ➔ Cu(s)</text>
+                        <line x1="610" y1="190" x2="550" y2="210" stroke="#3b82f6" stroke-dasharray="2 2" stroke-width="1"/>
+                    </g>
+
+                    <!-- CONTENEUR POUR PARTICULES/IONS EN SOLUTION -->
+                    <g id="a_solutionIonsGroup"></g>
+
+                    <!-- Structure extérieure Bécher en verre -->
+                    <rect x="180" y="200" width="440" height="250" rx="16" fill="url(#a_glassGrad)" stroke="#94a3b8" stroke-width="3" stroke-opacity="0.6"/>
+                    <ellipse cx="400" cy="200" rx="220" ry="12" fill="none" stroke="#94a3b8" stroke-width="2" stroke-opacity="0.5"/>
+
+                    <!-- Légende Solution Electrolyte -->
+                    <text x="400" y="435" fill="#0c4a6e" font-size="12" font-weight="medium" text-anchor="middle" opacity="0.8">
+                        Solution aqueuse de Sulfate de Cuivre (Cu²⁺ + SO₄²⁻)
+                    </text>
+                </svg>
+            </div>
+
+            <!-- Légende visuelle simplifiée au bas de l'expérience -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs bg-slate-100 p-2.5 rounded-xl border border-slate-200 mt-2">
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-cyan-400 inline-block shadow-[0_0_8px_#38bdf8]"></span>
+                    <span class="text-slate-700">Cations Cu²⁺ (Migration vers -)</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-black border border-slate-400 inline-block"></span>
+                    <span class="text-slate-700">Anions SO₄²⁻ (Spectateurs)</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-amber-400 inline-block shadow-[0_0_8px_#fbbf24]"></span>
+                    <span class="text-slate-700">Électrons e⁻ (dans les fils)</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded bg-amber-700 inline-block"></span>
+                    <span class="text-slate-700">Cuivre métallique Cu(s)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANNEAU DE CONTRÔLE ET MESURES -->
+        <section class="lg:col-span-4 flex flex-col space-y-4">
+            
+            <!-- Commandes Principales -->
+            <div class="bg-white border border-slate-300 rounded-2xl p-4 shadow-lg space-y-4">
+                <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center justify-between">
+                    <span>Contrôle de l’expérience</span>
+                    <span class="text-xs font-normal text-slate-600">Paramètres CC</span>
+                </h2>
+
+                <!-- Boutons d'action -->
+                <div class="grid grid-cols-3 gap-2">
+                    <button id="a_btnStart" class="flex items-center justify-center space-x-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-3 rounded-xl transition shadow-lg shadow-emerald-900/30">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6V4z"/></svg>
+                        <span>Lancer</span>
+                    </button>
+                    <button id="a_btnPause" class="flex items-center justify-center space-x-1.5 bg-amber-600 hover:bg-amber-500 text-white font-semibold py-2.5 px-3 rounded-xl transition shadow-lg shadow-amber-900/30" disabled>
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4h3v12H5V4zm7 0h3v12h-3V4z"/></svg>
+                        <span>Pause</span>
+                    </button>
+                    <button id="a_btnReset" class="flex items-center justify-center space-x-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold py-2.5 px-3 rounded-xl transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        <span>RAZ</span>
+                    </button>
+                </div>
+
+                <!-- Sliders Réglages -->
+                <div class="space-y-3 pt-2">
+                    <!-- Intensité du courant -->
+                    <div>
+                        <div class="flex justify-between text-xs font-medium mb-1">
+                            <label for="a_inputCurrent" class="text-slate-700">Intensité du courant (I) :</label>
+                            <span class="text-amber-700 font-mono font-bold"><span id="a_valCurrent">1.50</span> A</span>
+                        </div>
+                        <input type="range" id="a_inputCurrent" min="0.2" max="5.0" step="0.1" value="1.5" 
+                               class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-500">
+                    </div>
+
+                    <!-- Vitesse Simulation -->
+                    <div>
+                        <div class="flex justify-between text-xs font-medium mb-1">
+                            <label for="a_inputSpeed" class="text-slate-700">Accélération du temps :</label>
+                            <span class="text-cyan-700 font-mono font-bold">x<span id="a_valSpeed">60</span></span>
+                        </div>
+                        <input type="range" id="a_inputSpeed" min="1" max="300" step="10" value="60" 
+                               class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-500">
+                        <p class="text-[10px] text-slate-600 mt-1">1 sec réelle = <span id="a_txtSpeedSec">60</span> sec expérimentales</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calculs & Données Faraday -->
+            <div class="bg-white border border-slate-300 rounded-2xl p-4 shadow-lg space-y-3 flex-1 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-3 flex items-center justify-between">
+                        <span>Bilan Massique (Loi de Faraday)</span>
+                        <svg class="w-4 h-4 text-cyan-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    </h2>
+
+                    <!-- Formule mathématique -->
+                    <div class="bg-slate-100 border border-slate-200 rounded-xl p-3 mb-3 text-center">
+                        <div class="text-xs text-slate-600 mb-1">Masse déposée / dissoute :</div>
+                        <div class="font-mono text-sm text-cyan-800">
+                            m = <span class="inline-block border-b border-slate-400 pb-0.5">M(Cu) · I · t</span>
+                            <br>
+                            <span class="inline-block pt-0.5">n · F</span>
+                        </div>
+                    </div>
+
+                    <!-- Valeurs mesurées en direct -->
+                    <div class="space-y-2 text-xs font-mono">
+                        <div class="flex justify-between items-center p-2 rounded-lg bg-slate-100 border border-slate-200">
+                            <span class="text-slate-600">Charge électrique Q (I·t) :</span>
+                            <span id="a_displayQ" class="text-slate-800 font-bold">0 C</span>
+                        </div>
+
+                        <div class="flex justify-between items-center p-2 rounded-lg bg-slate-100 border border-slate-200">
+                            <span class="text-slate-600">Quantité d’e⁻ n(e⁻) :</span>
+                            <span id="a_displayNe" class="text-amber-700 font-bold">0.000 mol</span>
+                        </div>
+
+                        <div class="flex justify-between items-center p-2.5 rounded-lg bg-emerald-50 border border-emerald-300">
+                            <span class="text-emerald-800 font-sans font-medium">Δm Cathode (gain) :</span>
+                            <span id="a_displayMassGain" class="text-emerald-700 font-bold text-sm">+0.000 g</span>
+                        </div>
+
+                        <div class="flex justify-between items-center p-2.5 rounded-lg bg-rose-50 border border-rose-300">
+                            <span class="text-rose-800 font-sans font-medium">Δm Anode (perte) :</span>
+                            <span id="a_displayMassLoss" class="text-rose-700 font-bold text-sm">-0.000 g</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Données Constantes -->
+                <div class="border-t border-slate-200 pt-2.5 text-[11px] text-slate-600 grid grid-cols-2 gap-x-2 gap-y-1">
+                    <div>M(Cu) = <strong class="text-slate-700">63.5 g/mol</strong></div>
+                    <div>Faraday F = <strong class="text-slate-700">96500 C/mol</strong></div>
+                    <div>Nombre d’e⁻ n = <strong class="text-slate-700">2</strong></div>
+                    <div>[Cu²⁺] soln = <strong class="text-slate-700">Constante</strong></div>
+                </div>
+            </div>
+
+            <!-- Interprétation / Réactions aux électrodes -->
+            <div class="bg-white border border-slate-300 rounded-2xl p-4 shadow-lg text-xs space-y-2">
+                <h3 class="font-bold text-slate-800 flex items-center space-x-2">
+                    <svg class="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>Principe de l’Électrode Soluble</span>
+                </h3>
+                <p class="text-slate-600 leading-relaxed">
+                    L’anode en cuivre se dissout au même rythme que le cuivre se dépose à la cathode. 
+                    La concentration en ions <span class="text-cyan-700 font-semibold">Cu²⁺</span> dans la solution reste ainsi constante et la teinte bleue ne varie pas.
+                </p>
+            </div>
+        </section>
+    
+<h3 class="text-lg font-bold text-slate-900 mt-6 mb-3">Applications</h3>
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3"><div class="bg-white border border-slate-200 rounded-xl p-4"><h4 class="font-semibold text-slate-900 text-sm mb-1">Galvanoplastie</h4><p class="text-sm text-slate-600 leading-relaxed">Cuivrage, nickelage, chromage, argenture, dorure : on recouvre un objet d’une fine couche de métal pour le protéger ou le décorer.</p></div><div class="bg-white border border-slate-200 rounded-xl p-4"><h4 class="font-semibold text-slate-900 text-sm mb-1">Raffinage du cuivre</h4><p class="text-sm text-slate-600 leading-relaxed">L’anode est en cuivre impur et la cathode récupère du cuivre à environ 99,99 %. Les métaux précieux (Ag, Au) tombent au fond en « boues anodiques ».</p></div><div class="bg-white border border-slate-200 rounded-xl p-4"><h4 class="font-semibold text-slate-900 text-sm mb-1">Zingage de l’acier</h4><p class="text-sm text-slate-600 leading-relaxed">Une couche de zinc déposée sur l’acier le protège de la corrosion (pièces de carrosserie, visserie).</p></div><div class="bg-white border border-slate-200 rounded-xl p-4"><h4 class="font-semibold text-slate-900 text-sm mb-1">Électroformage</h4><p class="text-sm text-slate-600 leading-relaxed">Un métal est déposé sur un modèle pour en reproduire la forme avec précision : moules, pièces creuses, reproductions.</p></div></div></section>
+<section id="panel-b" class="hidden"><h2 class="text-xl font-bold text-slate-900">Type 2 : l’électrolyse à électrodes inattaquables</h2>
+<p class="text-slate-700 mt-2 max-w-3xl">Les électrodes en graphite ne réagissent pas : elles servent seulement à échanger des électrons avec la solution. Ce sont les ions de l’électrolyte, ici Cu²⁺ et Cl⁻, qui sont transformés. On fabrique donc de nouvelles espèces chimiques.</p>
+<div class="grid md:grid-cols-2 gap-4 my-4">
+<div class="font-mono text-[13px] overflow-x-auto bg-slate-100 border border-slate-200 rounded-xl p-3 space-y-1 text-slate-800"><div><span class="font-bold text-rose-700">Anode (+) · oxydation</span> 2 Cl⁻(aq) → Cl₂(g) + 2 e⁻</div><div><span class="font-bold text-blue-700">Cathode (−) · réduction</span> Cu²⁺(aq) + 2 e⁻ → Cu(s)</div><div class="border-t border-slate-300 pt-1 text-emerald-700 font-bold">Bilan : Cu²⁺(aq) + 2 Cl⁻(aq) → Cu(s) + Cl₂(g)</div></div>
+<div class="text-sm text-slate-700 bg-cyan-50 border border-cyan-200 rounded-xl p-3"><b class="text-cyan-800">À observer :</b> des bulles de dichlore se forment à l’anode, du cuivre se dépose à la cathode et la solution se décolore, puisque les ions Cu²⁺ sont consommés. Le dichlore est un gaz toxique, d’où la manipulation sous hotte en laboratoire.</div></div>
+
+
+        <!-- PANNEAU SVG ET SCHÉMA EXPÉRIMENTAL -->
+        <section class="lg:col-span-8 bg-white rounded-2xl border border-slate-300 p-4 flex flex-col relative overflow-hidden backdrop-blur-sm min-h-0 lg:min-h-[520px]">
+            
+            <!-- Barre de contrôle de l'état -->
+            <div class="flex flex-wrap gap-2 justify-between items-center mb-2 z-10">
+                <div class="flex items-center space-x-4">
+                    <div id="b_statusBadge" class="flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-200 text-slate-700 text-xs font-semibold">
+                        <span id="b_statusDot" class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                        <span id="b_statusText">Générateur désactivé</span>
+                    </div>
+                    <div class="text-xs font-mono bg-slate-100 px-3 py-1 rounded-lg border border-slate-300 text-emerald-700">
+                        Chrono t = <span id="b_timerDisplay" class="text-sm font-bold">00:00</span> s
+                    </div>
+                </div>
+
+                <!-- Toggles visualisations -->
+                <div class="flex items-center space-x-2 text-xs">
+                    <label class="flex items-center cursor-pointer bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-lg border border-slate-300 transition">
+                        <input type="checkbox" id="b_toggleIons" checked class="rounded border-slate-300 text-cyan-500 focus:ring-0 mr-2">
+                        <span class="text-slate-700">Ions (Cu²⁺, Cl⁻)</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-lg border border-slate-300 transition">
+                        <input type="checkbox" id="b_toggleElectrons" checked class="rounded border-slate-300 text-amber-500 focus:ring-0 mr-2">
+                        <span class="text-slate-700">Électrons (e⁻)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- ZONE SCHÉMA SVG -->
+            <div class="relative flex-1 flex items-center justify-center w-full h-full min-h-[260px] sm:min-h-[440px]">
+                <svg id="b_labSvg" viewBox="0 0 800 500" class="w-full h-full max-h-[560px] drop-shadow-xl">
+                    <defs>
+                        <!-- Fluid solution background - Gradient dynamique pour la décoloration -->
+                        <linearGradient id="b_solutionGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop id="b_solutionStopTop" offset="0%" stop-color="#7dd3fc" stop-opacity="0.65"/>
+                            <stop id="b_solutionStopBot" offset="100%" stop-color="#38bdf8" stop-opacity="0.85"/>
+                        </linearGradient>
+
+                        <!-- Texture graphite pour électrodes inertes -->
+                        <linearGradient id="b_graphiteGrad" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="#1e293b"/>
+                            <stop offset="50%" stop-color="#475569"/>
+                            <stop offset="100%" stop-color="#0f172a"/>
+                        </linearGradient>
+
+                        <!-- Filtre de lueur lumineuse -->
+                        <filter id="b_glow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur stdDeviation="3" result="blur" />
+                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        </filter>
+                    </defs>
+
+                    <!-- CIRCUITS & FILS ÉLECTRIQUES -->
+                    <path d="M 260 210 V 90 H 350" fill="none" stroke="#ef4444" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M 540 210 V 90 H 450" fill="none" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
+
+                    <!-- SENS DU COURANT -->
+                    <g id="b_currentArrows" class="opacity-0 transition-opacity duration-300">
+                        <text x="300" y="75" fill="#ef4444" font-size="12" font-weight="bold">I ➔</text>
+                        <text x="485" y="75" fill="#ef4444" font-size="12" font-weight="bold">I ➔</text>
+                    </g>
+
+                    <!-- CONTENEUR DES ÉLECTRONS EN CIRCULATION -->
+                    <g id="b_wireElectronsGroup"></g>
+
+                    <!-- GÉNÉRATEUR CONTINU & COMPTEURS -->
+                    <g transform="translate(325, 40)">
+                        <rect x="0" y="0" width="150" height="80" rx="10" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+                        <rect x="10" y="10" width="130" height="30" rx="4" fill="#0f172a"/>
+                        <text x="20" y="30" fill="#10b981" font-family="monospace" font-size="13" font-weight="bold">U: <tspan id="b_svgVoltDisplay">6.0</tspan>V</text>
+                        <text x="85" y="30" fill="#f59e0b" font-family="monospace" font-size="13" font-weight="bold">I: <tspan id="b_svgAmpDisplay">2.00</tspan>A</text>
+                        <circle cx="25" cy="60" r="8" fill="#ef4444"/>
+                        <text x="22" y="64" fill="#ffffff" font-size="12" font-weight="bold">+</text>
+                        <circle cx="125" cy="60" r="8" fill="#3b82f6"/>
+                        <text x="122" y="64" fill="#ffffff" font-size="12" font-weight="bold">-</text>
+                        <text x="60" y="62" fill="#475569" font-size="9" font-weight="bold">GÉNÉRATEUR CC</text>
+                    </g>
+
+                    <!-- CUVE / BÉCHER EN VERRE -->
+                    <rect id="b_solutionRect" x="180" y="220" width="440" height="230" rx="10" fill="url(#b_solutionGrad)" />
+                    <line x1="180" y1="220" x2="620" y2="220" stroke="#38bdf8" stroke-width="2" stroke-opacity="0.8"/>
+
+                    <!-- Graduations -->
+                    <g stroke="#0c4a6e" stroke-opacity="0.35" stroke-width="1.5">
+                        <line x1="600" y1="260" x2="615" y2="260"/>
+                        <line x1="595" y1="300" x2="615" y2="300"/>
+                        <line x1="600" y1="340" x2="615" y2="340"/>
+                        <line x1="595" y1="380" x2="615" y2="380"/>
+                    </g>
+
+                    <!-- ANODE (+, GRAPHITE INERTE) -->
+                    <g id="b_anodeGroup">
+                        <rect x="250" y="195" width="20" height="20" fill="#334155" rx="2"/>
+                        <!-- Tige de Graphite -->
+                        <rect x="252" y="215" width="16" height="190" fill="url(#b_graphiteGrad)" rx="3" stroke="#64748b" stroke-width="1.5"/>
+                        
+                        <!-- Bulles de Gaz Chloré Cl2 à l'anode -->
+                        <g id="b_gasBubblesGroup"></g>
+
+                        <!-- Étiquette Anode -->
+                        <rect x="125" y="155" width="125" height="34" rx="6" fill="#ffffff" stroke="#ef4444" stroke-width="1.5"/>
+                        <text x="187" y="170" fill="#ef4444" font-size="11" font-weight="bold" text-anchor="middle">ANODE (+) Graphite</text>
+                        <text x="187" y="182" fill="#4d7c0f" font-size="9" text-anchor="middle">2Cl⁻ ➔ Cl₂(g) + 2e⁻</text>
+                        <line x1="187" y1="189" x2="250" y2="210" stroke="#ef4444" stroke-dasharray="2 2" stroke-width="1"/>
+                    </g>
+
+                    <!-- CATHODE (-, GRAPHITE INERTE) -->
+                    <g id="b_cathodeGroup">
+                        <rect x="530" y="195" width="20" height="20" fill="#334155" rx="2"/>
+                        
+                        <!-- Tige de Graphite Base -->
+                        <rect x="532" y="215" width="16" height="190" fill="url(#b_graphiteGrad)" rx="3" stroke="#64748b" stroke-width="1.5"/>
+                        
+                        <!-- Dépôt métallique de cuivre Cu(s) sur la tige -->
+                        <rect id="b_copperDepositBar" x="530" y="230" width="20" height="170" fill="#b45309" stroke="#f59e0b" stroke-width="0" rx="3" opacity="0"/>
+
+                        <!-- Étiquette Cathode -->
+                        <rect x="550" y="155" width="135" height="34" rx="6" fill="#ffffff" stroke="#3b82f6" stroke-width="1.5"/>
+                        <text x="617" y="170" fill="#3b82f6" font-size="11" font-weight="bold" text-anchor="middle">CATHODE (-) Graphite</text>
+                        <text x="617" y="182" fill="#b45309" font-size="9" text-anchor="middle">Cu²⁺ + 2e⁻ ➔ Cu(s)</text>
+                        <line x1="617" y1="189" x2="550" y2="210" stroke="#3b82f6" stroke-dasharray="2 2" stroke-width="1"/>
+                    </g>
+
+                    <!-- PARTICULES EN SOLUTION -->
+                    <g id="b_solutionIonsGroup"></g>
+
+                    <!-- Contour Bécher Verre -->
+                    <rect x="180" y="200" width="440" height="250" rx="16" fill="none" stroke="#94a3b8" stroke-width="3" opacity="0.5"/>
+                    <ellipse cx="400" cy="200" rx="220" ry="12" fill="none" stroke="#94a3b8" stroke-width="2" opacity="0.5"/>
+
+                    <text x="400" y="438" fill="#0c4a6e" font-size="11" font-weight="medium" text-anchor="middle" opacity="0.85">
+                        Solution aqueuse de Chlorure de Cuivre II (Cu²⁺ + 2Cl⁻)
+                    </text>
+                </svg>
+            </div>
+
+            <!-- Légende visuelle -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs bg-slate-100 p-2.5 rounded-xl border border-slate-200 mt-2">
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-cyan-400 inline-block shadow-[0_0_8px_#38bdf8]"></span>
+                    <span class="text-slate-700">Cations Cu²⁺ (vers -)</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-lime-400 inline-block shadow-[0_0_8px_#a3e635]"></span>
+                    <span class="text-slate-700">Anions Cl⁻ (vers +)</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-yellow-300 border border-yellow-500 inline-block shadow-[0_0_8px_#fde047]"></span>
+                    <span class="text-slate-700">Bulles Cl₂ (gaz verdâtre)</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded bg-amber-600 inline-block"></span>
+                    <span class="text-slate-700">Dépôt de Cu(s) métallique</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANNEAU DE COMMANDES ET BILAN CHIMIQUE -->
+        <section class="lg:col-span-4 flex flex-col space-y-4">
+            
+            <!-- Commandes -->
+            <div class="bg-white border border-slate-300 rounded-2xl p-4 shadow-lg space-y-4">
+                <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center justify-between">
+                    <span>Commandes</span>
+                    <span class="text-xs font-normal text-slate-600">Paramètres CC</span>
+                </h2>
+
+                <!-- Boutons -->
+                <div class="grid grid-cols-3 gap-2">
+                    <button id="b_btnStart" class="flex items-center justify-center space-x-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-3 rounded-xl transition shadow-lg shadow-emerald-900/30">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6V4z"/></svg>
+                        <span>Lancer</span>
+                    </button>
+                    <button id="b_btnPause" class="flex items-center justify-center space-x-1.5 bg-amber-600 hover:bg-amber-500 text-white font-semibold py-2.5 px-3 rounded-xl transition shadow-lg shadow-amber-900/30" disabled>
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4h3v12H5V4zm7 0h3v12h-3V4z"/></svg>
+                        <span>Pause</span>
+                    </button>
+                    <button id="b_btnReset" class="flex items-center justify-center space-x-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold py-2.5 px-3 rounded-xl transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        <span>RAZ</span>
+                    </button>
+                </div>
+
+                <!-- Sliders -->
+                <div class="space-y-3 pt-2">
+                    <div>
+                        <div class="flex justify-between text-xs font-medium mb-1">
+                            <label for="b_inputCurrent" class="text-slate-700">Intensité du courant (I) :</label>
+                            <span class="text-amber-700 font-mono font-bold"><span id="b_valCurrent">2.00</span> A</span>
+                        </div>
+                        <input type="range" id="b_inputCurrent" min="0.2" max="5.0" step="0.1" value="2.0" 
+                               class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-500">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs font-medium mb-1">
+                            <label for="b_inputSpeed" class="text-slate-700">Accélération du temps :</label>
+                            <span class="text-cyan-700 font-mono font-bold">x<span id="b_valSpeed">60</span></span>
+                        </div>
+                        <input type="range" id="b_inputSpeed" min="1" max="300" step="10" value="60" 
+                               class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-500">
+                        <p class="text-[10px] text-slate-600 mt-1">1 sec réelle = <span id="b_txtSpeedSec">60</span> sec expérimentales</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bilan et Mesures en direct -->
+            <div class="bg-white border border-slate-300 rounded-2xl p-4 shadow-lg space-y-3 flex-1 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-2.5 flex items-center justify-between">
+                        <span>Loi de Faraday & Produit</span>
+                        <svg class="w-4 h-4 text-cyan-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    </h2>
+
+                    <div class="space-y-2 text-xs font-mono">
+                        <div class="flex justify-between items-center p-2 rounded-lg bg-slate-100 border border-slate-200">
+                            <span class="text-slate-600">Charge Q = I · t :</span>
+                            <span id="b_displayQ" class="text-slate-800 font-bold">0 C</span>
+                        </div>
+
+                        <div class="flex justify-between items-center p-2 rounded-lg bg-slate-100 border border-slate-200">
+                            <span class="text-slate-600">Moles d’électrons n(e⁻) :</span>
+                            <span id="b_displayNe" class="text-amber-700 font-bold">0.0000 mol</span>
+                        </div>
+
+                        <!-- Gain masse de cuivre -->
+                        <div class="flex justify-between items-center p-2.5 rounded-lg bg-amber-50 border border-amber-300">
+                            <span class="text-amber-800 font-sans font-medium">Masse de Cu(s) déposée :</span>
+                            <span id="b_displayMassCu" class="text-amber-700 font-bold text-sm">0.000 g</span>
+                        </div>
+
+                        <!-- Volume de dichlore -->
+                        <div class="flex justify-between items-center p-2.5 rounded-lg bg-lime-50 border border-lime-300">
+                            <span class="text-lime-800 font-sans font-medium">Volume de Cl₂(g) dégagé :</span>
+                            <span id="b_displayVolCl2" class="text-lime-700 font-bold text-sm">0.00 mL</span>
+                        </div>
+
+                        <!-- État d'avancement des ions Cu2+ -->
+                        <div class="p-2 rounded-lg bg-slate-100 border border-slate-200 space-y-1">
+                            <div class="flex justify-between text-[11px] font-sans text-slate-700">
+                                <span>Concentration relative en Cu²⁺ :</span>
+                                <span id="b_displayCuPercent" class="font-mono font-bold text-cyan-700">100 %</span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                                <div id="b_barCuPercent" class="bg-cyan-500 h-1.5 rounded-full transition-all duration-300" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Données Constantes -->
+                <div class="border-t border-slate-200 pt-2 text-[11px] text-slate-600 grid grid-cols-2 gap-x-2 gap-y-1">
+                    <div>M(Cu) = <strong class="text-slate-700">63.5 g/mol</strong></div>
+                    <div>Vm = <strong class="text-slate-700">24.0 L/mol</strong></div>
+                    <div>Faraday F = <strong class="text-slate-700">96500 C/mol</strong></div>
+                    <div>Électrodes = <strong class="text-slate-700">Inattaquables (C)</strong></div>
+                </div>
+            </div>
+
+            <!-- Interprétation et Équations Bilan -->
+            <div class="bg-white border border-slate-300 rounded-2xl p-4 shadow-lg text-xs space-y-2">
+                <h3 class="font-bold text-slate-800 flex items-center space-x-2">
+                    <svg class="w-4 h-4 text-cyan-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>Équations de Réaction</span>
+                </h3>
+                <div class="space-y-1 text-slate-700 font-mono text-[11px] bg-slate-100 p-2.5 rounded-xl border border-slate-200">
+                    <div><span class="text-ef4444 text-rose-700 font-bold">Anode (+) :</span> 2Cl⁻(aq) ➔ Cl₂(g) + 2e⁻</div>
+                    <div><span class="text-3b82f6 text-blue-700 font-bold">Cathode (-) :</span> Cu²⁺(aq) + 2e⁻ ➔ Cu(s)</div>
+                    <div class="border-t border-slate-300 pt-1 text-emerald-700 font-bold">Bilan : Cu²⁺(aq) + 2Cl⁻(aq) ➔ Cu(s) + Cl₂(g)</div>
+                </div>
+            </div>
+        </section>
+    
+<h3 class="text-lg font-bold text-slate-900 mt-6 mb-3">Applications</h3>
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3"><div class="bg-white border border-slate-200 rounded-xl p-4"><h4 class="font-semibold text-slate-900 text-sm mb-1">Industrie chlore-alcali</h4><p class="text-sm text-slate-600 leading-relaxed">L’électrolyse de la saumure (NaCl) donne du dichlore, du dihydrogène et de la soude, trois bases de la chimie industrielle.</p></div><div class="bg-white border border-slate-200 rounded-xl p-4"><h4 class="font-semibold text-slate-900 text-sm mb-1">Hydrogène par électrolyse de l’eau</h4><p class="text-sm text-slate-600 leading-relaxed">2 H₂O → 2 H₂ + O₂. Avec de l’électricité renouvelable, on obtient un hydrogène dit « vert », utilisé comme carburant ou matière première.</p></div><div class="bg-white border border-slate-200 rounded-xl p-4"><h4 class="font-semibold text-slate-900 text-sm mb-1">Aluminium</h4><p class="text-sm text-slate-600 leading-relaxed">L’alumine dissoute dans la cryolithe fondue (environ 950 °C) est électrolysée. Procédé très gourmand en énergie ; ses anodes en carbone se consomment en réalité lentement.</p></div><div class="bg-white border border-slate-200 rounded-xl p-4"><h4 class="font-semibold text-slate-900 text-sm mb-1">Métaux réactifs</h4><p class="text-sm text-slate-600 leading-relaxed">Sodium, lithium et magnésium s’obtiennent par électrolyse de sels fondus, car leurs ions ne peuvent pas être réduits en solution aqueuse.</p></div></div></section>
+<section id="panel-c" class="hidden"><h2 class="text-xl font-bold text-slate-900">Les accumulateurs : l’électrolyse au service du stockage</h2>
+<p class="text-slate-700 mt-2 max-w-3xl">Un accumulateur est une pile rechargeable. Il fonctionne en pile lorsqu’il fournit du courant (décharge) et en électrolyse lorsqu’on le recharge : un chargeur impose alors la réaction inverse.</p>
+<div class="grid md:grid-cols-2 gap-4 my-4">
+<div class="bg-white border border-emerald-300 rounded-xl p-4"><h3 class="font-semibold text-emerald-800">Décharge : fonctionnement en pile</h3><p class="text-sm text-slate-700 mt-1">Réaction spontanée : l’énergie chimique devient énergie électrique. L’électrode négative est le siège d’une oxydation (anode) et la positive d’une réduction (cathode).</p></div>
+<div class="bg-white border border-amber-300 rounded-xl p-4"><h3 class="font-semibold text-amber-800">Charge : fonctionnement en électrolyse</h3><p class="text-sm text-slate-700 mt-1">Le générateur impose le sens inverse : l’électrode positive devient l’anode (oxydation) et la négative la cathode (réduction), comme dans toute électrolyse.</p></div></div>
+<div class="font-mono text-[13px] overflow-x-auto bg-slate-100 border border-slate-200 rounded-xl p-3 space-y-1 text-slate-800"><div><span class="font-bold text-rose-700">Électrode − (anode en décharge)</span> Pb(s) + SO₄²⁻(aq) ⇌ PbSO₄(s) + 2 e⁻</div><div><span class="font-bold text-blue-700">Électrode + (cathode en décharge)</span> PbO₂(s) + 4 H⁺(aq) + SO₄²⁻(aq) + 2 e⁻ ⇌ PbSO₄(s) + 2 H₂O(ℓ)</div><div class="border-t border-slate-300 pt-1 text-emerald-700 font-bold">Accumulateur au plomb : Pb + PbO₂ + 2 H₂SO₄ ⇌ 2 PbSO₄ + 2 H₂O (→ décharge, ← charge)</div></div>
+<h3 class="text-lg font-bold text-slate-900 mt-6 mb-3">Applications</h3>
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3"><div class="bg-white border border-slate-200 rounded-xl p-4"><h4 class="font-semibold text-slate-900 text-sm mb-1">Batteries de démarrage</h4><p class="text-sm text-slate-600 leading-relaxed">L’accumulateur au plomb lance les moteurs thermiques et sert d’alimentation de secours ; il est très largement recyclé.</p></div><div class="bg-white border border-slate-200 rounded-xl p-4"><h4 class="font-semibold text-slate-900 text-sm mb-1">Électronique portable</h4><p class="text-sm text-slate-600 leading-relaxed">Smartphones et ordinateurs utilisent le lithium-ion : les ions Li⁺ passent d’une électrode à l’autre à chaque charge et décharge.</p></div><div class="bg-white border border-slate-200 rounded-xl p-4"><h4 class="font-semibold text-slate-900 text-sm mb-1">Véhicules électriques</h4><p class="text-sm text-slate-600 leading-relaxed">Des packs de cellules lithium-ion stockent l’énergie, rechargée sur borne ou récupérée au freinage.</p></div><div class="bg-white border border-slate-200 rounded-xl p-4"><h4 class="font-semibold text-slate-900 text-sm mb-1">Stockage d’énergie</h4><p class="text-sm text-slate-600 leading-relaxed">Les accumulateurs gardent l’électricité solaire ou éolienne pour la restituer la nuit ou aux heures de pointe.</p></div></div>
+<p class="text-sm text-slate-600 mt-4">Limite : chaque cycle charge-décharge use un peu les électrodes, d’où une durée de vie en nombre de cycles.</p></section>
+<section id="summary" class="mt-10"><h3 class="text-lg font-bold mb-3">En résumé</h3>
+<div class="bg-white border border-slate-200 rounded-xl p-4 overflow-x-auto"><table class="w-full text-sm text-left min-w-[520px]"><tr class="border-b border-slate-200 last:border-0"><th class="py-2 pr-4 font-semibold text-slate-900"></th><th class="py-2 pr-4 font-semibold text-slate-900">Électrode soluble</th><th class="py-2 pr-4 font-semibold text-slate-900">Électrodes inattaquables</th></tr><tr class="border-b border-slate-200 last:border-0"><th class="py-2 pr-4 font-semibold text-slate-900">Anode</th><td class="py-2 pr-4 text-slate-700">Cuivre, consommée</td><td class="py-2 pr-4 text-slate-700">Graphite, ne réagit pas</td></tr><tr class="border-b border-slate-200 last:border-0"><th class="py-2 pr-4 font-semibold text-slate-900">Réaction anodique</th><td class="py-2 pr-4 text-slate-700">Cu → Cu²⁺ + 2 e⁻</td><td class="py-2 pr-4 text-slate-700">2 Cl⁻ → Cl₂ + 2 e⁻</td></tr><tr class="border-b border-slate-200 last:border-0"><th class="py-2 pr-4 font-semibold text-slate-900">[Cu²⁺] en solution</th><td class="py-2 pr-4 text-slate-700">Constante</td><td class="py-2 pr-4 text-slate-700">Diminue (décoloration)</td></tr><tr class="border-b border-slate-200 last:border-0"><th class="py-2 pr-4 font-semibold text-slate-900">Résultat</th><td class="py-2 pr-4 text-slate-700">Transfert de métal</td><td class="py-2 pr-4 text-slate-700">Nouvelles espèces : Cu et Cl₂</td></tr><tr class="border-b border-slate-200 last:border-0"><th class="py-2 pr-4 font-semibold text-slate-900">Usage typique</th><td class="py-2 pr-4 text-slate-700">Revêtement, raffinage</td><td class="py-2 pr-4 text-slate-700">Production : Cl₂, H₂, Al, Na</td></tr></table></div>
+<p class="text-sm text-slate-600 mt-3">Question à se poser : l’électrode participe-t-elle à la réaction ? Si oui, le métal est transféré ; sinon, ce sont les ions de la solution qui sont transformés.</p></section></div>
+<button id="toTop" aria-label="Revenir en haut de la page" class="fixed right-4 z-40 w-11 h-11 rounded-full bg-slate-900 text-white shadow-lg flex items-center justify-center opacity-0 pointer-events-none transition-opacity hover:bg-slate-700" style="bottom:calc(1rem + env(safe-area-inset-bottom,0px))"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg></button>
+<script>(function(){
+        // --- CONSTANTES DE LA PHYSIQUE-CHIMIE ---
+        const M_CU = 63.54;       // Masse molaire du Cuivre (g/mol)
+        const FARADAY = 96500;    // Constante de Faraday (C/mol)
+        const N_ELECTRONS = 2;    // Nombre d’électrons échangés par ion Cu2+
+
+        // --- ÉTAT DE LA SIMULATION ---
+        let isRunning = false;
+        let intensity = 1.5;      // Ampères
+        let timeSpeed = 60;       // Facteur d'accélération du temps
+        let simulatedTime = 0;    // Temps d'expérience simulé en secondes
+        let lastTimestamp = null;
+
+        // --- ÉLÉMENTS DU DOM ---
+        const btnStart = document.getElementById('a_btnStart');
+        const btnPause = document.getElementById('a_btnPause');
+        const btnReset = document.getElementById('a_btnReset');
+        const inputCurrent = document.getElementById('a_inputCurrent');
+        const valCurrent = document.getElementById('a_valCurrent');
+        const inputSpeed = document.getElementById('a_inputSpeed');
+        const valSpeed = document.getElementById('a_valSpeed');
+        const txtSpeedSec = document.getElementById('a_txtSpeedSec');
+
+        const timerDisplay = document.getElementById('a_timerDisplay');
+        const statusBadge = document.getElementById('a_statusBadge');
+        const statusDot = document.getElementById('a_statusDot');
+        const statusText = document.getElementById('a_statusText');
+
+        const displayQ = document.getElementById('a_displayQ');
+        const displayNe = document.getElementById('a_displayNe');
+        const displayMassGain = document.getElementById('a_displayMassGain');
+        const displayMassLoss = document.getElementById('a_displayMassLoss');
+
+        const svgVoltDisplay = document.getElementById('a_svgVoltDisplay');
+        const svgAmpDisplay = document.getElementById('a_svgAmpDisplay');
+        const currentArrows = document.getElementById('a_currentArrows');
+
+        const anodePlate = document.getElementById('a_anodePlate');
+        const copperDeposit = document.getElementById('a_copperDeposit');
+        const solutionIonsGroup = document.getElementById('a_solutionIonsGroup');
+        const wireElectronsGroup = document.getElementById('a_wireElectronsGroup');
+
+        const toggleIons = document.getElementById('a_toggleIons');
+        const toggleElectrons = document.getElementById('a_toggleElectrons');
+
+        // --- GESTION DES PARTICULES ET ANIMATIONS ---
+        const ions = [];
+        const electrons = [];
+        const NUM_CU_IONS = 18;
+        const NUM_SO4_IONS = 14;
+        const NUM_ELECTRONS = 12;
+
+        // Limites du liquide dans le bécher pour le mouvement des ions
+        const FLUID_BOUNDS = { minX: 200, maxX: 600, minY: 230, maxY: 420 };
+        const ANODE_X = 260;
+        const CATHODE_X = 540;
+
+        // Initialisation de la grille d'ions en solution
+        function initIons() {
+            solutionIonsGroup.innerHTML = '';
+            ions.length = 0;
+
+            // Créer ions Cu2+ (Cations -> Vont vers la Cathode quand ON)
+            for (let i = 0; i < NUM_CU_IONS; i++) {
+                const x = FLUID_BOUNDS.minX + Math.random() * (FLUID_BOUNDS.maxX - FLUID_BOUNDS.minX);
+                const y = FLUID_BOUNDS.minY + Math.random() * (FLUID_BOUNDS.maxY - FLUID_BOUNDS.minY);
+                
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.setAttribute('class', 'ion-cu');
+                
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('r', '8');
+                circle.setAttribute('fill', '#0284c7');
+                circle.setAttribute('stroke', '#38bdf8');
+                circle.setAttribute('stroke-width', '1.5');
+                circle.setAttribute('filter', 'url(#a_glow)');
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.textContent = 'Cu²⁺';
+                text.setAttribute('fill', '#ffffff');
+                text.setAttribute('font-size', '8');
+                text.setAttribute('font-weight', 'bold');
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('dy', '3');
+
+                g.appendChild(circle);
+                g.appendChild(text);
+                solutionIonsGroup.appendChild(g);
+
+                ions.push({
+                    element: g,
+                    x: x,
+                    y: y,
+                    type: 'Cu2+',
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5
+                });
+            }
+
+            // Créer ions SO42- (Anions Spectateurs -> Mouvement aléatoire)
+            for (let i = 0; i < NUM_SO4_IONS; i++) {
+                const x = FLUID_BOUNDS.minX + Math.random() * (FLUID_BOUNDS.maxX - FLUID_BOUNDS.minX);
+                const y = FLUID_BOUNDS.minY + Math.random() * (FLUID_BOUNDS.maxY - FLUID_BOUNDS.minY);
+                
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.setAttribute('class', 'ion-so4');
+
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('r', '9');
+                circle.setAttribute('fill', '#1e293b');
+                circle.setAttribute('stroke', '#64748b');
+                circle.setAttribute('stroke-width', '1.5');
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.textContent = 'SO₄²⁻';
+                text.setAttribute('fill', '#94a3b8');
+                text.setAttribute('font-size', '7');
+                text.setAttribute('font-weight', 'bold');
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('dy', '2.5');
+
+                g.appendChild(circle);
+                g.appendChild(text);
+                solutionIonsGroup.appendChild(g);
+
+                ions.push({
+                    element: g,
+                    x: x,
+                    y: y,
+                    type: 'SO42-',
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4
+                });
+            }
+        }
+
+        // Initialisation des électrons circulant dans le câble
+        function initElectrons() {
+            wireElectronsGroup.innerHTML = '';
+            electrons.length = 0;
+
+            for (let i = 0; i < NUM_ELECTRONS; i++) {
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('r', '4');
+                circle.setAttribute('fill', '#d97706');
+                circle.setAttribute('filter', 'url(#a_glow)');
+                wireElectronsGroup.appendChild(circle);
+
+                electrons.push({
+                    element: circle,
+                    progress: i / NUM_ELECTRONS
+                });
+            }
+        }
+
+        // Calcule la position (x,y) sur le fil selon le progrès (0 = Anode, 1 = Cathode)
+        function getWirePosition(progress) {
+            const dist = progress * 520;
+            if (dist <= 120) {
+                return { x: 260, y: 210 - dist };
+            } else if (dist <= 210) {
+                return { x: 260 + (dist - 120), y: 90 };
+            } else if (dist <= 310) {
+                return { x: 350 + (dist - 210), y: 90 };
+            } else if (dist <= 400) {
+                return { x: 450 + (dist - 310), y: 90 };
+            } else {
+                return { x: 540, y: 90 + (dist - 400) };
+            }
+        }
+
+        // --- MISE À JOUR DE LA PHYSIQUE & DES ANIMATIONS ---
+        function updatePhysics(dt) {
+            if (!isRunning) return;
+
+            // Avancement du chrono
+            simulatedTime += dt * timeSpeed;
+
+            // Calculs de Faraday
+            const Q = intensity * simulatedTime;                    // Charge totale en Coulombs
+            const n_e = Q / FARADAY;                                // Moles d'électrons
+            const deltaM = (M_CU * intensity * simulatedTime) / (N_ELECTRONS * FARADAY); // Masse en grammes
+
+            // Affichage des métriques
+            displayQ.textContent = `${Q.toFixed(1)} C`;
+            displayNe.textContent = `${n_e.toFixed(4)} mol`;
+            displayMassGain.textContent = `+${deltaM.toFixed(3)} g`;
+            displayMassLoss.textContent = `-${deltaM.toFixed(3)} g`;
+
+            // Formatage du timer
+            const mins = Math.floor(simulatedTime / 60);
+            const secs = Math.floor(simulatedTime % 60);
+            timerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+            // --- EVOLUTION VISUELLE DES ÉLECTRODES ---
+            // 1. Amincissement de l'anode (perte de masse)
+            const anodeWidth = Math.max(2, 16 - (deltaM * 3.5));
+            anodePlate.setAttribute('width', anodeWidth);
+            anodePlate.setAttribute('x', 260 - (anodeWidth / 2));
+
+            // 2. Épaississement du dépôt sur la clé (gain de masse)
+            const depositOpacity = Math.min(0.95, deltaM * 0.8);
+            const depositStroke = Math.min(10, deltaM * 6);
+            copperDeposit.setAttribute('opacity', depositOpacity);
+            copperDeposit.setAttribute('stroke-width', depositStroke);
+        }
+
+        function animate(timestamp) {
+            if (!lastTimestamp) lastTimestamp = timestamp;
+            const dt = (timestamp - lastTimestamp) / 1000;
+            lastTimestamp = timestamp;
+
+            if (isRunning) {
+                updatePhysics(dt);
+            }
+
+            // --- ANIMATION DES IONS ---
+            solutionIonsGroup.style.display = toggleIons.checked ? 'block' : 'none';
+            if (toggleIons.checked) {
+                ions.forEach(ion => {
+                    if (isRunning && ion.type === 'Cu2+') {
+                        const driftSpeed = 0.4 * (intensity / 1.5);
+                        ion.x += driftSpeed + ion.vx;
+
+                        if (ion.x >= CATHODE_X - 10) {
+                            ion.x = ANODE_X + 15 + Math.random() * 20;
+                            ion.y = FLUID_BOUNDS.minY + Math.random() * (FLUID_BOUNDS.maxY - FLUID_BOUNDS.minY);
+                        }
+                    } else {
+                        ion.x += ion.vx;
+                        ion.y += ion.vy;
+                    }
+
+                    if (ion.x < FLUID_BOUNDS.minX + 10 || ion.x > FLUID_BOUNDS.maxX - 10) ion.vx *= -1;
+                    if (ion.y < FLUID_BOUNDS.minY + 10 || ion.y > FLUID_BOUNDS.maxY - 10) ion.vy *= -1;
+
+                    ion.element.setAttribute('transform', `translate(${ion.x}, ${ion.y})`);
+                });
+            }
+
+            // --- ANIMATION DES ÉLECTRONS DANS LES FILS ---
+            wireElectronsGroup.style.display = toggleElectrons.checked ? 'block' : 'none';
+            if (toggleElectrons.checked) {
+                electrons.forEach(e => {
+                    if (isRunning) {
+                        e.progress += (0.15 * (intensity / 1.5)) * dt;
+                        if (e.progress > 1) e.progress = 0;
+                    }
+                    const pos = getWirePosition(e.progress);
+                    e.element.setAttribute('cx', pos.x);
+                    e.element.setAttribute('cy', pos.y);
+                });
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // --- GESTION DES ÉVÉNEMENTS & CONTRÔLES ---
+        function setSimulationState(running) {
+            isRunning = running;
+            if (running) {
+                btnStart.disabled = true;
+                btnStart.classList.add('opacity-50', 'cursor-not-allowed');
+                btnPause.disabled = false;
+                btnPause.classList.remove('opacity-50', 'cursor-not-allowed');
+                
+                statusDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping';
+                statusText.textContent = 'Électrolyse en cours...';
+                statusBadge.className = 'flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-semibold';
+                currentArrows.classList.remove('opacity-0');
+            } else {
+                btnStart.disabled = false;
+                btnStart.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnPause.disabled = true;
+                btnPause.classList.add('opacity-50', 'cursor-not-allowed');
+
+                statusDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400';
+                statusText.textContent = 'En pause';
+                statusBadge.className = 'flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-300 text-xs font-semibold';
+                currentArrows.classList.add('opacity-0');
+            }
+        }
+
+        btnStart.addEventListener('click', () => setSimulationState(true));
+        btnPause.addEventListener('click', () => setSimulationState(false));
+
+        btnReset.addEventListener('click', () => {
+            setSimulationState(false);
+            simulatedTime = 0;
+            
+            statusDot.className = 'w-2.5 h-2.5 rounded-full bg-slate-400';
+            statusText.textContent = 'Générateur éteint';
+            statusBadge.className = 'flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-200 text-slate-700 text-xs font-semibold';
+            
+            timerDisplay.textContent = '00:00';
+            displayQ.textContent = '0 C';
+            displayNe.textContent = '0.000 mol';
+            displayMassGain.textContent = '+0.000 g';
+            displayMassLoss.textContent = '-0.000 g';
+
+            anodePlate.setAttribute('width', 16);
+            anodePlate.setAttribute('x', 252);
+            copperDeposit.setAttribute('opacity', 0);
+            copperDeposit.setAttribute('stroke-width', 0);
+
+            initIons();
+            initElectrons();
+        });
+
+        // Sliders
+        inputCurrent.addEventListener('input', (e) => {
+            intensity = parseFloat(e.target.value);
+            valCurrent.textContent = intensity.toFixed(2);
+            svgAmpDisplay.textContent = intensity.toFixed(2);
+            svgVoltDisplay.textContent = (intensity * 3.33).toFixed(1);
+        });
+
+        inputSpeed.addEventListener('input', (e) => {
+            timeSpeed = parseInt(e.target.value);
+            valSpeed.textContent = timeSpeed;
+            txtSpeedSec.textContent = timeSpeed;
+        });
+
+        // Initialisation de démarrage
+        window.addEventListener('load', () => {
+            initIons();
+            initElectrons();
+            requestAnimationFrame(animate);
+        });
+    })();
+(function(){
+        // --- CONSTANTES PHYSIQUE-CHIMIE ---
+        const M_CU = 63.54;       // Masse molaire Cu (g/mol)
+        const VM_GAS = 24.0;      // Volume molaire des gaz à 20°C (L/mol)
+        const FARADAY = 96500;    // Constante de Faraday (C/mol)
+        const INITIAL_CU_MOLES = 0.05; // Quantité initiale d'ions Cu2+ en mol
+
+        // --- ÉTAT DU SYSTÈME ---
+        let isRunning = false;
+        let intensity = 2.0;      // Ampères
+        let timeSpeed = 60;       // Accélération du temps
+        let simulatedTime = 0;    // Temps en secondes
+        let lastTimestamp = null;
+
+        // --- RENDER & DOM ---
+        const btnStart = document.getElementById('b_btnStart');
+        const btnPause = document.getElementById('b_btnPause');
+        const btnReset = document.getElementById('b_btnReset');
+        const inputCurrent = document.getElementById('b_inputCurrent');
+        const valCurrent = document.getElementById('b_valCurrent');
+        const inputSpeed = document.getElementById('b_inputSpeed');
+        const valSpeed = document.getElementById('b_valSpeed');
+        const txtSpeedSec = document.getElementById('b_txtSpeedSec');
+
+        const timerDisplay = document.getElementById('b_timerDisplay');
+        const statusBadge = document.getElementById('b_statusBadge');
+        const statusDot = document.getElementById('b_statusDot');
+        const statusText = document.getElementById('b_statusText');
+
+        const displayQ = document.getElementById('b_displayQ');
+        const displayNe = document.getElementById('b_displayNe');
+        const displayMassCu = document.getElementById('b_displayMassCu');
+        const displayVolCl2 = document.getElementById('b_displayVolCl2');
+        const displayCuPercent = document.getElementById('b_displayCuPercent');
+        const barCuPercent = document.getElementById('b_barCuPercent');
+
+        const svgVoltDisplay = document.getElementById('b_svgVoltDisplay');
+        const svgAmpDisplay = document.getElementById('b_svgAmpDisplay');
+        const currentArrows = document.getElementById('b_currentArrows');
+
+        const copperDepositBar = document.getElementById('b_copperDepositBar');
+        const gasBubblesGroup = document.getElementById('b_gasBubblesGroup');
+        const solutionIonsGroup = document.getElementById('b_solutionIonsGroup');
+        const wireElectronsGroup = document.getElementById('b_wireElectronsGroup');
+        const solutionStopTop = document.getElementById('b_solutionStopTop');
+        const solutionStopBot = document.getElementById('b_solutionStopBot');
+
+        const toggleIons = document.getElementById('b_toggleIons');
+        const toggleElectrons = document.getElementById('b_toggleElectrons');
+
+        // Particles & Arrays
+        const ions = [];
+        const electrons = [];
+        const bubbles = [];
+        const NUM_CU_IONS = 16;
+        const NUM_CL_IONS = 24;
+        const NUM_ELECTRONS = 12;
+
+        const FLUID_BOUNDS = { minX: 200, maxX: 600, minY: 230, maxY: 420 };
+        const ANODE_X = 260;
+        const CATHODE_X = 540;
+
+        // --- GENERATION DES IONS ET ÉLECTRONS ---
+        function initIons() {
+            solutionIonsGroup.innerHTML = '';
+            ions.length = 0;
+
+            // Cations Cu2+ (Bleus)
+            for (let i = 0; i < NUM_CU_IONS; i++) {
+                const x = FLUID_BOUNDS.minX + Math.random() * (FLUID_BOUNDS.maxX - FLUID_BOUNDS.minX);
+                const y = FLUID_BOUNDS.minY + Math.random() * (FLUID_BOUNDS.maxY - FLUID_BOUNDS.minY);
+
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('r', '7.5');
+                circle.setAttribute('fill', '#0284c7');
+                circle.setAttribute('stroke', '#38bdf8');
+                circle.setAttribute('stroke-width', '1.5');
+                circle.setAttribute('filter', 'url(#b_glow)');
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.textContent = 'Cu²⁺';
+                text.setAttribute('fill', '#ffffff');
+                text.setAttribute('font-size', '7.5');
+                text.setAttribute('font-weight', 'bold');
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('dy', '2.5');
+
+                g.appendChild(circle);
+                g.appendChild(text);
+                solutionIonsGroup.appendChild(g);
+
+                ions.push({
+                    element: g,
+                    x: x,
+                    y: y,
+                    type: 'Cu2+',
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4
+                });
+            }
+
+            // Anions Cl- (Verdâtres)
+            for (let i = 0; i < NUM_CL_IONS; i++) {
+                const x = FLUID_BOUNDS.minX + Math.random() * (FLUID_BOUNDS.maxX - FLUID_BOUNDS.minX);
+                const y = FLUID_BOUNDS.minY + Math.random() * (FLUID_BOUNDS.maxY - FLUID_BOUNDS.minY);
+
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('r', '6.5');
+                circle.setAttribute('fill', '#65a30d');
+                circle.setAttribute('stroke', '#a3e635');
+                circle.setAttribute('stroke-width', '1.5');
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.textContent = 'Cl⁻';
+                text.setAttribute('fill', '#ffffff');
+                text.setAttribute('font-size', '7.5');
+                text.setAttribute('font-weight', 'bold');
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('dy', '2.5');
+
+                g.appendChild(circle);
+                g.appendChild(text);
+                solutionIonsGroup.appendChild(g);
+
+                ions.push({
+                    element: g,
+                    x: x,
+                    y: y,
+                    type: 'Cl-',
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5
+                });
+            }
+        }
+
+        // Bulles de dichlore Cl2 à l'anode
+        function initBubbles() {
+            gasBubblesGroup.innerHTML = '';
+            bubbles.length = 0;
+
+            for (let i = 0; i < 10; i++) {
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                const x = 250 + (Math.random() > 0.5 ? -4 : 20);
+                const y = 240 + Math.random() * 140;
+                const r = 2.5 + Math.random() * 3.5;
+
+                circle.setAttribute('cx', x);
+                circle.setAttribute('cy', y);
+                circle.setAttribute('r', r);
+                circle.setAttribute('fill', '#fde047');
+                circle.setAttribute('fill-opacity', '0.7');
+                circle.setAttribute('stroke', '#84cc16');
+                circle.setAttribute('stroke-width', '1');
+                circle.style.display = 'none';
+
+                gasBubblesGroup.appendChild(circle);
+                bubbles.push({
+                    element: circle,
+                    baseX: x,
+                    y: y,
+                    speed: 15 + Math.random() * 25
+                });
+            }
+        }
+
+        function initElectrons() {
+            wireElectronsGroup.innerHTML = '';
+            electrons.length = 0;
+
+            for (let i = 0; i < NUM_ELECTRONS; i++) {
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('r', '4');
+                circle.setAttribute('fill', '#d97706');
+                circle.setAttribute('filter', 'url(#b_glow)');
+                wireElectronsGroup.appendChild(circle);
+
+                electrons.push({
+                    element: circle,
+                    progress: i / NUM_ELECTRONS
+                });
+            }
+        }
+
+        function getWirePosition(progress) {
+            const dist = progress * 520;
+            if (dist <= 120) {
+                return { x: 260, y: 210 - dist };
+            } else if (dist <= 210) {
+                return { x: 260 + (dist - 120), y: 90 };
+            } else if (dist <= 310) {
+                return { x: 350 + (dist - 210), y: 90 };
+            } else if (dist <= 400) {
+                return { x: 450 + (dist - 310), y: 90 };
+            } else {
+                return { x: 540, y: 90 + (dist - 400) };
+            }
+        }
+
+        // --- PHYSIQUE & CHIMIE DE LA SIMULATION ---
+        function updatePhysics(dt) {
+            if (!isRunning) return;
+
+            simulatedTime += dt * timeSpeed;
+
+            // LOI DE FARADAY
+            const Q = intensity * simulatedTime;                      // Coulombs
+            const n_e = Q / FARADAY;                                  // Moles d'e-
+            const n_Cu = n_e / 2;                                     // Moles de Cu déposé
+            const n_Cl2 = n_e / 2;                                    // Moles de Cl2 dégagé
+
+            const massCu = n_Cu * M_CU;                               // g
+            const volCl2 = n_Cl2 * VM_GAS * 1000;                     // mL
+
+            // Pourcentage d'ions Cu2+ restants en solution
+            const remainingCuMoles = Math.max(0, INITIAL_CU_MOLES - n_Cu);
+            const percentCu = Math.max(0, (remainingCuMoles / INITIAL_CU_MOLES) * 100);
+
+            // METRIQUES DOM
+            displayQ.textContent = `${Q.toFixed(1)} C`;
+            displayNe.textContent = `${n_e.toFixed(4)} mol`;
+            displayMassCu.textContent = `${massCu.toFixed(3)} g`;
+            displayVolCl2.textContent = `${volCl2.toFixed(1)} mL`;
+            displayCuPercent.textContent = `${percentCu.toFixed(0)} %`;
+            barCuPercent.style.width = `${percentCu.toFixed(0)}%`;
+
+            // Timer
+            const mins = Math.floor(simulatedTime / 60);
+            const secs = Math.floor(simulatedTime % 60);
+            timerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+            // VISUELS : Dépôt Cu en épaississement à la cathode
+            const depositOpacity = Math.min(0.9, massCu * 1.5);
+            const depositWidth = Math.min(10, massCu * 8);
+            copperDepositBar.setAttribute('opacity', depositOpacity);
+            copperDepositBar.setAttribute('stroke-width', depositWidth);
+
+            // VISUELS : Décoloration progressive du liquide (Atténuation du bleu Cu2+)
+            const blueAlphaTop = 0.15 + (0.50 * (percentCu / 100));
+            const blueAlphaBot = 0.20 + (0.65 * (percentCu / 100));
+            solutionStopTop.setAttribute('stop-opacity', blueAlphaTop);
+            solutionStopBot.setAttribute('stop-opacity', blueAlphaBot);
+        }
+
+        function animate(timestamp) {
+            if (!lastTimestamp) lastTimestamp = timestamp;
+            const dt = (timestamp - lastTimestamp) / 1000;
+            lastTimestamp = timestamp;
+
+            if (isRunning) {
+                updatePhysics(dt);
+            }
+
+            // Animation des Ions (Solution)
+            solutionIonsGroup.style.display = toggleIons.checked ? 'block' : 'none';
+            if (toggleIons.checked) {
+                ions.forEach(ion => {
+                    if (isRunning) {
+                        const speedFactor = 0.45 * (intensity / 2.0);
+                        
+                        if (ion.type === 'Cu2+') {
+                            // Cations Cu2+ migrent vers la Cathode (-) à droite
+                            ion.x += speedFactor + ion.vx;
+                            if (ion.x >= CATHODE_X - 10) {
+                                ion.x = ANODE_X + 20 + Math.random() * 30;
+                                ion.y = FLUID_BOUNDS.minY + Math.random() * (FLUID_BOUNDS.maxY - FLUID_BOUNDS.minY);
+                            }
+                        } else if (ion.type === 'Cl-') {
+                            // Anions Cl- migrent vers l'Anode (+) à gauche
+                            ion.x -= speedFactor - ion.vx;
+                            if (ion.x <= ANODE_X + 10) {
+                                ion.x = CATHODE_X - 20 - Math.random() * 30;
+                                ion.y = FLUID_BOUNDS.minY + Math.random() * (FLUID_BOUNDS.maxY - FLUID_BOUNDS.minY);
+                            }
+                        }
+                    } else {
+                        ion.x += ion.vx;
+                        ion.y += ion.vy;
+                    }
+
+                    // Rebonds sur les parois du bécher
+                    if (ion.x < FLUID_BOUNDS.minX + 10 || ion.x > FLUID_BOUNDS.maxX - 10) ion.vx *= -1;
+                    if (ion.y < FLUID_BOUNDS.minY + 10 || ion.y > FLUID_BOUNDS.maxY - 10) ion.vy *= -1;
+
+                    ion.element.setAttribute('transform', `translate(${ion.x}, ${ion.y})`);
+                });
+            }
+
+            // Animation des Bulles Cl2 (Anode)
+            bubbles.forEach(b => {
+                if (isRunning) {
+                    b.element.style.display = 'block';
+                    b.y -= b.speed * dt * (intensity / 2.0);
+                    if (b.y < 215) {
+                        b.y = 380 + Math.random() * 20;
+                    }
+                    b.element.setAttribute('cy', b.y);
+                } else {
+                    b.element.style.display = 'none';
+                }
+            });
+
+            // Animation des Électrons (Circuit externe)
+            wireElectronsGroup.style.display = toggleElectrons.checked ? 'block' : 'none';
+            if (toggleElectrons.checked) {
+                electrons.forEach(e => {
+                    if (isRunning) {
+                        e.progress += (0.18 * (intensity / 2.0)) * dt;
+                        if (e.progress > 1) e.progress = 0;
+                    }
+                    const pos = getWirePosition(e.progress);
+                    e.element.setAttribute('cx', pos.x);
+                    e.element.setAttribute('cy', pos.y);
+                });
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // --- COMMANDES ET ÉVÉNEMENTS ---
+        function setSimulationState(running) {
+            isRunning = running;
+            if (running) {
+                btnStart.disabled = true;
+                btnStart.classList.add('opacity-50', 'cursor-not-allowed');
+                btnPause.disabled = false;
+                btnPause.classList.remove('opacity-50', 'cursor-not-allowed');
+
+                statusDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping';
+                statusText.textContent = 'Électrolyse active...';
+                statusBadge.className = 'flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-semibold';
+                currentArrows.classList.remove('opacity-0');
+            } else {
+                btnStart.disabled = false;
+                btnStart.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnPause.disabled = true;
+                btnPause.classList.add('opacity-50', 'cursor-not-allowed');
+
+                statusDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400';
+                statusText.textContent = 'En pause';
+                statusBadge.className = 'flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-300 text-xs font-semibold';
+                currentArrows.classList.add('opacity-0');
+            }
+        }
+
+        btnStart.addEventListener('click', () => setSimulationState(true));
+        btnPause.addEventListener('click', () => setSimulationState(false));
+
+        btnReset.addEventListener('click', () => {
+            setSimulationState(false);
+            simulatedTime = 0;
+
+            statusDot.className = 'w-2.5 h-2.5 rounded-full bg-slate-400';
+            statusText.textContent = 'Générateur désactivé';
+            statusBadge.className = 'flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-200 text-slate-700 text-xs font-semibold';
+
+            timerDisplay.textContent = '00:00';
+            displayQ.textContent = '0 C';
+            displayNe.textContent = '0.0000 mol';
+            displayMassCu.textContent = '0.000 g';
+            displayVolCl2.textContent = '0.00 mL';
+            displayCuPercent.textContent = '100 %';
+            barCuPercent.style.width = '100%';
+
+            copperDepositBar.setAttribute('opacity', 0);
+            copperDepositBar.setAttribute('stroke-width', 0);
+            solutionStopTop.setAttribute('stop-opacity', 0.65);
+            solutionStopBot.setAttribute('stop-opacity', 0.85);
+
+            initIons();
+            initBubbles();
+            initElectrons();
+        });
+
+        // Sliders
+        inputCurrent.addEventListener('input', (e) => {
+            intensity = parseFloat(e.target.value);
+            valCurrent.textContent = intensity.toFixed(2);
+            svgAmpDisplay.textContent = intensity.toFixed(2);
+            svgVoltDisplay.textContent = (intensity * 3.0).toFixed(1);
+        });
+
+        inputSpeed.addEventListener('input', (e) => {
+            timeSpeed = parseInt(e.target.value);
+            valSpeed.textContent = timeSpeed;
+            txtSpeedSec.textContent = timeSpeed;
+        });
+
+        // Lancement au chargement
+        window.addEventListener('load', () => {
+            initIons();
+            initBubbles();
+            initElectrons();
+            requestAnimationFrame(animate);
+        });
+    })();
+(function(){var on='bg-slate-900 text-white border-slate-900',off='bg-white text-slate-700 border-slate-300 hover:bg-slate-100';
+function show(k){document.getElementById('summary').classList.toggle('hidden',k==='c');['a','b','c'].forEach(function(x){document.getElementById('panel-'+x).classList.toggle('hidden',x!==k)});
+document.querySelectorAll('.tab').forEach(function(b){b.className='tab shrink-0 px-4 py-2 rounded-xl text-sm font-semibold border transition '+(b.dataset.tab===k?on:off)})}
+document.querySelectorAll('.tab').forEach(function(b){b.addEventListener('click',function(){show(b.dataset.tab);var n=document.querySelector('nav');if(window.scrollY>n.offsetTop)window.scrollTo(0,n.offsetTop)})});show('a')})();
+(function(){
+var t=document.getElementById('toTop');
+function f(){var h=(window.scrollY||document.documentElement.scrollTop)<400;t.classList.toggle('opacity-0',h);t.classList.toggle('pointer-events-none',h)}
+window.addEventListener('scroll',f,{passive:true});f();
+t.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})});
+var mq=window.matchMedia('(max-width: 640px)');
+function vb(){['a_labSvg','b_labSvg'].forEach(function(i){var e=document.getElementById(i);if(e)e.setAttribute('viewBox',mq.matches?'115 30 580 430':'0 0 800 500')})}
+if(mq.addEventListener)mq.addEventListener('change',vb);else mq.addListener(vb);vb();
+})();
+</script></body></html>
