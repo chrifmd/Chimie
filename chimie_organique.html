@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chimie organique — Terminale Sciences expérimentales</title>
+<style>
+:root{--blue:#145da0;--navy:#0f2a43;--ink:#183044;--muted:#607586;--bg:#f3f7fb;--line:#d8e3ec;--orange:#ffb84d}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;min-height:100vh;display:flex;flex-direction:column}
+.topbar{padding:10px 16px;background:var(--navy);display:flex;justify-content:flex-start}
+.btn{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-weight:600;font-size:.9rem;line-height:1;padding:9px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.35);color:#fff;transition:background .2s,color .2s}
+.btn:hover,.btn:focus-visible{background:#fff;color:var(--navy);outline:none}
+.btn svg{width:15px;height:15px}
+header{background:linear-gradient(120deg,#123e68,#1678a8);color:#fff;text-align:center;padding:44px 16px 52px}
+header h1{margin:0;font-size:clamp(2rem,6vw,3.2rem);letter-spacing:.06em}
+header p{margin:10px 0 0;color:#e3f4ff;font-size:clamp(1rem,2.4vw,1.2rem)}
+main{flex:1;width:100%;max-width:960px;margin:-28px auto 0;padding:0 16px 40px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.card{display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;text-decoration:none;color:inherit;box-shadow:0 6px 22px #163b5516;transition:transform .2s,box-shadow .2s,border-color .2s}
+.card:hover,.card:focus-visible{transform:translateY(-4px);box-shadow:0 12px 30px #163b5528;border-color:var(--blue);outline:none}
+.num{width:44px;height:44px;border-radius:12px;background:#e7f3fc;color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.2rem;margin-bottom:14px}
+.card h2{margin:0 0 8px;font-size:1.3rem;color:#124d7a}
+.card p{margin:0 0 14px;color:var(--muted)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.tags span{background:#e7f3fc;color:#12517d;border-radius:999px;padding:3px 10px;font-size:.8rem;font-weight:700}
+.go{margin-top:auto;display:inline-flex;align-items:center;gap:8px;color:var(--blue);font-weight:700}
+.go svg{width:18px;height:18px;transition:transform .2s}
+.card:hover .go svg{transform:translateX(4px)}
+footer{text-align:center;padding:0 16px 36px}
+footer .btn{background:var(--navy);border-color:var(--navy)}
+footer .btn:hover,footer .btn:focus-visible{background:var(--blue);color:#fff;border-color:var(--blue)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="Navigation du site">
+  <a class="btn" href="https://simphysique.tn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/></svg>Retour à SimPhysique.tn</a>
+</nav>
+
+<header>
+  <h1>CHIMIE ORGANIQUE</h1>
+  <p>Terminale · Sciences expérimentales</p>
+</header>
+
+<main>
+  <div class="cards">
+    <a class="card" href="amides.html">
+      <div class="num">1</div>
+      <h2>Les amides</h2>
+      <p>Structure du groupe amide, classes, nomenclature, préparation à partir d’un sel d’ammonium et hydrolyse, avec simulations interactives.</p>
+      <div class="tags"><span>Simulation</span><span>Nomenclature</span><span>Quiz</span></div>
+      <span class="go">Ouvrir la page <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></span>
+    </a>
+
+    <a class="card" href="derives_acides_carb.html">
+      <div class="num">2</div>
+      <h2>Dérivés des acides carboxyliques</h2>
+      <p>Esters, anhydrides d’acide et amides : cours synthétique, carte des passages, stratégies d’examen et quiz de 12 questions types Bac.</p>
+      <div class="tags"><span>Cours</span><span>Carte des passages</span><span>Quiz</span></div>
+      <span class="go">Ouvrir la page <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></span>
+    </a>
+  </div>
+</main>
+
+<footer>
+  <a class="btn" href="https://simphysique.tn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/></svg>Retour à SimPhysique.tn</a>
+</footer>
+
+</body>
+</html>

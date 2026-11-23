@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les amides — simulation interactive</title>
+<style>
+:root{--blue:#145da0;--cyan:#dff3ff;--ink:#183044;--muted:#607586;--bg:#f3f7fb;--card:#fff;--line:#d8e3ec;--orange:#ffb84d;--green:#16865b;--red:#c74747}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+header{background:linear-gradient(120deg,#123e68,#1678a8);color:white;padding:24px 16px 20px;text-align:center}
+header h1{margin:0;font-size:clamp(1.5rem,4vw,2.2rem)}header p{margin:7px 0 0;color:#e3f4ff}
+main{max-width:1100px;margin:auto;padding:16px}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px}
+.tabs button{white-space:nowrap;border:1px solid var(--line);background:white;color:var(--ink);border-radius:999px;padding:10px 16px;font-weight:650;cursor:pointer}
+.tabs button.active{background:var(--blue);border-color:var(--blue);color:white}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin:0 0 15px;box-shadow:0 4px 16px #163b5510}
+h2{font-size:1.35rem;margin:0 0 12px;color:#124d7a}h3{font-size:1.05rem;margin:12px 0 6px}
+p{margin:7px 0}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.pill{display:inline-block;background:#e7f3fc;color:#12517d;border-radius:999px;padding:4px 10px;font-size:.84rem;font-weight:700}
+button,select,input{font:inherit}button.action{background:var(--blue);color:white;border:0;border-radius:10px;padding:10px 14px;font-weight:650;cursor:pointer}
+button.secondary{background:#eaf2f8;color:#164d73;border:1px solid #c9dce9;border-radius:10px;padding:9px 13px;cursor:pointer;font-weight:600}
+button:disabled{opacity:.45;cursor:not-allowed}
+select,input[type=text]{padding:10px;border:1px solid #bdcfdd;border-radius:9px;background:white;color:var(--ink);max-width:100%}
+.diagram-wrap{background:linear-gradient(180deg,#fbfdff,#eef6fc);border:1px solid var(--line);border-radius:14px;padding:10px;overflow:hidden}
+svg{width:100%;height:auto;display:block;max-height:300px}
+.atom{cursor:pointer}.atom circle{stroke:#27465d;stroke-width:2}.atom text{font-size:15px;font-weight:800;text-anchor:middle;dominant-baseline:middle;pointer-events:none}.atom:hover circle,.atom.selected circle{stroke:#f09a18;stroke-width:4}
+.bond{stroke:#263f52;stroke-width:3;stroke-linecap:round}.bond.double{stroke-width:2}.atom-label{font-size:12px;fill:#526b7c}
+.info{background:#fff7e8;border-left:4px solid var(--orange);padding:10px 12px;border-radius:8px;margin-top:10px}
+.good{color:var(--green);font-weight:700}.bad{color:var(--red);font-weight:700}
+.class-card{border:1px solid var(--line);border-radius:13px;padding:14px;background:#fcfeff}
+.class-card h3{margin-top:0}.formula{font-family:Georgia,serif;font-size:1.25rem;letter-spacing:.4px;color:#123e68;font-weight:700}
+.question{padding:13px;background:#f7fafc;border:1px solid var(--line);border-radius:12px;margin:10px 0}
+.options{display:grid;gap:7px;margin-top:9px}.options label{display:flex;gap:9px;align-items:flex-start;background:white;border:1px solid var(--line);padding:9px;border-radius:9px;cursor:pointer}
+.feedback{margin-top:10px;padding:10px;border-radius:9px;display:none}.feedback.show{display:block}.feedback.ok{background:#e8f7ef;color:#126642}.feedback.no{background:#fff0ef;color:#9c3030}
+.score{font-size:1.1rem;font-weight:750}.footer{text-align:center;color:var(--muted);font-size:.85rem;padding:12px}
+.atom-key{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.atom-key span{font-size:.82rem;padding:4px 8px;border-radius:8px;background:#f0f4f7}
+.canvas-help{color:#d8e8f5;text-align:center;font-size:.85rem;margin:6px 0 0}
+@media(max-width:600px){main{padding:10px}.card{padding:14px}.tabs button{padding:9px 12px;font-size:.9rem}}
+
+.hit{fill:transparent}.hot{cursor:pointer}.hot:hover .hit,.hot.sel .hit{fill:#ffb84d44;stroke:#f09a18;stroke-width:2.5}
+button.secondary.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px;font-size:.86rem;color:var(--muted)}
+.legend i{display:inline-block;width:22px;height:5px;border-radius:3px;vertical-align:middle;margin-right:6px}
+.legend label{cursor:pointer}
+.diagram-wrap svg.mol{max-height:340px}
+.eqbox{background:#fdf3b8;border:2px solid #8a7a22;border-radius:4px;padding:9px 14px;margin:9px 0;font-family:Georgia,serif;font-weight:700;color:#2b2a10;overflow-x:auto;white-space:nowrap}
+.tabs{gap:6px}.tabs button{padding:8px 10px;font-size:.88rem}
+@media(min-width:700px){.tabs{flex-wrap:wrap;overflow-x:visible}}
+</style>
+
+<style id="sp-nav-style">
+.sp-topbar{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;padding:10px 16px;background:#0f2a43;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;position:relative;z-index:5}
+.sp-topbar a{display:inline-flex;align-items:center;gap:7px;color:#fff;text-decoration:none;font-size:.9rem;font-weight:600;line-height:1;padding:9px 14px;border:1px solid rgba(255,255,255,.35);border-radius:999px;transition:background .2s,color .2s}
+.sp-topbar a:hover,.sp-topbar a:focus-visible{background:#fff;color:#0f2a43;outline:none}
+.sp-topbar svg{width:15px;height:15px;flex:none}
+.sp-totop{position:fixed;right:18px;bottom:18px;z-index:9999;width:48px;height:48px;border-radius:50%;border:0;background:#145da0;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.3);opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .25s,transform .25s,visibility .25s,background .2s;padding:0}
+.sp-totop.show{opacity:1;visibility:visible;transform:none}
+.sp-totop:hover{background:#0f2a43}
+.sp-totop:focus-visible{outline:3px solid #ffb84d;outline-offset:2px}
+.sp-totop svg{width:22px;height:22px}
+@media (max-width:480px){.sp-topbar a{font-size:.82rem;padding:8px 11px}}
+</style>
+</head>
+<body>
+<nav class="sp-topbar" aria-label="Navigation du site">
+  <a href="chimie_organique.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Retour à l’accueil</a>
+  <a href="https://simphysique.tn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/></svg>Retour à SimPhysique.tn</a>
+</nav>
+
+<header>
+  <h1>Les amides : structure, classes et nomenclature</h1>
+  <p>Explorer les molécules, reconnaître une classe et apprendre à nommer les amides</p>
+</header>
+<main>
+<nav class="tabs" aria-label="Rubriques">
+  <button class="active" data-tab="decouvrir">1. Découvrir</button>
+  <button data-tab="classes">2. Les classes</button>
+  <button data-tab="nomenclature">3. Nomenclature</button>
+  <button data-tab="preparation">4. Préparation</button>
+  <button data-tab="hydrolyse">5. Hydrolyse</button>
+  <button data-tab="atelier">6. Atelier 2D</button>
+  <button data-tab="editeur3d">7. Éditeur 3D</button>
+  <button data-tab="quiz">8. Exercices</button>
+</nav>
+
+<section id="decouvrir" class="panel active">
+ <div class="card">
+  <span class="pill">Cours interactif</span>
+  <h2>1. Qu'est-ce qu'une amide ?</h2>
+  <p>Une amide est un composé organique qui possède le groupe fonctionnel <b>–C(=O)–N–</b>. Le carbone du groupe carbonyle est directement lié à un atome d'azote.</p>
+  <div class="diagram-wrap"><svg id="genSvg" class="mol" role="img" aria-label="Structure générale d'une amide : R–C(=O)–N(R′)R″"></svg></div>
+  <div class="legend"><span><i style="background:#145da0"></i>chaîne R</span><span><i style="background:#263f52"></i>groupe amide –C(=O)–N–</span><span><i style="background:#16865b"></i>substituants de N (R′, R″ : H ou groupes carbonés)</span></div>
+  <div class="atom-key"><span>🔴 O : oxygène</span><span>🟢 N : azote</span><span>⚫ C : carbone</span><span>🔵 R, R' : chaînes carbonées</span></div>
+  <h3>Cliquer sur un élément pour comprendre son rôle</h3>
+  <div class="grid">
+   <button class="secondary" onclick="showAtom('C')">Carbone du carbonyle</button>
+   <button class="secondary" onclick="showAtom('O')">Oxygène</button>
+   <button class="secondary" onclick="showAtom('N')">Azote</button>
+   <button class="secondary" onclick="showAtom('R')">Groupe R</button>
+  </div>
+  <div id="atomInfo" class="info" aria-live="polite">Sélectionnez un élément pour afficher son rôle dans le groupe amide.</div>
+ </div>
+ <div class="card">
+  <span class="pill">Aller plus loin</span>
+  <h2>Pourquoi le groupe amide est-il plan ? La mésomérie</h2>
+  <p>Le doublet non liant de l'azote se délocalise vers le carbonyle. La liaison C–N acquiert un caractère partiel de double liaison : le groupe –CON– est <b>plan</b> (angles proches de 120°) et la rotation autour de C–N est fortement gênée.</p>
+  <div class="diagram-wrap"><svg id="resSvg" class="mol" role="img" aria-label="Mésomérie du groupe amide"></svg></div>
+  <p class="muted">Flèches courbes : le doublet de N se déplace vers la liaison C–N, tandis que la liaison π C=O se déplace vers l'oxygène.</p>
+ </div>
+ <div class="card">
+  <h2>À retenir</h2>
+  <ul>
+   <li>Le groupe caractéristique est <b>–CON–</b>.</li>
+   <li>Le carbone du carbonyle est lié à un oxygène par une double liaison.</li>
+   <li>L'azote est lié directement au carbone du carbonyle.</li>
+   <li>La nature des substituants portés par l'azote permet de distinguer les amides primaires, secondaires et tertiaires.</li>
+  </ul>
+  <div class="info"><b>Attention :</b> une amine (C–N) et une amide (C(=O)–N) ne sont pas la même fonction chimique.</div>
+ </div>
+</section>
+
+<section id="classes" class="panel">
+ <div class="card">
+  <h2>2. Les trois classes d'amides</h2>
+  <p>La classe dépend du nombre d'atomes d'hydrogène encore liés à l'azote (dans les amides acycliques usuelles).</p>
+  <div class="grid">
+   <div class="class-card">
+    <h3>Amide primaire</h3><div class="formula">R–C(=O)–NH₂</div>
+    <p>L'azote porte <b>deux hydrogènes</b> et un lien avec le carbone du carbonyle.</p>
+    <p><b>Exemple :</b> CH₃CONH₂, éthanamide.</p>
+   </div>
+   <div class="class-card">
+    <h3>Amide secondaire</h3><div class="formula">R–C(=O)–NH–R′</div>
+    <p>L'azote porte <b>un hydrogène</b> et un groupe carboné supplémentaire.</p>
+    <p><b>Exemple :</b> CH₃CONHCH₃, N-méthyléthanamide.</p>
+   </div>
+   <div class="class-card">
+    <h3>Amide tertiaire</h3><div class="formula">R–C(=O)–N(R′)–R″</div>
+    <p>L'azote ne porte <b>aucun hydrogène</b> : il est lié à deux groupes carbonés en plus du carbonyle.</p>
+    <p><b>Exemple :</b> CH₃CON(CH₃)₂, N,N-diméthyléthanamide.</p>
+   </div>
+  </div>
+ </div>
+ <div class="card">
+  <h2>Classer une molécule</h2>
+  <label for="classChoice"><b>Choisir une formule :</b></label>
+  <select id="classChoice" onchange="classify()">
+   <option value="primary">CH₃–C(=O)–NH₂</option>
+   <option value="secondary">CH₃–C(=O)–NH–CH₃</option>
+   <option value="tertiary">CH₃–C(=O)–N(CH₃)₂</option>
+   <option value="primary2">CH₃CH₂–C(=O)–NH₂</option>
+  </select>
+  <button class="action" onclick="classify()">Identifier la classe</button>
+  <div id="classResult" class="info" aria-live="polite">Choisissez une formule puis cliquez sur « Identifier la classe ».</div>
+ </div>
+</section>
+
+<section id="nomenclature" class="panel">
+ <div class="card">
+  <h2>3. Règles essentielles de nomenclature</h2>
+  <ol>
+   <li>Repérer la chaîne principale contenant le carbone du groupe –CONH₂.</li>
+   <li>Compter le carbone du carbonyle dans la chaîne principale.</li>
+   <li>Remplacer la terminaison de l'acide carboxylique correspondant par <b>-amide</b> : acide éthanoïque → éthanamide.</li>
+   <li>Les groupes fixés sur l'azote sont indiqués par le préfixe <b>N-</b> : N-méthyl…, N-éthyl…</li>
+   <li>Si deux groupes identiques sont fixés sur l'azote, utiliser <b>N,N-di-</b>.</li>
+  </ol>
+  <div class="info">Exemple : CH₃–C(=O)–NH–CH₃ se nomme <b>N-méthyléthanamide</b>. La chaîne contenant le carbonyle est éthanamide ; le groupe méthyle est porté par l'azote, d'où le préfixe N-méthyl.</div>
+ </div>
+ <div class="card">
+  <h2>Exemples à explorer</h2>
+  <div class="grid">
+   <div class="class-card"><div class="formula">H–CONH₂</div><b>Méthanamide</b><p class="muted">1 carbone dans la chaîne principale</p></div>
+   <div class="class-card"><div class="formula">CH₃–CONH₂</div><b>Éthanamide</b><p class="muted">2 carbones dans la chaîne principale</p></div>
+   <div class="class-card"><div class="formula">CH₃CH₂–CONH₂</div><b>Propanamide</b><p class="muted">3 carbones dans la chaîne principale</p></div>
+   <div class="class-card"><div class="formula">CH₃–CONHCH₃</div><b>N-méthyléthanamide</b><p class="muted">Un groupe méthyle sur l'azote</p></div>
+   <div class="class-card"><div class="formula">CH₃–CON(CH₃)₂</div><b>N,N-diméthyléthanamide</b><p class="muted">Deux groupes méthyle sur l'azote</p></div>
+   <div class="class-card"><div class="formula">CH₃CH₂–CONHCH₂CH₃</div><b>N-éthylpropanamide</b><p class="muted">Un groupe éthyle sur l'azote</p></div>
+  </div>
+ </div>
+</section>
+
+<section id="preparation" class="panel">
+ <div class="card">
+  <span class="pill">Expérience simulée</span>
+  <h2>4. Préparation d'une amide à partir d'un sel d'ammonium</h2>
+  <p><b>Activité :</b> dans un tube à essai prolongé par un tube effilé, on introduit un peu de carboxylate d'ammonium. On chauffe à l'aide d'un bec Bunsen pendant environ une demi-heure : un dépôt blanc se forme sur les parois supérieures du tube.</p>
+  <div class="grid" style="margin:10px 0">
+   <div><label for="prepR"><b>Sel d'ammonium</b></label><br>
+    <select id="prepR" onchange="prepReset()"><option value="H">Méthanoate d'ammonium</option><option value="CH₃" selected>Éthanoate d'ammonium</option><option value="CH₃CH₂">Propanoate d'ammonium</option></select></div>
+   <div><b>Commandes</b><div class="atom-key"><button class="action" id="prepGo" onclick="prepToggle()">▶ Chauffer</button><button class="secondary" onclick="prepReset()">↺ Réinitialiser</button></div></div>
+   <div><label for="prepT"><b>Durée de chauffage :</b> <span id="prepTlbl">0 min</span></label><br><input type="range" id="prepT" min="0" max="30" step="0.1" value="0" style="width:100%" oninput="prepScrub(this.value)"></div>
+  </div>
+  <div class="diagram-wrap"><svg id="prepSvg" class="mol" viewBox="0 0 640 350" role="img" aria-label="Chauffage d'un sel d'ammonium dans un tube à essai prolongé par un tube effilé">
+   <g id="prepFlame" opacity="0" transform="translate(190 302)"><path d="M0 0C-17 -10 -12 -32 0 -52C12 -32 17 -10 0 0Z" fill="#ff9a1f"/><path d="M0 0C-8 -6 -6 -18 0 -30C6 -18 8 -6 0 0Z" fill="#fff0a0"/><path d="M0 0C-4 -3 -3 -8 0 -12C3 -8 4 -3 0 0Z" fill="#4aa3ff"/></g>
+   <rect x="181" y="302" width="18" height="34" rx="3" fill="#6b7b88"/><ellipse cx="190" cy="338" rx="38" ry="7" fill="#4d5c68"/>
+   <g transform="translate(190 262) rotate(40)">
+    <path d="M-22 -170V-22A22 22 0 0 0 22 -22V-170L7 -190V-290H-7V-190Z" fill="#e8f4fb" fill-opacity=".55" stroke="#5f7f97" stroke-width="3" stroke-linejoin="round"/>
+    <path id="prepLiq" d="M-20 -48V-22A20 20 0 0 0 20 -22V-48Z" fill="#f1d98a" fill-opacity=".9"/>
+    <g id="prepBub" fill="#fff" stroke="#b9a05a"></g>
+    <g id="prepDep" opacity="0" fill="#fff" stroke="#c4d0d9" stroke-width="1.5"><rect x="-21" y="-160" width="6" height="86" rx="3"/><rect x="15" y="-158" width="6" height="84" rx="3"/><ellipse cx="-12" cy="-120" rx="4" ry="9"/><ellipse cx="11" cy="-100" rx="4" ry="10"/><ellipse cx="-5" cy="-165" rx="9" ry="3"/><ellipse cx="0" cy="-85" rx="6" ry="3"/></g>
+    <g id="prepVap" fill="#9fd0ee"></g>
+   </g>
+   <line x1="292" y1="182" x2="352" y2="150" stroke="#607586" stroke-width="1.6"/><text id="prepDepLbl" x="356" y="146" font-size="14" fill="#183044" font-weight="700"></text>
+   <line x1="205" y1="240" x2="130" y2="212" stroke="#607586" stroke-width="1.6"/><text id="prepSaltLbl" x="14" y="206" font-size="14" fill="#183044" font-weight="700"></text>
+   <text x="14" y="226" font-size="12.5" fill="#607586">au fond du tube</text>
+   <text id="prepTemp" x="626" y="338" text-anchor="end" font-size="16" fill="#c74747" font-weight="800"></text>
+  </svg></div>
+  <div id="prepObs" class="info" aria-live="polite"></div>
+  <div class="grid" style="margin-top:12px">
+   <div class="class-card"><h3>Quantités (en % du sel initial)</h3>
+    <div id="prepBars"></div></div>
+   <div class="class-card"><h3>Amide formée au cours du temps</h3>
+    <svg id="prepChart" viewBox="0 0 360 190" style="max-height:200px"></svg></div>
+  </div>
+ </div>
+ <div class="card">
+  <h2>Interprétation</h2>
+  <p>Le dépôt blanc obtenu est une amide non substituée, <b>solide</b> aux conditions du laboratoire. Elle résulte de la <b>déshydratation</b> du carboxylate d'ammonium.</p>
+  <div id="prepEq" class="info"></div>
+  <p id="prepMelt" class="muted"></p>
+  <p>La réaction est <b>lente</b> et conduit à un <b>équilibre chimique</b> : après un chauffage vers 210 °C pendant une demi-heure environ, la quantité d'amide formée représente environ <b>80 %</b> de la quantité initiale de sel.</p>
+  <h3>Remarque : obtention du sel d'ammonium</h3>
+  <p>Le carboxylate d'ammonium s'obtient par action de l'acide carboxylique sur l'ammoniac :</p>
+  <div class="eqbox" id="prepRem"></div>
+  <h3>Généralisation</h3>
+  <p>On peut préparer les amides non substituées par déshydratation du carboxylate d'ammonium correspondant :</p>
+  <div class="eqbox">R–COO⁻,NH₄⁺ &nbsp;⟶&nbsp; R–CO–NH₂ &nbsp;+&nbsp; H₂O</div>
+ </div>
+</section>
+
+<section id="hydrolyse" class="panel">
+ <div class="card">
+  <span class="pill">Expérience simulée</span>
+  <h2>5. Hydrolyse d'une amide</h2>
+  <p>Choisissez l'amide et le milieu, puis chauffez le mélange <b>sous la hotte</b>. Un papier pH humidifié est présenté à l'ouverture du tube pour identifier le gaz ou les vapeurs qui s'en échappent.</p>
+  <div class="grid" style="margin:10px 0">
+   <div><label for="hyAm"><b>Amide</b></label><br><select id="hyAm" onchange="hyReset()"><option value="eth">Éthanamide CH₃CONH₂</option><option value="prop">Propanamide CH₃CH₂CONH₂</option><option value="nme">N-méthyléthanamide CH₃CONHCH₃</option><option value="nnme">N,N-diméthyléthanamide CH₃CON(CH₃)₂</option></select></div>
+   <div><label for="hyMed"><b>Milieu</b></label><br><select id="hyMed" onchange="hyReset()"><option value="base">Basique : NaOH 1 M</option><option value="acid">Acide : H₂SO₄ 1 M</option></select></div>
+   <div><b>Commandes</b><div class="atom-key"><button class="action" id="hyGo" onclick="hyToggle()">▶ Chauffer</button><button class="secondary" onclick="hyReset()">↺ Réinitialiser</button></div></div>
+  </div>
+  <div class="diagram-wrap"><svg id="hySvg" class="mol" viewBox="0 0 560 350" role="img" aria-label="Hydrolyse d'une amide, papier pH à l'ouverture du tube">
+   <g id="hyFlame" opacity="0" transform="translate(200 306)"><path d="M0 0C-17 -10 -12 -32 0 -50C12 -32 17 -10 0 0Z" fill="#ff9a1f"/><path d="M0 0C-8 -6 -6 -18 0 -30C6 -18 8 -6 0 0Z" fill="#fff0a0"/><path d="M0 0C-4 -3 -3 -8 0 -12C3 -8 4 -3 0 0Z" fill="#4aa3ff"/></g>
+   <rect x="191" y="306" width="18" height="30" rx="3" fill="#6b7b88"/><ellipse cx="200" cy="338" rx="38" ry="7" fill="#4d5c68"/>
+   <g transform="translate(200 272) rotate(28)">
+    <path d="M-22 -236V-22A22 22 0 0 0 22 -22V-236" fill="#e8f4fb" fill-opacity=".5" stroke="#5f7f97" stroke-width="3" stroke-linecap="round"/>
+    <path d="M-20 -78V-22A20 20 0 0 0 20 -22V-78Z" fill="#d4ebf6" fill-opacity=".9"/>
+    <g id="hyCrumbs" fill="#fff" stroke="#c4d0d9"><ellipse cx="-8" cy="-14" rx="6" ry="3"/><ellipse cx="7" cy="-10" rx="5" ry="3"/><ellipse cx="0" cy="-20" rx="4" ry="2.5"/></g>
+    <g id="hyBub" fill="#fff" fill-opacity=".8" stroke="#8fb8d0"></g>
+    <g id="hyGas"></g>
+    <rect id="hyPaper" x="-9" y="-266" width="18" height="46" rx="2" fill="#e6cf3a" stroke="#8b7b1a" stroke-width="1.5"/>
+   </g>
+   <line x1="332" y1="70" x2="392" y2="54" stroke="#607586" stroke-width="1.6"/><text x="396" y="52" font-size="14" font-weight="700" fill="#183044">Papier pH humide</text>
+   <text id="hyMixLbl" x="14" y="236" font-size="14" font-weight="700" fill="#183044"></text><text id="hyMixLbl2" x="14" y="256" font-size="12.5" fill="#607586"></text>
+   <text id="hyGasLbl" x="396" y="140" font-size="14" font-weight="700" fill="#1a5f9c"></text>
+  </svg></div>
+  <div id="hyObs" class="info" aria-live="polite"></div>
+ </div>
+ <div class="card">
+  <h2>Interprétation de l'expérience</h2>
+  <div id="hyEq" class="info"></div>
+  <h3>Hydrolyse en milieu basique — généralisation</h3>
+  <p>L'hydrolyse en milieu basique d'une amide donne le sel de l'acide correspondant et un dégagement d'ammoniac NH₃ ou une amine, selon qu'il s'agit d'une amide N-non substituée ou N-substituée.</p>
+  <div class="eqbox">R–CONH₂ + Na⁺ + OH⁻ ⟶ R–CO₂⁻ + Na⁺ + NH₃(g)</div>
+  <div class="eqbox">R–CONHR′ + Na⁺ + OH⁻ ⟶ R–CO₂⁻ + Na⁺ + R′NH₂</div>
+  <h3>Hydrolyse en milieu acide — généralisation</h3>
+  <p>L'hydrolyse en milieu acide d'une amide donne un acide carboxylique et le sel d'ammonium ou le sel d'alkylammonium, selon qu'il s'agit d'une amide N-non substituée ou N-substituée.</p>
+  <div class="eqbox">R–CONH₂ + H₃O⁺ ⟶ R–CO₂H + NH₄⁺</div>
+  <div class="eqbox">R–CONHR′ + H₃O⁺ ⟶ R–CO₂H + R′NH₃⁺</div>
+ </div>
+</section>
+
+<section id="atelier" class="panel">
+ <div class="card">
+  <h2>6. Atelier : modifier les substituants de l'azote</h2>
+  <p>Choisissez les groupes attachés à l'azote. Observez la formule condensée, la classe et le nom correspondant.</p>
+  <div class="grid">
+   <div>
+    <label for="chain"><b>Chaîne principale</b></label><br>
+    <select id="chain" onchange="buildMolecule()">
+     <option value="H">Méthanamide (HCONH₂)</option>
+     <option value="CH₃">Éthanamide (CH₃CONH₂)</option>
+     <option value="CH₃CH₂">Propanamide (CH₃CH₂CONH₂)</option>
+     <option value="CH₃CH₂CH₂">Butanamide (CH₃CH₂CH₂CONH₂)</option>
+    </select>
+   </div>
+   <div>
+    <label for="sub1"><b>Premier substituant sur N</b></label><br>
+    <select id="sub1" onchange="buildMolecule()">
+     <option value="H">H (hydrogène)</option><option value="CH₃">CH₃ (méthyle)</option><option value="CH₂CH₃">CH₂CH₃ (éthyle)</option>
+    </select>
+   </div>
+   <div>
+    <label for="sub2"><b>Deuxième substituant sur N</b></label><br>
+    <select id="sub2" onchange="buildMolecule()">
+     <option value="H">H (hydrogène)</option><option value="CH₃">CH₃ (méthyle)</option><option value="CH₂CH₃">CH₂CH₃ (éthyle)</option>
+    </select>
+   </div>
+  </div>
+  <div class="atom-key" id="amModes" style="margin-top:12px">
+   <button class="secondary on" data-m="topo">Topologique</button><button class="secondary" data-m="semi">Semi-développée</button><button class="secondary" data-m="lp">Doublets et polarité</button>
+  </div>
+  <div class="diagram-wrap" style="margin-top:10px"><svg id="amideSvg" class="mol" role="img" aria-label="Formule de l'amide construite"></svg></div>
+  <div class="legend">
+   <span><i style="background:#145da0"></i>chaîne principale (numérotée à partir de C=O)</span>
+   <span><i style="background:#16865b"></i>groupes portés par N (préfixe N-)</span>
+   <span><i style="background:#ffb84d"></i>groupe amide</span>
+   <label><input type="checkbox" id="amNum" checked> Numérotation</label>
+   <label><input type="checkbox" id="amCol" checked> Couleurs « nomenclature »</label>
+  </div>
+  <div class="info" id="buildResult" aria-live="polite"></div>
+  <p class="muted">Pour une amide neutre usuelle, l'azote est lié au carbone du carbonyle et à deux substituants (H ou groupes carbonés).</p>
+ </div>
+</section>
+
+
+<section id="editeur3d" class="panel">
+ <div class="card">
+  <span class="pill">Éditeur moléculaire 3D interactif</span>
+  <h2>7. Construire une amide en 3D</h2>
+  <p>Choisissez la chaîne carbonée et les groupes fixés sur l'azote. Le modèle moléculaire se met à jour automatiquement. Faites glisser la souris ou le doigt sur la molécule pour la faire tourner.</p>
+  <div class="grid">
+   <div><label for="chain3d"><b>Chaîne principale</b></label><br>
+    <select id="chain3d" onchange="build3D()">
+     <option value="H">Méthanamide</option><option value="CH₃">Éthanamide</option>
+     <option value="CH₃CH₂">Propanamide</option><option value="CH₃CH₂CH₂">Butanamide</option>
+    </select>
+   </div>
+   <div><label for="sub13d"><b>Substituant 1 sur N</b></label><br>
+    <select id="sub13d" onchange="build3D()"><option value="H">H</option><option value="CH₃">CH₃ (méthyle)</option><option value="CH₂CH₃">CH₂CH₃ (éthyle)</option></select>
+   </div>
+   <div><label for="sub23d"><b>Substituant 2 sur N</b></label><br>
+    <select id="sub23d" onchange="build3D()"><option value="H">H</option><option value="CH₃">CH₃ (méthyle)</option><option value="CH₂CH₃">CH₂CH₃ (éthyle)</option></select>
+   </div>
+  </div>
+  <div class="diagram-wrap" style="margin-top:14px;background:#101d2b;border-color:#263b50">
+   <canvas id="molecule3d" width="900" height="470" style="width:100%;height:auto;max-height:470px;touch-action:none;cursor:grab;border-radius:10px" aria-label="Modèle moléculaire 3D manipulable"></canvas>
+  </div>
+  <div class="atom-key">
+   <span>⚫ Carbone</span><span>🔴 Oxygène</span><span>🔵 Azote</span><span>⚪ Hydrogène</span>
+   <span>🟠 Groupe carboné</span>
+  </div>
+  <div class="grid" style="margin-top:12px">
+   <button class="secondary" onclick="reset3D()">Réinitialiser la vue</button>
+   <button class="secondary" onclick="toggleLabels3D()" id="labelsBtn">Masquer les étiquettes</button>
+   <button class="secondary" onclick="toggleBonds3D()" id="bondsBtn">Masquer les liaisons</button>
+  </div>
+  <div id="result3d" class="info" aria-live="polite"></div>
+  <p class="muted">Modèle 3D pédagogique schématique : les couleurs distinguent les atomes. Les distances et angles sont illustratifs, et non des mesures expérimentales exactes. La rotation permet d'observer la connectivité sous différents angles.</p>
+ </div>
+
+  <div class="card" style="margin-top:16px">
+   <span class="pill">Mode construction libre</span>
+   <h2>Construire une molécule atome par atome</h2>
+   <p>Ajoutez des atomes, déplacez-les sur le tableau, puis sélectionnez deux atomes pour créer une liaison. Vous pouvez choisir une liaison simple ou double. Le vérificateur contrôle les valences usuelles et recherche le motif caractéristique d'une amide.</p>
+   <div class="grid" style="margin:12px 0">
+    <div>
+     <b>1. Ajouter un atome</b>
+     <div class="atom-key">
+      <button class="secondary" onclick="addFreeAtom('C')">⚫ + C</button>
+      <button class="secondary" onclick="addFreeAtom('O')">🔴 + O</button>
+      <button class="secondary" onclick="addFreeAtom('N')">🔵 + N</button>
+      <button class="secondary" onclick="addFreeAtom('H')">⚪ + H</button>
+     </div>
+    </div>
+    <div>
+     <b>2. Créer une liaison</b>
+     <div class="atom-key">
+      <button class="secondary" onclick="setFreeBondOrder(1)" id="singleBondBtn">Liaison simple</button>
+      <button class="secondary" onclick="setFreeBondOrder(2)" id="doubleBondBtn">Liaison double</button>
+      <button class="action" onclick="connectFreeAtoms()">Lier les 2 atomes</button>
+     </div>
+    </div>
+   </div>
+   <div class="diagram-wrap" style="background:#f8fbfe">
+    <svg id="freeBoard" viewBox="0 0 760 390" role="img" aria-label="Tableau de construction moléculaire libre" style="max-height:390px;touch-action:none">
+     <rect x="0" y="0" width="760" height="390" rx="12" fill="#f8fbfe"/>
+     <g id="freeBonds"></g><g id="freeAtoms"></g>
+    </svg>
+   </div>
+   <div class="atom-key" style="margin-top:12px">
+    <button class="secondary" onclick="deleteFreeSelection()">Supprimer la sélection</button>
+    <button class="secondary" onclick="clearFreeBoard()">Tout effacer</button>
+    <button class="secondary" onclick="loadAmideExample()">Charger un exemple d'amide</button>
+    <button class="action" onclick="checkFreeMolecule()">Vérifier la molécule</button>
+   </div>
+   <div id="freeStatus" class="info" aria-live="polite">Commencez par ajouter quelques atomes. Cliquez sur un atome pour le sélectionner ; faites-le glisser pour le déplacer.</div>
+   <p class="muted">Convention pédagogique : C a une valence de 4, O de 2, N de 3 et H de 1. Les liaisons représentées sont simples ou doubles. Le modèle ne traite pas toutes les exceptions de la chimie organique (charges, aromaticité, etc.).</p>
+  </div>
+
+</section>
+
+<section id="quiz" class="panel">
+ <div class="card">
+  <h2>8. Exercices d'entraînement</h2>
+  <p>Répondez aux questions puis vérifiez vos réponses. Une explication accompagne chaque correction.</p>
+  <div id="questions"></div>
+  <button class="action" onclick="correctQuiz()">Corriger mes réponses</button>
+  <button class="secondary" onclick="resetQuiz()">Recommencer</button>
+  <div id="quizScore" class="info score" aria-live="polite">Votre résultat apparaîtra ici.</div>
+ </div>
+</section>
+<div class="footer">Simulation pédagogique — Chimie organique · Les formules sont présentées sous forme condensée et simplifiée.<p>SimPhysique.tn &copy- chrif.md@gmail.com</p></div>
+ 
+</main>
+<script>
+
+// ===== Moteur de dessin 2D : angles de 120°, liaisons zigzag, positions calculées =====
+const AC={C:'#183044',O:'#c74747',N:'#16865b',R:'#145da0'};
+function amideGraph(o){
+ const A=[],B=[];
+ const add=(el,x,y,p={})=>(A.push({el,x,y,...p}),A.length-1);
+ const bond=(a,b,order,role)=>B.push({a,b,order,role});
+ const pos=(i,a,l=62)=>[A[i].x+Math.cos(a*Math.PI/180)*l,A[i].y-Math.sin(a*Math.PI/180)*l];
+ const c1=add('C',0,0,{role:'fn',num:1,key:'C'});
+ const O=add('O',...pos(c1,90),{role:'fn',key:'O',txt:o.zw?'O⁻':'O'});bond(c1,O,o.zw?1:2,'fn');
+ const N=add('N',...pos(c1,-30),{role:'fn',key:'N'});bond(c1,N,o.zw?2:1,'fn');
+ if(o.generic){
+  bond(c1,add('R',...pos(c1,210),{role:'chain',key:'R',txt:'R'}),1,'chain');
+  bond(N,add('R',...pos(N,30),{role:'sub',key:'R',txt:'R′'}),1,'sub');
+  bond(N,add('R',...pos(N,270),{role:'sub',key:'R',txt:'R″'}),1,'sub');
+  A[N].txt='N';A[c1].txt='C';return{A,B,c1,O,N};
+ }
+ const n={'H':1,'CH₃':2,'CH₃CH₂':3,'CH₃CH₂CH₂':4}[o.root];
+ if(n===1)bond(c1,add('H',...pos(c1,210),{role:'chain',txt:'H'}),1,'chain');
+ else{let prev=c1,a=210;for(let k=2;k<=n;k++){const i=add('C',...pos(prev,a),{role:'chain',num:k});bond(prev,i,1,'chain');prev=i;a=a===210?150:210;}}
+ const g=[o.s1,o.s2].filter(x=>x!=='H'),nH=2-g.length;
+ A[N].txt=(nH===2?'NH₂':nH===1?'NH':'N')+(o.zw?'⁺':'');
+ g.forEach((sub,k)=>{const i=add('C',...pos(N,k?270:30),{role:'sub',num:'N'});bond(N,i,1,'sub');
+  if(sub==='CH₂CH₃'){bond(i,add('C',...pos(i,330),{role:'sub'}),1,'sub');}});
+ return{A,B,c1,O,N};
+}
+function amideMarkup(o){
+ const {A,B,c1,O,N}=amideGraph(o),mode=o.mode||'topo',col=o.color!==false;
+ const deg=i=>B.filter(b=>b.a===i||b.b===i).length;
+ const bc=r=>!col?'#263f52':r==='chain'?'#145da0':r==='sub'?'#16865b':'#263f52';
+ const fc=a=>a.el==='O'?AC.O:a.el==='N'?AC.N:!col?AC.C:a.role==='chain'?AC.R:a.role==='sub'?AC.N:AC.C;
+ let s='';
+ if(o.zone){const xs=[A[c1].x,A[O].x,A[N].x],ys=[A[c1].y,A[O].y,A[N].y],x0=Math.min(...xs)-34,x1=Math.max(...xs)+34,y0=Math.min(...ys)-30,y1=Math.max(...ys)+30;
+  s+=`<rect x="${x0}" y="${y0}" width="${x1-x0}" height="${y1-y0}" rx="26" fill="#ffb84d1f" stroke="#ffb84d" stroke-width="2" stroke-dasharray="7 5"/><text x="${x0+8}" y="${y0-8}" font-size="13" fill="#b87400" font-weight="700">groupe amide</text>`;}
+ B.forEach(b=>{const p=A[b.a],q=A[b.b],dx=q.x-p.x,dy=q.y-p.y,l=Math.hypot(dx,dy),ux=-dy/l*3.6,uy=dx/l*3.6,c=bc(b.role);
+  const ln=(a,d)=>`<line x1="${p.x+a}" y1="${p.y+d}" x2="${q.x+a}" y2="${q.y+d}" stroke="${c}" stroke-width="3.4" stroke-linecap="round"/>`;
+  s+=b.order===2?ln(ux,uy)+ln(-ux,-uy):ln(0,0);});
+ A.forEach((a,i)=>{
+  let t=a.txt;if(t===undefined)t=a.el==='C'?(mode==='semi'?(i===c1?'C':deg(i)===1?'CH₃':'CH₂'):''):a.el;
+  if(!t)return;
+  const w=Math.max(28,t.length*14+8);s+=`<g data-atom="${a.key||''}" class="${a.key?'hot':''}"><rect x="${a.x-w/2}" y="${a.y-15}" width="${w}" height="30" rx="12" fill="#f6fafd"/><circle class="hit" cx="${a.x}" cy="${a.y}" r="21"/><text x="${a.x}" y="${a.y}" text-anchor="middle" dominant-baseline="central" font-size="22" font-weight="700" fill="${fc(a)}" style="pointer-events:none">${t}</text></g>`;});
+ if(mode==='lp'){
+  const dots=(a,ang)=>{const r=ang*Math.PI/180,cx=a.x+Math.cos(r)*25,cy=a.y-Math.sin(r)*25,px=Math.sin(r)*4.6,py=Math.cos(r)*4.6;
+   return [-1,1].map(k=>`<circle cx="${cx+px*k}" cy="${cy+py*k}" r="2.8" fill="${fc(a)}"/>`).join('');};
+  s+=dots(A[O],42)+dots(A[O],138)+dots(A[N],90);
+  s+=`<text x="${A[O].x+30}" y="${A[O].y+6}" font-size="17" font-weight="700" fill="#c74747">δ−</text><text x="${A[c1].x+16}" y="${A[c1].y-8}" font-size="17" font-weight="700" fill="#1a5f9c">δ+</text>`;
+ }
+ if(o.num)A.forEach((a,i)=>{if(a.num===undefined)return;
+  const nb=B.filter(b=>b.a===i||b.b===i).map(b=>A[b.a===i?b.b:b.a]);let vx=-nb.reduce((t,n)=>t+n.x-a.x,0),vy=-nb.reduce((t,n)=>t+n.y-a.y,0),l=Math.hypot(vx,vy);
+  if(l<1){vx=0;vy=1;l=1;}const bx=a.x+vx/l*26,by=a.y+vy/l*26;
+  s+=`<circle cx="${bx}" cy="${by}" r="10.5" fill="${a.num==='N'?'#16865b':'#145da0'}"/><text x="${bx}" y="${by}" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="800" fill="#fff">${a.num}</text>`;});
+ const px=A.map(a=>a.x),py=A.map(a=>a.y);
+ return{g:s,x0:Math.min(...px)-55,x1:Math.max(...px)+55,y0:Math.min(...py)-62,y1:Math.max(...py)+55,A,c1,O,N};
+}
+function fit(svg,m,minW,minH,inner){
+ const w=Math.max(m.x1-m.x0,minW),h=Math.max(m.y1-m.y0,minH),cx=(m.x0+m.x1)/2,cy=(m.y0+m.y1)/2;
+ svg.setAttribute('viewBox',`${cx-w/2} ${cy-h/2} ${w} ${h}`);svg.innerHTML=inner||m.g;
+}
+let amMode='topo';
+function drawAtelier(root,s1,s2){
+ const m=amideMarkup({root,s1,s2,mode:amMode,num:document.getElementById('amNum').checked,color:document.getElementById('amCol').checked,zone:true});
+ fit(document.getElementById('amideSvg'),m,520,280);
+}
+function drawGeneric(){fit(document.getElementById('genSvg'),amideMarkup({generic:true,mode:'semi',zone:true}),520,280);}
+function drawResonance(){
+ const base={root:'CH₃',s1:'H',s2:'H',mode:'semi',color:false},a=amideMarkup(base),b=amideMarkup({...base,zw:true});
+ const tB=a.x1-b.x0+170,y=Math.max(a.y1,b.y1)-6,mx=(a.x1+tB+b.x0)/2;
+ const arc=(d,c,m)=>`<path d="${d}" fill="none" stroke="${c}" stroke-width="2.6" marker-end="url(#${m})"/>`;
+ const inner=`<defs><marker id="resR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#c74747"/></marker><marker id="resK" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#183044"/></marker></defs>`+
+  `<g>${a.g}${arc('M54 10 Q46 -10 29 12','#c74747','resR')}${arc('M0 -31 Q28 -38 16 -53','#c74747','resR')}</g>`+
+  `<g transform="translate(${tB} 0)">${b.g}</g>`+
+  `<line x1="${mx-45}" y1="0" x2="${mx+45}" y2="0" stroke="#183044" stroke-width="3" marker-start="url(#resK)" marker-end="url(#resK)"/>`+
+  `<text x="${(a.x0+a.x1)/2}" y="${y}" text-anchor="middle" font-size="14" fill="#607586">Forme neutre (C=O)</text><text x="${tB+(b.x0+b.x1)/2}" y="${y}" text-anchor="middle" font-size="14" fill="#607586">Forme limite (O⁻ / N⁺, C=N)</text>`;
+ fit(document.getElementById('resSvg'),{x0:a.x0,x1:tB+b.x1,y0:a.y0,y1:y+20},560,260,inner);
+}
+document.addEventListener('DOMContentLoaded',()=>{
+ document.querySelectorAll('#amModes button').forEach(b=>b.addEventListener('click',()=>{amMode=b.dataset.m;document.querySelectorAll('#amModes button').forEach(x=>x.classList.toggle('on',x===b));buildMolecule();}));
+ ['amNum','amCol'].forEach(id=>document.getElementById(id).addEventListener('change',buildMolecule));
+ document.getElementById('genSvg').addEventListener('click',e=>{const g=e.target.closest('[data-atom]');if(g&&g.dataset.atom)showAtom(g.dataset.atom);});
+});
+const tabs=document.querySelectorAll('.tabs button');
+tabs.forEach(b=>b.addEventListener('click',()=>{tabs.forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active')}));
+function showAtom(a){
+ const infos={C:"Le carbone du carbonyle est le carbone central du groupe amide. Il est lié à l'oxygène par une double liaison et à l'azote par une liaison simple.",O:"L'oxygène du carbonyle est lié au carbone par une double liaison C=O.",N:"L'azote est directement lié au carbone du carbonyle. Il porte deux, un ou aucun hydrogène selon que l'amide est primaire, secondaire ou tertiaire.",R:"R représente le reste de la molécule, généralement une chaîne carbonée. Il est attaché au carbone du carbonyle."};
+ document.getElementById('atomInfo').textContent=infos[a];
+}
+function classify(){
+ const v=document.getElementById('classChoice').value;
+ const data={primary:["Amide primaire","L'azote porte deux hydrogènes : –CONH₂."],secondary:["Amide secondaire","L'azote porte un hydrogène et un groupe carboné : –CONH–R′."],tertiary:["Amide tertiaire","L'azote ne porte aucun hydrogène : –CON(R′)–R″."],primary2:["Amide primaire","L'azote porte deux hydrogènes : –CONH₂."]};
+ document.getElementById('classResult').innerHTML="<b>"+data[v][0]+"</b><br>"+data[v][1];
+}
+const roots={"H":["méthanamide","HCON"],"CH₃":["éthanamide","CH₃CON"],"CH₃CH₂":["propanamide","CH₃CH₂CON"],"CH₃CH₂CH₂":["butanamide","CH₃CH₂CH₂CON"]};
+function buildMolecule(){
+ const root=document.getElementById('chain').value,s1=document.getElementById('sub1').value,s2=document.getElementById('sub2').value;
+ const [base,formula]=roots[root];let cls=(s1==="H"&&s2==="H")?"primaire":(s1==="H"||s2==="H")?"secondaire":"tertiaire";
+ let name=base;
+ const groups=[s1,s2].filter(x=>x!=="H");
+ if(groups.length===1) name="N-"+(groups[0]==="CH₃"?"méthyl":"éthyl")+base;
+ if(groups.length===2){
+  if(groups[0]===groups[1]) name="N,N-di"+(groups[0]==="CH₃"?"méthyl":"éthyl")+base;
+  else name="N-éthyl-N-méthyl"+base;
+ }
+ let f=formula+"N"+(s1==="H"?"H": "("+s1+")")+(s2==="H"?"H":"("+s2+")");
+ drawAtelier(root,s1,s2);
+ document.getElementById('buildResult').innerHTML="<b>Formule condensée :</b> "+f+"<br><b>Classe :</b> amide "+cls+"<br><b>Nom :</b> "+name;
+}
+const quiz=[
+ {q:"Quel est le groupe caractéristique d'une amide ?",o:["–OH","–C(=O)–N–","–CHO"],a:1,e:"Une amide contient un carbonyle directement lié à un atome d'azote."},
+ {q:"Comment classe-t-on CH₃CONH₂ ?",o:["Primaire","Secondaire","Tertiaire"],a:0,e:"L'azote porte deux hydrogènes : c'est une amide primaire."},
+ {q:"Comment classe-t-on CH₃CONHCH₃ ?",o:["Primaire","Secondaire","Tertiaire"],a:1,e:"L'azote porte un hydrogène et un groupe méthyle : amide secondaire."},
+ {q:"Quel est le nom de CH₃CH₂CONH₂ ?",o:["Éthanamide","Propanamide","Butanamide"],a:1,e:"La chaîne principale compte trois carbones, en incluant le carbone du carbonyle : propanamide."},
+ {q:"Quel est le nom de CH₃CON(CH₃)₂ ?",o:["N-méthyléthanamide","N,N-diméthyléthanamide","N-éthyléthanamide"],a:1,e:"Deux groupes méthyle sont fixés sur l'azote : préfixe N,N-diméthyl."}
+];
+function renderQuiz(){
+ const box=document.getElementById('questions');box.innerHTML='';
+ quiz.forEach((q,i)=>{let d=document.createElement('div');d.className='question';d.innerHTML='<b>Question '+(i+1)+' : '+q.q+'</b><div class="options">'+q.o.map((o,j)=>'<label><input type="radio" name="q'+i+'" value="'+j+'"> '+o+'</label>').join('')+'</div><div id="fb'+i+'" class="feedback"></div>';box.appendChild(d)});
+}
+function correctQuiz(){
+ let score=0;
+ quiz.forEach((q,i)=>{let s=document.querySelector('input[name="q'+i+'"]:checked'),fb=document.getElementById('fb'+i);
+ if(s&&Number(s.value)===q.a){score++;fb.className='feedback show ok';fb.innerHTML='Correct ! '+q.e}
+ else{fb.className='feedback show no';fb.innerHTML='À revoir. Bonne réponse : <b>'+q.o[q.a]+'</b>. '+q.e}
+ });
+ document.getElementById('quizScore').textContent='Résultat : '+score+' / '+quiz.length+' — '+(score===quiz.length?'Excellent !':score>=3?'Bon travail, poursuivez vos révisions.':'Relisez le cours puis recommencez.');
+}
+function resetQuiz(){renderQuiz();document.getElementById('quizScore').textContent='Votre résultat apparaîtra ici.'}
+buildMolecule();renderQuiz();
+
+// --- Éditeur 3D autonome : projection perspective sur Canvas, sans bibliothèque externe ---
+let rot3D={x:-0.22,y:0.55}, drag3D=null, labels3D=true, bondsVisible3D=true, atoms3D=[];
+const canvas3D=document.getElementById('molecule3d');
+const ctx3D=canvas3D.getContext('2d');
+const atomColors={C:'#333f4d',O:'#e84b4b',N:'#397bd2',H:'#f4f7fb',R:'#e8a23a'};
+function addAtom(el,x,y,z,label){atoms3D.push({el,x,y,z,label});}
+function addBond(a,b,order=1){bonds3D.push({a,b,order});}
+let bonds3D=[];
+function build3D(){
+ if(!canvas3D)return;
+ const root=document.getElementById('chain3d').value;
+ const s1=document.getElementById('sub13d').value,s2=document.getElementById('sub23d').value;
+ atoms3D=[];bonds3D=[];
+ // Carbonyle central, oxygène en haut, azote à droite.
+ addAtom('C',0,0,0,'C');
+ addAtom('O',0,1.18,0,'O'); addBond(0,1,2);
+ addAtom('N',1.25,-.05,0,'N'); addBond(0,2);
+ // Groupe R à gauche, représenté par le premier carbone de la chaîne.
+ if(root!=='H'){
+   addAtom('R',-1.28,-.12,0,root==='CH₃'?'CH₃':root==='CH₃CH₂'?'CH₂':'CH₂');
+   addBond(0,3);
+   if(root==='CH₃CH₂'||root==='CH₃CH₂CH₂'){
+     addAtom('R',-2.15,-.85,.15,root==='CH₃CH₂'?'CH₃':'CH₂');addBond(3,4);
+   }
+   if(root==='CH₃CH₂CH₂'){addAtom('R',-2.95,-.35,.55,'CH₃');addBond(4,5);}
+ } else {addAtom('H',-1.05,-.45,0,'H');addBond(0,3);}
+ // Substituants de l'azote : liaisons dans deux directions spatiales.
+ function addNSub(s,idx,sign){
+   if(s==='H'){let p=atoms3D.length;addAtom('H',1.55,sign*.95,.18,'H');addBond(2,p);}
+   else{
+     let p=atoms3D.length;addAtom('R',1.55,sign*.88,.15,s==='CH₃'?'CH₃':'CH₂');addBond(2,p);
+     if(s==='CH₂CH₃'){let q=atoms3D.length;addAtom('R',2.35,sign*1.25,.55,'CH₃');addBond(p,q);}
+   }
+ }
+ addNSub(s1,0,1);addNSub(s2,1,-1);
+ // H supplémentaire sur le carbone formyle pour HCON...
+ const cls=(s1==='H'&&s2==='H')?'primaire':(s1==='H'||s2==='H')?'secondaire':'tertiaire';
+ const bases={'H':'méthanamide','CH₃':'éthanamide','CH₃CH₂':'propanamide','CH₃CH₂CH₂':'butanamide'};
+ let name=bases[root], groups=[s1,s2].filter(v=>v!=='H');
+ const groupName=v=>v==='CH₃'?'méthyl':'éthyl';
+ if(groups.length===1)name='N-'+groupName(groups[0])+name;
+ if(groups.length===2)name=groups[0]===groups[1]?'N,N-di'+groupName(groups[0])+name:'N-éthyl-N-méthyl'+name;
+ document.getElementById('result3d').innerHTML='<b>Classe :</b> amide '+cls+'<br><b>Nom :</b> '+name+'<br><b>Lecture :</b> le carbone du carbonyle est relié à l’oxygène et à l’azote.';
+ draw3D();
+}
+function project3D(a){
+ const cy=Math.cos(rot3D.y),sy=Math.sin(rot3D.y),cx=Math.cos(rot3D.x),sx=Math.sin(rot3D.x);
+ let x=a.x*cy-a.z*sy,z=a.x*sy+a.z*cy;
+ let y=a.y*cx-z*sx;z=a.y*sx+z*cx;
+ const scale=175/(4.7+z);
+ return {x:450+x*scale,y:235-y*scale,z,scale};
+}
+function draw3D(){
+ if(!ctx3D)return;
+ const w=canvas3D.width,h=canvas3D.height;
+ ctx3D.clearRect(0,0,w,h);
+ const bg=ctx3D.createLinearGradient(0,0,w,h);bg.addColorStop(0,'#172b40');bg.addColorStop(1,'#091522');ctx3D.fillStyle=bg;ctx3D.fillRect(0,0,w,h);
+ // repère discret
+ ctx3D.strokeStyle='#ffffff12';ctx3D.lineWidth=1;
+ for(let x=40;x<w;x+=40){ctx3D.beginPath();ctx3D.moveTo(x,0);ctx3D.lineTo(x,h);ctx3D.stroke();}
+ for(let y=35;y<h;y+=35){ctx3D.beginPath();ctx3D.moveTo(0,y);ctx3D.lineTo(w,y);ctx3D.stroke();}
+ const pts=atoms3D.map(project3D);
+ if(bondsVisible3D){
+  const sorted=bonds3D.map(b=>({...b,pa:pts[b.a],pb:pts[b.b]})).sort((a,b)=>(a.pa.z+a.pb.z)-(b.pa.z+b.pb.z));
+  sorted.forEach(b=>{
+   const dx=b.pb.x-b.pa.x,dy=b.pb.y-b.pa.y,len=Math.hypot(dx,dy)||1,ox=-dy/len*4,oy=dx/len*4;
+   ctx3D.strokeStyle='#c5d4df';ctx3D.lineWidth=7;ctx3D.lineCap='round';
+   if(b.order===2){[-1,1].forEach(k=>{ctx3D.beginPath();ctx3D.moveTo(b.pa.x+ox*k,b.pa.y+oy*k);ctx3D.lineTo(b.pb.x+ox*k,b.pb.y+oy*k);ctx3D.stroke();});}
+   else{ctx3D.beginPath();ctx3D.moveTo(b.pa.x,b.pa.y);ctx3D.lineTo(b.pb.x,b.pb.y);ctx3D.stroke();}
+  });
+ }
+ atoms3D.map((a,i)=>({a,p:pts[i]})).sort((a,b)=>a.p.z-b.p.z).forEach(({a,p})=>{
+  const r=Math.max(10,Math.min(29,18*p.scale/38));
+  const g=ctx3D.createRadialGradient(p.x-r*.35,p.y-r*.4,2,p.x,p.y,r*1.2);
+  g.addColorStop(0,'#ffffff');g.addColorStop(.22,atomColors[a.el]);g.addColorStop(1,'#101923');
+  ctx3D.beginPath();ctx3D.arc(p.x,p.y,r,0,Math.PI*2);ctx3D.fillStyle=g;ctx3D.fill();
+  ctx3D.strokeStyle='#ffffff88';ctx3D.lineWidth=1.5;ctx3D.stroke();
+  if(labels3D){ctx3D.fillStyle='#ffffff';ctx3D.font='bold 15px system-ui';ctx3D.textAlign='center';ctx3D.fillText(a.label,p.x,p.y-r-7);}
+ });
+ ctx3D.fillStyle='#d6e8f7';ctx3D.font='14px system-ui';ctx3D.textAlign='left';ctx3D.fillText('Faites glisser pour tourner le modèle',18,28);
+}
+function reset3D(){rot3D={x:-.22,y:.55};draw3D();}
+function toggleLabels3D(){labels3D=!labels3D;document.getElementById('labelsBtn').textContent=labels3D?'Masquer les étiquettes':'Afficher les étiquettes';draw3D();}
+function toggleBonds3D(){bondsVisible3D=!bondsVisible3D;document.getElementById('bondsBtn').textContent=bondsVisible3D?'Masquer les liaisons':'Afficher les liaisons';draw3D();}
+if(canvas3D){
+ canvas3D.addEventListener('pointerdown',e=>{drag3D={x:e.clientX,y:e.clientY};canvas3D.setPointerCapture(e.pointerId);canvas3D.style.cursor='grabbing';});
+ canvas3D.addEventListener('pointermove',e=>{if(!drag3D)return;let dx=e.clientX-drag3D.x,dy=e.clientY-drag3D.y;rot3D.y+=dx*.008;rot3D.x+=dy*.008;drag3D={x:e.clientX,y:e.clientY};draw3D();});
+ const endDrag=()=>{drag3D=null;canvas3D.style.cursor='grab';};
+ canvas3D.addEventListener('pointerup',endDrag);canvas3D.addEventListener('pointercancel',endDrag);
+}
+build3D();
+
+// --- Construction libre 2D avec déplacement des atomes et contrôle de valence ---
+let freeAtoms=[], freeBonds=[], freeSelected=[], freeBondOrder=1, freeNextId=1, freeDrag=null;
+const freeSvg=document.getElementById('freeBoard');
+const freeColors={C:'#354555',O:'#df4b4b',N:'#3478c9',H:'#ffffff'};
+function setFreeBondOrder(order){
+ freeBondOrder=order;
+ document.getElementById('singleBondBtn').style.outline=order===1?'3px solid #83b7dc':'none';
+ document.getElementById('doubleBondBtn').style.outline=order===2?'3px solid #83b7dc':'none';
+}
+function addFreeAtom(el,x,y){
+ const positions=[[160,185],[280,185],[400,185],[520,185],[220,285],[340,285],[460,285],[580,285]];
+ const pos=positions[(freeNextId-1)%positions.length];
+ freeAtoms.push({id:freeNextId++,el,x:x??pos[0],y:y??pos[1]});
+ freeSelected=[freeAtoms[freeAtoms.length-1].id];renderFreeBoard();
+}
+function freeAtom(id){return freeAtoms.find(a=>a.id===id);}
+function selectFreeAtom(id,extend=false){
+ if(extend){if(!freeSelected.includes(id))freeSelected.push(id);if(freeSelected.length>2)freeSelected.shift();}
+ else freeSelected=[id];
+ renderFreeBoard();
+}
+function connectFreeAtoms(){
+ if(freeSelected.length!==2){freeMessage('Sélectionnez exactement deux atomes (Ctrl-clic ou clic successif avec sélection conservée) pour les relier.',false);return;}
+ const [a,b]=freeSelected;
+ if(a===b)return;
+ if(freeBonds.some(x=>(x.a===a&&x.b===b)||(x.a===b&&x.b===a))){freeMessage('Ces deux atomes sont déjà liés. Supprimez la liaison avant d’en créer une autre.',false);return;}
+ freeBonds.push({a,b,order:freeBondOrder});freeSelected=[];renderFreeBoard();
+}
+function renderFreeBoard(){
+ const bg=document.getElementById('freeBonds'),ag=document.getElementById('freeAtoms');
+ bg.innerHTML='';ag.innerHTML='';
+ freeBonds.forEach(b=>{
+  const a=freeAtom(b.a),c=freeAtom(b.b);if(!a||!c)return;
+  const dx=c.x-a.x,dy=c.y-a.y,len=Math.hypot(dx,dy)||1,ox=-dy/len*4,oy=dx/len*4;
+  for(let k=0;k<b.order;k++){
+   const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+   const off=b.order===1?0:(k===0?-1:1);
+   line.setAttribute('x1',a.x+ox*off);line.setAttribute('y1',a.y+oy*off);
+   line.setAttribute('x2',c.x+ox*off);line.setAttribute('y2',c.y+oy*off);
+   line.setAttribute('stroke','#334b5e');line.setAttribute('stroke-width','4');line.setAttribute('stroke-linecap','round');bg.appendChild(line);
+  }
+ });
+ freeAtoms.forEach(a=>{
+  const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+  g.setAttribute('transform',`translate(${a.x} ${a.y})`);g.style.cursor='grab';
+  const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  circle.setAttribute('r',a.el==='H'?17:23);circle.setAttribute('fill',freeColors[a.el]);
+  circle.setAttribute('stroke',freeSelected.includes(a.id)?'#f09a18':'#27465d');circle.setAttribute('stroke-width',freeSelected.includes(a.id)?5:2);
+  const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+  txt.textContent=a.el;txt.setAttribute('text-anchor','middle');txt.setAttribute('dominant-baseline','middle');
+  txt.setAttribute('font-size',a.el==='H'?15:18);txt.setAttribute('font-weight','800');txt.setAttribute('fill',a.el==='H'?'#183044':'white');
+  g.appendChild(circle);g.appendChild(txt);
+  g.addEventListener('pointerdown',e=>{
+   e.stopPropagation();const multi=e.ctrlKey||e.metaKey;
+   if(multi || (freeSelected.length===1 && !freeSelected.includes(a.id))){selectFreeAtom(a.id,true);}else if(!freeSelected.includes(a.id)){selectFreeAtom(a.id,false);}
+   const pt=freeSvg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;
+   const p=pt.matrixTransform(freeSvg.getScreenCTM().inverse());
+   freeDrag={id:a.id,dx:p.x-a.x,dy:p.y-a.y};g.setPointerCapture?.(e.pointerId);
+  });
+  ag.appendChild(g);
+ });
+}
+freeSvg.addEventListener('pointermove',e=>{
+ if(!freeDrag)return;const pt=freeSvg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;
+ const p=pt.matrixTransform(freeSvg.getScreenCTM().inverse()),a=freeAtom(freeDrag.id);
+ if(a){a.x=Math.max(25,Math.min(735,p.x-freeDrag.dx));a.y=Math.max(25,Math.min(365,p.y-freeDrag.dy));renderFreeBoard();}
+});
+freeSvg.addEventListener('pointerup',()=>freeDrag=null);
+freeSvg.addEventListener('pointercancel',()=>freeDrag=null);
+function freeMessage(msg,ok){const el=document.getElementById('freeStatus');el.innerHTML=msg;el.style.borderLeftColor=ok?'#16865b':'#ffb84d';}
+function deleteFreeSelection(){
+ if(!freeSelected.length){freeMessage('Aucun atome sélectionné.',false);return;}
+ const ids=[...freeSelected];freeAtoms=freeAtoms.filter(a=>!ids.includes(a.id));
+ freeBonds=freeBonds.filter(b=>!ids.includes(b.a)&&!ids.includes(b.b));freeSelected=[];renderFreeBoard();
+ freeMessage('Atome(s) et liaison(s) associé(s) supprimés.',true);
+}
+function clearFreeBoard(){freeAtoms=[];freeBonds=[];freeSelected=[];renderFreeBoard();freeMessage('Tableau vide. Ajoutez des atomes pour commencer.',true);}
+function loadAmideExample(){
+ freeAtoms=[];freeBonds=[];freeSelected=[];
+ const add=(el,x,y)=>{const id=freeNextId++;freeAtoms.push({id,el,x,y});return id;};
+ const r=add('C',145,195),c=add('C',310,195),o=add('O',310,75),n=add('N',475,195),h1=add('H',475,305),h2=add('H',560,150);
+ freeBonds=[{a:r,b:c,order:1},{a:c,b:o,order:2},{a:c,b:n,order:1},{a:n,b:h1,order:1},{a:n,b:h2,order:1}];
+ renderFreeBoard();freeMessage('Exemple chargé : CH₃–C(=O)–NH₂ (éthanamide). Essayez de déplacer les atomes puis de vérifier la structure.',true);
+}
+function checkFreeMolecule(){
+ if(!freeAtoms.length){freeMessage('Le tableau est vide : ajoutez des atomes avant la vérification.',false);return;}
+ const errors=[];
+ const max={C:4,O:2,N:3,H:1},used={};
+ freeAtoms.forEach(a=>used[a.id]=0);
+ freeBonds.forEach(b=>{used[b.a]=(used[b.a]||0)+b.order;used[b.b]=(used[b.b]||0)+b.order;});
+ freeAtoms.forEach(a=>{
+  const v=used[a.id]||0;
+  if(v>max[a.el])errors.push(`${a.el}${a.id} : valence ${v}, supérieure à ${max[a.el]}.`);
+  if(v===0)errors.push(`${a.el}${a.id} : atome isolé, sans liaison.`);
+ });
+ // Détecter un motif amide : C=O et ce même C relié à N.
+ const amide=freeBonds.some(b=>{
+  if(b.order!==2)return false;
+  const c=freeAtom(b.a),o=freeAtom(b.b);
+  const carbon=c?.el==='C'&&o?.el==='O'?c:o?.el==='C'&&c?.el==='O'?o:null;
+  if(!carbon)return false;
+  return freeBonds.some(x=>x.order===1&&((x.a===carbon.id&&freeAtom(x.b)?.el==='N')||(x.b===carbon.id&&freeAtom(x.a)?.el==='N')));
+ });
+ if(!amide)errors.push('Motif amide non détecté : il faut un groupe C=O dont le carbone est directement lié à un azote.');
+ if(errors.length)freeMessage('<b>Quelques corrections sont nécessaires :</b><ul>'+errors.map(e=>'<li>'+e+'</li>').join('')+'</ul>',false);
+ else freeMessage('<b class="good">Structure cohérente selon les valences usuelles !</b><br>Le motif C(=O)–N est présent : la molécule construite contient bien une fonction amide. Vérifiez aussi que tous les atomes correspondent à la formule souhaitée.',true);
+}
+renderFreeBoard();setFreeBondOrder(1);
+
+
+drawGeneric();drawResonance();
+const _showAtom=showAtom;
+showAtom=function(a){_showAtom(a);document.querySelectorAll('#genSvg [data-atom]').forEach(g=>g.classList.toggle('sel',g.dataset.atom===a));};
+
+// ===== Simulations : préparation et hydrolyse =====
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+const lerpC=(a,b,k)=>{const h=s=>[1,3,5].map(i=>parseInt(s.slice(i,i+2),16)),A=h(a),B=h(b);return'#'+A.map((v,i)=>Math.round(v+(B[i]-v)*k).toString(16).padStart(2,'0')).join('');};
+function mkCircles(g,n,r){g.innerHTML='';for(let i=0;i<n;i++){const c=document.createElementNS(NS,'circle');c.setAttribute('r',r+(i%3));g.appendChild(c);}}
+
+// --- Préparation ---
+const PREPD={'H':{salt:'Méthanoate d’ammonium',amide:'méthanamide',dep:'Dépôt blanc de méthanamide',acid:'acide méthanoïque'},
+ 'CH₃':{salt:'Éthanoate d’ammonium',amide:'éthanamide',dep:'Dépôt blanc d’éthanamide',acid:'acide éthanoïque'},
+ 'CH₃CH₂':{salt:'Propanoate d’ammonium',amide:'propanamide',dep:'Dépôt blanc de propanamide',acid:'acide propanoïque'}};
+const prep={t:0,run:false,last:0};
+const prepY=t=>80*(1-Math.exp(-t/7));
+function prepReset(){prep.run=false;prep.t=0;$('prepGo').textContent='▶ Chauffer';$('prepT').value=0;
+ const R=$('prepR').value,d=PREPD[R];
+ $('prepDepLbl').textContent=d.dep;$('prepSaltLbl').textContent=d.salt+' (fondu)';
+ $('prepEq').innerHTML='<b>'+R+'–COONH₄ <span class="muted">(fondu)</span> &nbsp;⟶&nbsp; '+R+'–CONH₂ <span class="muted">(sd)</span> + H₂O</b><br><span class="muted">'+d.salt+' → '+d.amide+' + eau</span>';
+ $('prepRem').innerHTML=R+'–COOH &nbsp;+&nbsp; NH₃ &nbsp;⟶&nbsp; '+R+'–COONH₄ <span class="muted">(sd)</span>';
+ $('prepMelt').textContent=R==='CH₃'?'L’éthanamide est un solide dont la température de fusion est voisine de 82 °C : il se dépose à l’état solide sur les parois plus froides du tube.':'';
+ if(!$('prepBars').children.length)prepInit();updatePrep(0);}
+function prepInit(){
+ $('prepBars').innerHTML=[['Sel d’ammonium restant','#d9a520','bs'],['Amide formée','#16865b','ba'],['Eau formée','#3b8fd0','bw']].map(r=>'<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:.9rem"><span>'+r[0]+'</span><b id="'+r[2]+'v"></b></div><div style="background:#eaf0f5;border-radius:6px;height:14px;overflow:hidden"><div id="'+r[2]+'" style="height:100%;width:0;background:'+r[1]+'"></div></div></div>').join('');
+ mkCircles($('prepBub'),7,2.5);mkCircles($('prepVap'),8,3);
+ const X=t=>40+300*t/30,Y=v=>160-135*v/100;let s='<rect x="0" y="0" width="360" height="190" fill="#fbfdff"/>';
+ [0,10,20,30].forEach(t=>s+='<line x1="'+X(t)+'" y1="160" x2="'+X(t)+'" y2="164" stroke="#607586"/><text x="'+X(t)+'" y="178" text-anchor="middle" font-size="11" fill="#607586">'+t+'</text>');
+ [0,40,80,100].forEach(v=>s+='<line x1="36" y1="'+Y(v)+'" x2="40" y2="'+Y(v)+'" stroke="#607586"/><text x="32" y="'+(Y(v)+4)+'" text-anchor="end" font-size="11" fill="#607586">'+v+'</text>');
+ s+='<line x1="40" y1="160" x2="340" y2="160" stroke="#607586"/><line x1="40" y1="160" x2="40" y2="25" stroke="#607586"/><line x1="40" y1="'+Y(80)+'" x2="340" y2="'+Y(80)+'" stroke="#c74747" stroke-dasharray="6 4"/><text x="337" y="'+(Y(80)-5)+'" text-anchor="end" font-size="11" fill="#c74747">≈ 80 % (équilibre)</text><text x="190" y="190" text-anchor="middle" font-size="11" fill="#607586">t (min)</text><text x="12" y="16" font-size="11" fill="#607586">% amide</text><path id="prepCurve" fill="none" stroke="#16865b" stroke-width="3"/><circle id="prepDot" r="5" fill="#16865b" stroke="#fff" stroke-width="2"/>';
+ $('prepChart').innerHTML=s;}
+function updatePrep(time){
+ const t=prep.t,y=prepY(t),T=Math.round(20+190*(1-Math.exp(-t/1.2)));
+ $('prepTlbl').textContent=Math.round(t)+' min';
+ $('prepFlame').setAttribute('opacity',prep.run?1:0);
+ if(prep.run)$('prepFlame').setAttribute('transform','translate(190 302) scale(1,'+(0.9+0.15*Math.sin(time*18))+')');
+ $('prepDep').setAttribute('opacity',Math.min(1,y/70));
+ $('prepLiq').setAttribute('fill',lerpC('#f1d98a','#f6e7b4',y/80));
+ $('prepTemp').textContent=t>0?'T ≈ '+T+' °C':'';
+ [['bs',100-y],['ba',y],['bw',y]].forEach(([id,v])=>{$(id).style.width=v+'%';$(id+'v').textContent=v.toFixed(0)+' %';});
+ let p='';for(let u=0;u<=t+1e-6;u+=.5)p+=(p?'L':'M')+(40+300*u/30).toFixed(1)+' '+(160-135*prepY(u)/100).toFixed(1);
+ $('prepCurve').setAttribute('d',p||'M40 160');$('prepDot').setAttribute('cx',40+300*t/30);$('prepDot').setAttribute('cy',160-135*y/100);
+ const on=prep.run&&T>90;
+ [...$('prepBub').children].forEach((c,i)=>{c.setAttribute('cx',-12+i*4+Math.sin(time*3+i)*2);c.setAttribute('cy',-24-((time*22+i*7)%26));c.setAttribute('opacity',on?.9:0);});
+ [...$('prepVap').children].forEach((c,i)=>{c.setAttribute('cx',Math.sin(time*2+i)*3);c.setAttribute('cy',-60-((time*50+i*30)%230));c.setAttribute('opacity',on?.65:0);});
+ let m;
+ if(t===0)m='Le tube contient le sel d’ammonium. Cliquez sur « Chauffer » : 30 minutes sont simulées en quelques secondes.';
+ else if(T<150)m='Chauffage en cours : le sel fond et la température monte.';
+ else if(y<12)m='La réaction démarre lentement : de la vapeur d’eau s’échappe par le tube effilé.';
+ else if(y<60)m='Un dépôt blanc d’amide apparaît sur les parois supérieures, plus froides, du tube.';
+ else if(t<28)m='Le dépôt s’épaissit, mais la vitesse de formation diminue : on approche d’un état d’équilibre.';
+ else m='Après environ une demi-heure à 210 °C, l’amide représente environ 80 % de la quantité initiale : l’équilibre chimique est atteint (la réaction n’est pas totale).';
+ $('prepObs').innerHTML='<b>Observation :</b> '+m;}
+function prepTick(ts){
+ if(prep.run){prep.t=Math.min(30,prep.t+Math.min(.1,(ts-prep.last)/1000)*2);$('prepT').value=prep.t;if(prep.t>=30){prep.run=false;$('prepGo').textContent='▶ Rejouer';}}
+ prep.last=ts;updatePrep(ts/1000);if(prep.run)requestAnimationFrame(prepTick);}
+function prepToggle(){
+ if(prep.run){prep.run=false;$('prepGo').textContent='▶ Reprendre';updatePrep(0);return;}
+ if(prep.t>=30)prep.t=0;prep.run=true;prep.last=performance.now();$('prepGo').textContent='⏸ Pause';requestAnimationFrame(prepTick);}
+function prepScrub(v){prep.run=false;prep.t=+v;$('prepGo').textContent='▶ Chauffer';updatePrep(0);}
+
+// --- Hydrolyse ---
+const HYD={
+ eth:{n:'éthanamide',f:'CH₃CONH₂',R:'CH₃',acid:'acide éthanoïque',am:'NH₃',amg:'NH₃(g)',amH:'NH₄⁺',sel:'(NH₄)₂SO₄',vin:true},
+ prop:{n:'propanamide',f:'CH₃CH₂CONH₂',R:'CH₃CH₂',acid:'acide propanoïque',am:'NH₃',amg:'NH₃(g)',amH:'NH₄⁺',sel:'(NH₄)₂SO₄'},
+ nme:{n:'N-méthyléthanamide',f:'CH₃CONHCH₃',R:'CH₃',acid:'acide éthanoïque',am:'CH₃NH₂',amg:'CH₃NH₂',amH:'CH₃NH₃⁺',sel:'(CH₃NH₃)₂SO₄',vin:true},
+ nnme:{n:'N,N-diméthyléthanamide',f:'CH₃CON(CH₃)₂',R:'CH₃',acid:'acide éthanoïque',am:'(CH₃)₂NH',amg:'(CH₃)₂NH',amH:'(CH₃)₂NH₂⁺',sel:'((CH₃)₂NH₂)₂SO₄',vin:true}};
+const hy={p:0,run:false,last:0};
+function hyReset(){hy.run=false;hy.p=0;$('hyGo').textContent='▶ Chauffer';
+ const d=HYD[$('hyAm').value],base=$('hyMed').value==='base';
+ $('hyMixLbl').textContent=d.n[0].toUpperCase()+d.n.slice(1)+' +';$('hyMixLbl2').textContent=base?'soude NaOH (1 M)':'acide sulfurique H₂SO₄ (1 M)';
+ $('hyGasLbl').textContent=base?(d.am==='NH₃'?'Ammoniac NH₃ (gaz)':'Amine '+d.am+' (gaz)'):'Vapeurs d’'+d.acid;
+ $('hyGasLbl').setAttribute('fill',base?'#1a5f9c':'#c74747');
+ if(!$('hyBub').children.length){mkCircles($('hyBub'),6,2.5);mkCircles($('hyGas'),10,3);}
+ updateHy(0);}
+function updateHy(time){
+ const d=HYD[$('hyAm').value],base=$('hyMed').value==='base',p=hy.p,r=hy.run;
+ $('hyFlame').setAttribute('opacity',r?1:0);
+ if(r)$('hyFlame').setAttribute('transform','translate(200 306) scale(1,'+(0.9+0.15*Math.sin(time*18))+')');
+ $('hyCrumbs').setAttribute('opacity',Math.max(0,1-p*1.6));
+ const k=Math.max(0,Math.min(1,(p-.3)/.6));
+ $('hyPaper').setAttribute('fill',lerpC('#e6cf3a',base?'#2f62c9':'#d8372f',k));
+ const gc=base?'#7fb2e8':'#e8a0a0';
+ [...$('hyBub').children].forEach((c,i)=>{c.setAttribute('cx',-12+i*5+Math.sin(time*3+i)*2);c.setAttribute('cy',-30-((time*24+i*9)%40));c.setAttribute('opacity',r?.9:0);});
+ [...$('hyGas').children].forEach((c,i)=>{c.setAttribute('fill',gc);c.setAttribute('cx',Math.sin(time*2+i*2)*8);c.setAttribute('cy',-82-((time*45+i*20)%170));c.setAttribute('opacity',p>.1?.7:0);});
+ let m;
+ if(p===0)m='Le mélange est prêt. Cliquez sur « Chauffer » : le papier pH humide est présenté à l’ouverture du tube (jaune au départ).';
+ else if(p<.15)m='Chauffage du mélange…';
+ else if(p<.9)m=base?'Un gaz à odeur caractéristique se dégage ; le papier pH humide commence à virer.':'Des vapeurs s’échappent'+(d.vin?' (odeur de vinaigre)':'')+' ; le papier pH humide commence à virer.';
+ else m=base?'Le papier pH humide est passé du <b>jaune au bleu</b> : le gaz dégagé ('+d.am+') est <b>basique</b>.':'Le papier pH humide est passé du <b>jaune au rouge</b> : les vapeurs d’'+d.acid+' sont <b>acides</b>.';
+ $('hyObs').innerHTML='<b>Observation :</b> '+m;
+ if(p>=.95){$('hyEq').innerHTML=hyEquation(d,base);}else $('hyEq').innerHTML='<span class="muted">Lancez l’expérience : l’équation de la réaction apparaîtra une fois l’observation terminée.</span>';}
+function hyEquation(d,base){
+ const sub=d.am!=='NH₃'?'<br>L’amide est <b>N-substituée</b> : on obtient une amine au lieu de l’ammoniac.':'';
+ if(base)return'<b>Équation de l’hydrolyse en milieu basique :</b><br>'+d.f+' + Na⁺ + OH⁻ ⟶ '+d.R+'CO₂⁻ + Na⁺ + '+d.amg+'<br><span class="muted">Produits : ion '+d.R+'CO₂⁻ (carboxylate) et '+(d.am==='NH₃'?'ammoniac':'amine '+d.am)+'.</span>'+sub;
+ return'<b>Équation de l’hydrolyse en milieu acide :</b><br>2 '+d.f+' + 2 H₃O⁺ + SO₄²⁻ ⟶ 2 '+d.R+'CO₂H + '+d.sel+'<br><b>Équation simplifiée :</b> '+d.f+' + H₃O⁺ ⟶ '+d.R+'CO₂H + '+d.amH+'<br><span class="muted">Produits : '+d.acid+' (virage du papier pH au rouge) et ion '+(d.am==='NH₃'?'ammonium':'alkylammonium')+' '+d.amH+'.</span>'+sub;}
+function hyTick(ts){
+ if(hy.run){hy.p=Math.min(1,hy.p+Math.min(.1,(ts-hy.last)/1000)/9);if(hy.p>=1){hy.run=false;$('hyGo').textContent='▶ Rejouer';}}
+ hy.last=ts;updateHy(ts/1000);if(hy.run)requestAnimationFrame(hyTick);}
+function hyToggle(){
+ if(hy.run){hy.run=false;$('hyGo').textContent='▶ Reprendre';updateHy(0);return;}
+ if(hy.p>=1)hy.p=0;hy.run=true;hy.last=performance.now();$('hyGo').textContent='⏸ Pause';requestAnimationFrame(hyTick);}
+
+quiz.push(
+ {q:"Quelle équation traduit la préparation d'une amide non substituée à partir d'un sel d'ammonium ?",o:["R–COO⁻,NH₄⁺ ⟶ R–CO–NH₂ + H₂O","R–COOH + NH₃ ⟶ R–CO–NH₂ + H₂","R–COO⁻,NH₄⁺ ⟶ R–COOH + NH₃"],a:0,e:"Le carboxylate d'ammonium perd une molécule d'eau (déshydratation) pour donner l'amide."},
+ {q:"Après chauffage de l'éthanoate d'ammonium vers 210 °C pendant une demi-heure, quelle proportion est transformée en éthanamide ?",o:["Environ 20 %","Environ 50 %","Environ 80 %"],a:2,e:"La réaction est lente et limitée : elle conduit à un équilibre chimique (environ 80 % de la quantité initiale)."},
+ {q:"On chauffe de l'éthanamide avec de la soude. Quel gaz se dégage et fait virer le papier pH humide au bleu ?",o:["Le dioxyde de carbone CO₂","L'ammoniac NH₃","L'acide éthanoïque CH₃CO₂H"],a:1,e:"L'hydrolyse basique d'une amide non substituée donne l'ion carboxylate et de l'ammoniac, gaz basique."},
+ {q:"Quels produits obtient-on par hydrolyse de CH₃CONH₂ en milieu acide ?",o:["CH₃CO₂⁻ et NH₃","CH₃CO₂H et NH₄⁺","CH₃NH₂ et CO₂"],a:1,e:"CH₃CONH₂ + H₃O⁺ ⟶ CH₃CO₂H + NH₄⁺."},
+ {q:"L'hydrolyse basique de CH₃CONHCH₃ (amide N-substituée) donne l'ion éthanoate et…",o:["de l'ammoniac NH₃","de la méthanamine CH₃NH₂","de l'acide éthanoïque"],a:1,e:"R–CONHR′ + OH⁻ ⟶ R–CO₂⁻ + R′NH₂ : ici R′ = CH₃."},
+ {q:"En milieu acide, pourquoi le papier pH humide vire-t-il du jaune au rouge ?",o:["À cause des vapeurs d'acide éthanoïque","À cause de l'ammoniac dégagé","À cause de l'eau formée"],a:0,e:"Des vapeurs d'acide éthanoïque (odeur de vinaigre) sont entraînées à la sortie du tube."}
+);
+renderQuiz();prepReset();hyReset();
+</script>
+
+<button type="button" class="sp-totop" id="sp-totop" aria-label="Revenir en haut de la page" title="Haut de page">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+</button>
+<script>
+(function(){
+  var b=document.getElementById('sp-totop');
+  function t(){b.classList.toggle('show',(window.pageYOffset||document.documentElement.scrollTop)>300);}
+  window.addEventListener('scroll',t,{passive:true});t();
+  b.addEventListener('click',function(){
+    var r=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({top:0,behavior:r?'auto':'smooth'});
+  });
+})();
+</script>
+</body>
+</html>
